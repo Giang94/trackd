@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/screen_padding"
+        android:background="@color/white"
+        android:titleTextColor="@color/black"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+            android:gravity="top"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    app:endIconDrawable="@drawable/ic_scan"
+                    app:endIconMode="custom"
+                    android:hint="Looking for..."
+                    android:id="@+id/lyBarcode">
+
+                <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                    android:id="@+id/btnFetch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:minHeight="48dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:text="GO!"
+                    android:layout_marginStart="12dp"/>
+        </LinearLayout>
+
+        <ImageView
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:id="@+id/ivCover"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_placeholder"
+                android:scaleType="centerCrop"
+                android:background="#ddd"
+                android:layout_marginBottom="16dp" />
+
+        <EditText
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:id="@+id/etTitle"
+                android:hint="Album title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        <EditText
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:id="@+id/etArtist"
+                android:hint="Artist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp" />
+
+        <EditText
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:id="@+id/etYear"
+                android:hint="Year"
+                android:inputType="number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp" />
+
+        <Spinner
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:id="@+id/spFormat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp" />
+
+        <Button
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:id="@+id/btnSave"
+                android:text="Save Album"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp" />
+    </LinearLayout>
+
+</ScrollView>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="trackd_primary">#1E1E1E</color>       <!-- Dark grey but not black -->
+    <color name="trackd_primary_variant">#2A2A2A</color>
+
+    <color name="trackd_on_primary">#FFFFFF</color>     <!-- Text/icons on primary -->
+
+    <color name="trackd_secondary">#E53935</color>      <!-- Warm red accent -->
+    <color name="trackd_secondary_variant">#D32F2F</color>
+    <color name="trackd_on_secondary">#FFFFFF</color>
+
+    <color name="trackd_background">#F5F5F5</color>     <!-- Clean light bg -->
+    <color name="trackd_surface">#FFFFFF</color>
+
+    <color name="trackd_statusbar">#1E1E1E</color>
+    <color name="trackd_navbar">#1E1E1E</color>
+</resources>
