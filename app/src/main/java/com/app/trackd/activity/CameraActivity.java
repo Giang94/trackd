@@ -11,6 +11,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
@@ -23,16 +25,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.trackd.R;
 import com.app.trackd.adapter.RecentAdapter;
+import com.app.trackd.common.OpenCVLoader;
 import com.app.trackd.common.SwipeBackHelper;
-import com.app.trackd.matcher.PhotoMatcherORB;
+import com.app.trackd.matcher.TFPhotoMatcher;
 import com.app.trackd.model.Album;
 import com.app.trackd.service.AlbumService;
-import com.app.trackd.util.ImagePHash;
 import com.app.trackd.util.ImageUtils;
-import com.app.trackd.matcher.PhotoMatcher;
 import com.google.common.util.concurrent.ListenableFuture;
-
-import org.opencv.android.OpenCVLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,13 +43,14 @@ public class CameraActivity extends AppCompatActivity {
     private PreviewView previewView;
     private RecyclerView recyclerView;
     private ImageButton btnTakePhoto;
+    private ImageButton btnPickPhoto;
     private TextView tvMatchesResults;
     private Bitmap latestBitmap;
     private boolean isPhotoTaken = false;
 
     private List<Album> albums;
     private RecentAdapter recentAdapter;
-    private PhotoMatcherORB photoMatcher;
+    private TFPhotoMatcher tfPhotoMatcher;
     private AlbumService albumService;
 
     @Override
@@ -59,11 +59,11 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera);
 
         SwipeBackHelper.enableSwipeBack(this);
-
-        OpenCVLoader.initLocal();
+        OpenCVLoader.init();
 
         initViews();
         setupRecyclerView();
+        setupGalleryButton();
         setupTakePhotoButton();
         loadAlbumsAndInitMatcher();
         startCamera();
@@ -83,6 +83,40 @@ public class CameraActivity extends AppCompatActivity {
         recentAdapter = new RecentAdapter(new ArrayList<>(), album -> {});
         recyclerView.setAdapter(recentAdapter);
     }
+
+    private final ActivityResultLauncher<String> pickImageLauncher =
+            registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+                if (uri != null) {
+                    try {
+                        Bitmap bitmap = ImageUtils.uriToBitmap(this, uri);
+
+                        // Show photo on screen
+                        ImageView imageCaptured = findViewById(R.id.imageCaptured);
+                        imageCaptured.setImageBitmap(bitmap);
+                        imageCaptured.setVisibility(View.VISIBLE);
+                        previewView.setVisibility(View.GONE);
+
+                        // Stop camera mode
+                        isPhotoTaken = true;
+                        btnTakePhoto.setImageResource(R.drawable.ic_redo);
+
+                        // Match
+                        matchAndShow(bitmap);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+    private void setupGalleryButton() {
+        btnPickPhoto = findViewById(R.id.btnPickFromGallery);  // your new button
+
+        btnPickPhoto.setOnClickListener(v -> {
+            pickImageLauncher.launch("image/*");
+        });
+    }
+
 
     private void setupTakePhotoButton() {
         ImageView imageCaptured = findViewById(R.id.imageCaptured);
@@ -104,6 +138,10 @@ public class CameraActivity extends AppCompatActivity {
                 // Retake
                 imageCaptured.setVisibility(GONE);
                 previewView.setVisibility(View.VISIBLE);
+
+                tvMatchesResults.setVisibility(GONE);
+                recyclerView.setVisibility(View.GONE);
+
                 btnTakePhoto.setImageResource(R.drawable.ic_camera);
                 isPhotoTaken = false;
 
@@ -116,7 +154,8 @@ public class CameraActivity extends AppCompatActivity {
     private void loadAlbumsAndInitMatcher() {
         albumService = new AlbumService(this);
         albums = albumService.getAll();
-        photoMatcher = new PhotoMatcherORB();
+        // photoMatcher = new ORBPhotoMatcher();
+        tfPhotoMatcher = new TFPhotoMatcher(this);
     }
 
     private void startCamera() {
@@ -155,6 +194,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private void matchAndShow(Bitmap bitmap) {
+        Log.d("MATCHING", "Selected bitmap " + bitmap.describeContents());
         if (albums == null || albums.isEmpty()) {
             tvMatchesResults.setText("No matches found");
             tvMatchesResults.setVisibility(View.VISIBLE);
@@ -163,7 +203,7 @@ public class CameraActivity extends AppCompatActivity {
         }
 
         // Use photoMatcher to find top matches
-        List<Album> topMatches = photoMatcher.findTopMatches(bitmap, albums, 5);
+        List<Album> topMatches = tfPhotoMatcher.findTopMatches(bitmap, albums, 5);
 
         if (topMatches.isEmpty()) {
             tvMatchesResults.setText("No matches found");

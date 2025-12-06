@@ -21,9 +21,8 @@ import com.app.trackd.R;
 import com.app.trackd.common.OpenCVLoader;
 import com.app.trackd.common.SwipeBackHelper;
 import com.app.trackd.database.AppDatabase;
-import com.app.trackd.matcher.PhotoMatcherORB;
+import com.app.trackd.matcher.TFPhotoMatcher;
 import com.app.trackd.model.Album;
-import com.app.trackd.util.ImagePHash;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -31,11 +30,6 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.opencv.android.Utils;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfKeyPoint;
-import org.opencv.features2d.ORB;
-import org.opencv.imgproc.Imgproc;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -203,23 +197,8 @@ public class AddAlbumActivity extends AppCompatActivity {
         String formatText = spFormat.getSelectedItem().toString();
         Album.Format format = Album.Format.valueOf(formatText);
 
-        // Convert Bitmap to Mat
-        Mat coverMat = new Mat();
-        Utils.bitmapToMat(currentBitmap, coverMat);
-        Imgproc.cvtColor(coverMat, coverMat, Imgproc.COLOR_RGBA2GRAY);
-
-        // Compute ORB descriptors
-        ORB orb = ORB.create();
-        MatOfKeyPoint keyPoints = new MatOfKeyPoint();
-        Mat descriptors = new Mat();
-        orb.detectAndCompute(coverMat, new Mat(), keyPoints, descriptors);
-
-        // Serialize descriptors to byte[]
-        int rows = descriptors.rows();
-        int cols = descriptors.cols();
-        int type = descriptors.type();
-        byte[] descriptorBytes = new byte[(int) (descriptors.total() * descriptors.elemSize())];
-        descriptors.get(0, 0, descriptorBytes);
+        TFPhotoMatcher tfPhotoMatcher = new TFPhotoMatcher(this);
+        float[] embedding = tfPhotoMatcher.getEmbedding(currentBitmap);
 
         Album album = new Album(
                 0,
@@ -228,10 +207,7 @@ public class AddAlbumActivity extends AppCompatActivity {
                 year,
                 format,
                 coverBase64,
-                rows,
-                cols,
-                type,
-                descriptorBytes
+                embedding
         );
 
         new Thread(() -> {

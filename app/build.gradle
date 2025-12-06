@@ -57,8 +57,16 @@ dependencies {
 
     // ZXing for barcode scanning (optional)
     implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
+    implementation("com.google.code.gson:gson:2.13.2")
 
     implementation project(':openCVLib')
+
+    // Core TFLite runtime
+    implementation 'org.tensorflow:tensorflow-lite:2.13.0'
+    // TensorFlow Lite Task Library (vision / embedding)
+    implementation 'org.tensorflow:tensorflow-lite-task-vision:0.4.4'
+    // TensorFlow Lite Support Library (Makes handling Bitmaps easy)
+    implementation 'org.tensorflow:tensorflow-lite-support:0.4.4'
 }
 
 // Force single annotations version to avoid duplicates

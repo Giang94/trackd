@@ -5,6 +5,8 @@ import androidx.room.PrimaryKey;
 
 import org.opencv.core.Mat;
 
+import java.sql.Blob;
+
 @Entity
 public class Album {
     public enum Format {CD, VINYL}
@@ -16,62 +18,24 @@ public class Album {
     private int year;
     private Format format;
     private String cover;
-    private int orbRows;
-    private int orbCols;
-    private byte[] orbDescriptor;
-    private int orbType;
+    private float[] embedding;
 
-    public Album(long id, String title, String artist, int year, Format format, String cover, int orbRows, int orbCols, int orbType, byte[] orbDescriptor) {
+    public Album(long id, String title, String artist, int year, Format format, String cover, float[] embedding) {
         this.id = id;
         this.title = title;
         this.artist = artist;
         this.year = year;
         this.format = format;
         this.cover = cover;
-        this.orbRows = orbRows;
-        this.orbCols = orbCols;
-        this.orbType = orbType;
-        this.orbDescriptor = orbDescriptor;
+        this.embedding = embedding;
     }
 
-    public long getId() {
-        return id;
+    public float[] getEmbedding() {
+        return embedding;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getArtist() {
-        return artist;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public Format getFormat() {
-        return format;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setArtist(String artist) {
-        this.artist = artist;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-    public void setFormat(Format format) {
-        this.format = format;
+    public void setEmbedding(float[] embedding) {
+        this.embedding = embedding;
     }
 
     public String getCover() {
@@ -82,35 +46,43 @@ public class Album {
         this.cover = cover;
     }
 
-    public int getOrbRows() {
-        return orbRows;
+    public Format getFormat() {
+        return format;
     }
 
-    public void setOrbRows(int orbRows) {
-        this.orbRows = orbRows;
+    public void setFormat(Format format) {
+        this.format = format;
     }
 
-    public int getOrbCols() {
-        return orbCols;
+    public int getYear() {
+        return year;
     }
 
-    public void setOrbCols(int orbCols) {
-        this.orbCols = orbCols;
+    public void setYear(int year) {
+        this.year = year;
     }
 
-    public byte[] getOrbDescriptor() {
-        return orbDescriptor;
+    public String getArtist() {
+        return artist;
     }
 
-    public void setOrbDescriptor(byte[] orbDescriptor) {
-        this.orbDescriptor = orbDescriptor;
+    public void setArtist(String artist) {
+        this.artist = artist;
     }
 
-    public int getOrbType() {
-        return orbType;
+    public String getTitle() {
+        return title;
     }
 
-    public void setOrbType(int orbType) {
-        this.orbType = orbType;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

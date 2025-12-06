@@ -1,18 +1,24 @@
 package com.app.trackd.util;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ImageDecoder;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.YuvImage;
 import android.media.Image;
+import android.net.Uri;
 import android.util.Base64;
 
 import androidx.annotation.OptIn;
 import androidx.camera.core.ExperimentalGetImage;
 import androidx.camera.core.ImageProxy;
 
+import com.app.trackd.activity.CameraActivity;
+
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class ImageUtils {
@@ -130,5 +136,17 @@ public class ImageUtils {
         paint.setColorFilter(f);
         canvas.drawBitmap(bitmap, 0, 0, paint);
         return grayBitmap;
+    }
+
+    public static Bitmap uriToBitmap(Context context, Uri uri) throws IOException {
+        // Step 1: Load bitmap from URI
+        ImageDecoder.Source src = ImageDecoder.createSource(context.getContentResolver(), uri);
+        Bitmap rawBitmap = ImageDecoder.decodeBitmap(src);
+        // Step 2: Ensure ARGB_8888 format
+        if (rawBitmap.getConfig() != Bitmap.Config.ARGB_8888) {
+            rawBitmap = rawBitmap.copy(Bitmap.Config.ARGB_8888, true);
+        }
+
+        return rawBitmap;
     }
 }
