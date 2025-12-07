@@ -52,7 +52,7 @@
                 android:layout_width="160dp"
                 android:layout_height="160dp"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_placeholder"
+                android:src="@drawable/cover_placeholder"
                 android:scaleType="centerCrop"
                 android:background="#ddd"
                 android:layout_marginBottom="16dp" />
