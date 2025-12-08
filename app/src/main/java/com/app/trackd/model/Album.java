@@ -3,24 +3,26 @@ package com.app.trackd.model;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.app.trackd.model.enums.AlbumFormat;
+
 import org.opencv.core.Mat;
 
 import java.sql.Blob;
 
 @Entity
 public class Album {
-    public enum Format {CD, VINYL}
+
 
     @PrimaryKey(autoGenerate = true)
     private long id;
     private String title;
     private String artist;
     private int year;
-    private Format format;
+    private AlbumFormat format;
     private String cover;
     private float[] embedding;
 
-    public Album(long id, String title, String artist, int year, Format format, String cover, float[] embedding) {
+    public Album(long id, String title, String artist, int year, AlbumFormat format, String cover, float[] embedding) {
         this.id = id;
         this.title = title;
         this.artist = artist;
@@ -46,11 +48,11 @@ public class Album {
         this.cover = cover;
     }
 
-    public Format getFormat() {
+    public AlbumFormat getFormat() {
         return format;
     }
 
-    public void setFormat(Format format) {
+    public void setFormat(AlbumFormat format) {
         this.format = format;
     }
 

@@ -1,40 +1,53 @@
 package com.app.trackd.activity;
 
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
-
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.app.trackd.R;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
 public class BarcodeScanActivity extends AppCompatActivity {
+
+    private DecoratedBarcodeView barcodeView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_barcode_scan);
 
-        // Start ZXing scanner
-        new IntentIntegrator(this)
-                .setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES)
-                .setPrompt("Scan a barcode")
-                .setCameraId(0)
-                .setBeepEnabled(true)
-                .initiateScan();
+        barcodeView = findViewById(R.id.barcodeView);
 
-        // The result will come back in onActivityResult
+        barcodeView.decodeContinuous(result -> {
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("SCAN_RESULT", result.getText());
+            setResult(RESULT_OK, returnIntent);
+            finish();
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        barcodeView.resume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        barcodeView.pause();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if(result != null) {
+        if (result != null) {
             Intent returnIntent = new Intent();
-            if(result.getContents() != null) {
+            if (result.getContents() != null) {
                 returnIntent.putExtra("SCAN_RESULT", result.getContents());
                 setResult(RESULT_OK, returnIntent);
             } else {

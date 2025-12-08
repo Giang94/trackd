@@ -9,7 +9,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.MenuItem;
-import android.widget.*;
+import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -18,11 +24,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.app.trackd.R;
+import com.app.trackd.common.LongPressHelper;
 import com.app.trackd.common.OpenCVLoader;
 import com.app.trackd.common.SwipeBackHelper;
+import com.app.trackd.database.AlbumFormatConverter;
 import com.app.trackd.database.AppDatabase;
 import com.app.trackd.matcher.TFPhotoMatcher;
 import com.app.trackd.model.Album;
+import com.app.trackd.model.enums.AlbumFormat;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -47,7 +56,7 @@ public class AddAlbumActivity extends AppCompatActivity {
     private EditText etTitle, etArtist, etYear;
     private Spinner spFormat;
     private ImageView ivCover;
-    private Button btnSave, btnFetch;
+    private Button btnSave;
     private TextInputLayout lyBarcode;
     private String coverBase64 = "";
     private Bitmap currentBitmap;
@@ -61,6 +70,7 @@ public class AddAlbumActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_album);
 
         SwipeBackHelper.enableSwipeBack(this);
+        LongPressHelper.enableLongPress(this);
         OpenCVLoader.init();
 
         initViews();
@@ -78,7 +88,6 @@ public class AddAlbumActivity extends AppCompatActivity {
         spFormat = findViewById(R.id.spFormat);
         ivCover = findViewById(R.id.ivCover);
         btnSave = findViewById(R.id.btnSave);
-        btnFetch = findViewById(R.id.btnFetch);
     }
 
     private void initDropdowns() {
@@ -103,12 +112,18 @@ public class AddAlbumActivity extends AppCompatActivity {
         // save
         btnSave.setOnClickListener(v -> saveAlbum());
 
-        // fetch discogs info
-        btnFetch.setOnClickListener(v -> {
-            String barcode = String.valueOf(
-                    Objects.requireNonNull(lyBarcode.getEditText()).getText()
-            );
-            fetchDiscogsData(barcode);
+        // handle barcode input action
+        EditText etBarcode = lyBarcode.getEditText();
+
+        etBarcode.setOnEditorActionListener((textView, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_GO) {
+                String barcode = etBarcode.getText().toString().trim();
+                if (!barcode.isEmpty()) {
+                    fetchDiscogsData(barcode);
+                }
+                return true;
+            }
+            return false;
         });
     }
 
@@ -129,7 +144,7 @@ public class AddAlbumActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_spinner_item,
-                new String[]{"CD", "VINYL", "CASSETTE"}
+                new String[]{"CD", "CASSETTE", "VINYL 12\"", "VINYL 10\"", "VINYL 7\""}
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spFormat.setAdapter(adapter);
@@ -194,8 +209,9 @@ public class AddAlbumActivity extends AppCompatActivity {
         }
 
         int year = Integer.parseInt(yearStr);
-        String formatText = spFormat.getSelectedItem().toString();
-        Album.Format format = Album.Format.valueOf(formatText);
+
+        String formatText = AlbumFormatConverter.mapFormatForDb(spFormat.getSelectedItem().toString());
+        AlbumFormat format = AlbumFormat.valueOf(formatText);
 
         TFPhotoMatcher tfPhotoMatcher = new TFPhotoMatcher(this);
         float[] embedding = tfPhotoMatcher.getEmbedding(currentBitmap);

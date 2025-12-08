@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.app.trackd.R;
 import com.app.trackd.adapter.RecentAdapter;
+import com.app.trackd.common.LongPressHelper;
 import com.app.trackd.model.Album;
 import com.app.trackd.service.AlbumService;
 import com.google.android.material.chip.Chip;
@@ -27,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
 
     TextView tvTotalItems, tvVinyl, tvCds, tvCollections;
     ImageView ivProfile;
-    Button btnOpenCamera;
     RecyclerView rvRecent;
     RecentAdapter adapter;
     List<Album> albums;
@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        LongPressHelper.enableLongPress(this);
 
         setupGestures();
         initViews();
@@ -73,12 +75,6 @@ public class MainActivity extends AppCompatActivity {
         tvCollections = findViewById(R.id.tvCollections);
         rvRecent = findViewById(R.id.rvRecent);
         ivProfile = findViewById(R.id.ivProfile);
-        btnOpenCamera = findViewById(R.id.btnOpenCamera);
-
-        btnOpenCamera.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, CameraActivity.class);
-            startActivity(intent);
-        });
     }
 
     private void setupChips() {
@@ -105,17 +101,35 @@ public class MainActivity extends AppCompatActivity {
 
     private void refreshData() {
         albums = albumService.getRecent();
-        adapter.updateData(albums);  // you must add this method in adapter
+
+        // Build display list
+        List<Album> displayList;
+        if (albums.size() > 4) {
+            displayList = albums.subList(0, 4);
+        } else {
+            displayList = albums;
+        }
+
+        adapter.updateData(displayList);
         updateStats();
     }
 
     private void setupRecycler() {
-        adapter = new RecentAdapter(albums, album -> {
-        });
+        int fullCount = albums.size();
 
-        GridLayoutManager glm = new GridLayoutManager(this, 2); // 2 cards per row
-        rvRecent.setLayoutManager(glm);
+        adapter = new RecentAdapter(
+                albums.size() > 4 ? albums.subList(0, 4) : albums,
+                fullCount,
+                album -> {}
+        );
+
+        rvRecent.setLayoutManager(new GridLayoutManager(this, 2));
         rvRecent.setAdapter(adapter);
+
+        adapter.setShowAllCallback(() -> {
+//            Intent i = new Intent(MainActivity.this, AllAlbumsActivity.class);
+//            startActivity(i);
+        });
     }
 
     private void updateStats() {

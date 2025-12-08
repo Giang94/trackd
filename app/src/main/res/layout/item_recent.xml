@@ -17,16 +17,22 @@
         <ImageView
                 android:id="@+id/ivAlbumCover"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
-                android:background="#DDD"/>
+                android:background="#DDD" />
+
+        <include
+                android:id="@+id/includeFourCovers"
+                layout="@layout/four_covers_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
         <!-- White bottom info area -->
         <LinearLayout
                 android:orientation="vertical"
                 android:padding="12dp"
+                android:gravity="center"
                 android:background="@android:color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -53,6 +59,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
+            <!-- Show all for the 4th card -->
+            <TextView
+                    android:id="@+id/tvShowAll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Show all →"
+                    android:textColor="#007AFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:paddingTop="24dp"
+                    android:paddingBottom="24dp"
+                    android:visibility="gone"
+                    android:gravity="center"
+                    android:layout_gravity="center" />
         </LinearLayout>
 
     </LinearLayout>

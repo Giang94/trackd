@@ -61,11 +61,11 @@ public class CameraActivity extends AppCompatActivity {
         SwipeBackHelper.enableSwipeBack(this);
         OpenCVLoader.init();
 
+        loadAlbumsAndInitMatcher();
         initViews();
         setupRecyclerView();
         setupGalleryButton();
         setupTakePhotoButton();
-        loadAlbumsAndInitMatcher();
         startCamera();
     }
 
@@ -78,9 +78,10 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
+        int fullCount = albums.size();
         GridLayoutManager glm = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(glm);
-        recentAdapter = new RecentAdapter(new ArrayList<>(), album -> {});
+        recentAdapter = new RecentAdapter(new ArrayList<>(), fullCount, album -> {});
         recyclerView.setAdapter(recentAdapter);
     }
 

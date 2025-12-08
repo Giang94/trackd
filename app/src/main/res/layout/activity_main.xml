@@ -5,7 +5,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
-        android:padding="@dimen/screen_padding"
         android:background="@color/white">
 
     <LinearLayout
@@ -60,11 +59,11 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-                android:id="@+id/btnOpenCamera"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Scan CD Cover" />
+<!--        <Button-->
+<!--                android:id="@+id/btnOpenCamera"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Scan CD Cover" />-->
 
         <!-- Stats -->
         <TextView
