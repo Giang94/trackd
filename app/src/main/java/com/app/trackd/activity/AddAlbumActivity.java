@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
@@ -24,14 +25,17 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.app.trackd.R;
-import com.app.trackd.common.LongPressHelper;
 import com.app.trackd.common.OpenCVLoader;
 import com.app.trackd.common.SwipeBackHelper;
 import com.app.trackd.database.AlbumFormatConverter;
 import com.app.trackd.database.AppDatabase;
 import com.app.trackd.matcher.TFPhotoMatcher;
 import com.app.trackd.model.Album;
+import com.app.trackd.model.Artist;
 import com.app.trackd.model.enums.AlbumFormat;
+import com.app.trackd.model.ref.AlbumArtistCrossRef;
+import com.app.trackd.util.ImageUtils;
+import com.app.trackd.util.StringUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -70,7 +74,6 @@ public class AddAlbumActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_album);
 
         SwipeBackHelper.enableSwipeBack(this);
-        LongPressHelper.enableLongPress(this);
         OpenCVLoader.init();
 
         initViews();
@@ -110,7 +113,7 @@ public class AddAlbumActivity extends AppCompatActivity {
         });
 
         // save
-        btnSave.setOnClickListener(v -> saveAlbum());
+        btnSave.setOnClickListener(v -> saveAlbumWithArtists());
 
         // handle barcode input action
         EditText etBarcode = lyBarcode.getEditText();
@@ -198,17 +201,23 @@ public class AddAlbumActivity extends AppCompatActivity {
         return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
     }
 
-    private void saveAlbum() {
+    private void saveAlbumWithArtists() {
         String title = etTitle.getText().toString().trim();
-        String artist = etArtist.getText().toString().trim();
+        String artistInput = etArtist.getText().toString().trim();
         String yearStr = etYear.getText().toString().trim();
 
-        if (title.isEmpty() || artist.isEmpty() || yearStr.isEmpty() || coverBase64.isEmpty()) {
-            Toast.makeText(this, "Fill all fields + choose cover", Toast.LENGTH_SHORT).show();
+        if (title.isEmpty() || artistInput.isEmpty()) {
+            Toast.makeText(this, "Should provide album name and artist", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        int year = Integer.parseInt(yearStr);
+        var parsedYear = new Object() {
+            int value = 0;
+        };
+        try {
+            parsedYear.value = Integer.parseInt(yearStr);
+        } catch (NumberFormatException ignored) {
+        }
 
         String formatText = AlbumFormatConverter.mapFormatForDb(spFormat.getSelectedItem().toString());
         AlbumFormat format = AlbumFormat.valueOf(formatText);
@@ -216,22 +225,48 @@ public class AddAlbumActivity extends AppCompatActivity {
         TFPhotoMatcher tfPhotoMatcher = new TFPhotoMatcher(this);
         float[] embedding = tfPhotoMatcher.getEmbedding(currentBitmap);
 
-        Album album = new Album(
-                0,
-                title,
-                artist,
-                year,
-                format,
-                coverBase64,
-                embedding
-        );
+        String[] artistNames = artistInput.split(",");
+
+        if (coverBase64 == null || coverBase64.isEmpty()) {
+            Bitmap defaultBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cover_placeholder);
+            coverBase64 = ImageUtils.toBase64(defaultBitmap);
+        }
 
         new Thread(() -> {
-            AppDatabase.get(this).albumDao().insert(album);
+            AppDatabase db = AppDatabase.get(this);
+
+            // 1. Insert album
+            Album album = new Album(0, title, parsedYear.value, format, coverBase64, embedding);
+            long albumId = db.albumDao().insert(album);
+
+            for (String name : artistNames) {
+                String trimmedName = name.trim();
+                if (trimmedName.isEmpty()) continue;
+
+                // 2. Normalize for comparison
+                String normalized = StringUtils.normalizeArtistName(trimmedName);
+
+                // 3. Check if artist exists
+                Artist artist = db.artistDao().findByNormalizedName(normalized);
+                long artistId;
+                if (artist == null) {
+                    // Insert new artist
+                    Artist newArtist = new Artist(0, trimmedName, normalized);
+                    artistId = db.artistDao().insert(newArtist);
+                } else {
+                    artistId = artist.getId();
+                }
+
+                // 4. Insert cross reference
+                AlbumArtistCrossRef crossRef = new AlbumArtistCrossRef(albumId, artistId);
+                db.albumArtistDao().insert(crossRef);
+            }
+
             runOnUiThread(() -> {
                 Toast.makeText(this, "Album added!", Toast.LENGTH_SHORT).show();
                 finish();
             });
+
         }).start();
     }
 
@@ -273,6 +308,7 @@ public class AddAlbumActivity extends AppCompatActivity {
                             // Format mapping
                             String format = item.optJSONArray("format") != null
                                     ? item.optJSONArray("format").optString(0) : "CD";
+                            Log.d("DISCOGS", "Fetched Title: " + item.optString("title", "") + " format: " + format);
                             spFormat.setSelection(getFormatIndex(format));
 
                             // Cover image
@@ -314,9 +350,9 @@ public class AddAlbumActivity extends AppCompatActivity {
 
     private int getFormatIndex(String format) {
         switch (format.toUpperCase()) {
-            case "VINYL":
-                return 1;
             case "CASSETTE":
+                return 1;
+            case "VINYL":
                 return 2;
             default:
                 return 0; // CD

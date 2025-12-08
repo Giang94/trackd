@@ -1,23 +1,22 @@
 package com.app.trackd.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.app.trackd.R;
 import com.app.trackd.adapter.RecentAdapter;
-import com.app.trackd.common.LongPressHelper;
+import com.app.trackd.common.TwoFingerZoomHelper;
 import com.app.trackd.model.Album;
 import com.app.trackd.service.AlbumService;
 import com.google.android.material.chip.Chip;
@@ -26,7 +25,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView tvTotalItems, tvVinyl, tvCds, tvCollections;
+    TextView tvTotalItems, tvVinyl, tvCds;
     ImageView ivProfile;
     RecyclerView rvRecent;
     RecentAdapter adapter;
@@ -39,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        LongPressHelper.enableLongPress(this);
+        TwoFingerZoomHelper.enableTwoFingerZoom(this);
 
         setupGestures();
         initViews();
@@ -72,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
         tvTotalItems = findViewById(R.id.tvTotalItems);
         tvVinyl = findViewById(R.id.tvVinyl);
         tvCds = findViewById(R.id.tvCds);
-        tvCollections = findViewById(R.id.tvCollections);
         rvRecent = findViewById(R.id.rvRecent);
         ivProfile = findViewById(R.id.ivProfile);
     }
@@ -101,27 +99,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void refreshData() {
         albums = albumService.getRecent();
-
-        // Build display list
-        List<Album> displayList;
-        if (albums.size() > 4) {
-            displayList = albums.subList(0, 4);
-        } else {
-            displayList = albums;
-        }
-
-        adapter.updateData(displayList);
+        adapter.updateData(albums);
         updateStats();
     }
 
     private void setupRecycler() {
         int fullCount = albums.size();
 
-        adapter = new RecentAdapter(
-                albums.size() > 4 ? albums.subList(0, 4) : albums,
-                fullCount,
-                album -> {}
-        );
+        adapter = new RecentAdapter(albums, fullCount, album -> {
+        });
 
         rvRecent.setLayoutManager(new GridLayoutManager(this, 2));
         rvRecent.setAdapter(adapter);
@@ -137,13 +123,13 @@ public class MainActivity extends AppCompatActivity {
         int vinyl = 0;
         int cds = 0;
         for (Album a : albums) {
-            if ("Vinyl".equalsIgnoreCase(a.getFormat().toString())) vinyl++;
-            if ("CD".equalsIgnoreCase(a.getFormat().toString())) cds++;
+            String formatStr = a.getFormat().toString();
+            if (formatStr.toLowerCase().startsWith("vinyl")) vinyl++;
+            if (formatStr.equalsIgnoreCase("cd")) cds++;
         }
         tvTotalItems.setText(String.valueOf(total));
         tvVinyl.setText(String.valueOf(vinyl));
         tvCds.setText(String.valueOf(cds));
-        tvCollections.setText("3"); // placeholder
     }
 
     private void populateCollections() {

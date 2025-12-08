@@ -5,13 +5,13 @@ import android.content.Intent;
 
 import com.app.trackd.activity.CameraActivity;
 
-public class LongPressHelper {
+public class TwoFingerZoomHelper {
 
-    public static void enableLongPress(Activity activity) {
-        LongPressLayout layout = new LongPressLayout(activity);
+    public static void enableTwoFingerZoom(Activity activity) {
+        TwoFingerZoomLayout layout = new TwoFingerZoomLayout(activity);
         layout.attachToActivity(activity);
 
-        layout.setOnLongPressListener(() -> {
+        layout.setOnZoomOutListener(() -> {
             Intent intent = new Intent(activity, CameraActivity.class);
             activity.startActivity(intent);
         });

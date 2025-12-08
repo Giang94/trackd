@@ -31,19 +31,27 @@
         <!-- White bottom info area -->
         <LinearLayout
                 android:orientation="vertical"
-                android:padding="12dp"
+                android:padding="4dp"
                 android:gravity="center"
                 android:background="@android:color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
             <TextView
-                    android:id="@+id/tvTitleArtist"
-                    android:layout_marginTop="4dp"
+                    android:id="@+id/tvTitle"
                     android:textStyle="bold"
                     android:textSize="14sp"
                     android:gravity="center"
-                    android:maxLines="2"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            <TextView
+                    android:id="@+id/tvArtist"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:maxLines="1"
                     android:ellipsize="end"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />

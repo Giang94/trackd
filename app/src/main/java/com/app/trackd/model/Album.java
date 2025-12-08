@@ -12,20 +12,17 @@ import java.sql.Blob;
 @Entity
 public class Album {
 
-
     @PrimaryKey(autoGenerate = true)
-    private long id;
-    private String title;
-    private String artist;
-    private int year;
-    private AlbumFormat format;
-    private String cover;
+    public long id;
+    public String title;
+    public int year;
+    public AlbumFormat format;
+    public String cover;
     private float[] embedding;
 
-    public Album(long id, String title, String artist, int year, AlbumFormat format, String cover, float[] embedding) {
+    public Album(long id, String title, int year, AlbumFormat format, String cover, float[] embedding) {
         this.id = id;
         this.title = title;
-        this.artist = artist;
         this.year = year;
         this.format = format;
         this.cover = cover;
@@ -62,14 +59,6 @@ public class Album {
 
     public void setYear(int year) {
         this.year = year;
-    }
-
-    public String getArtist() {
-        return artist;
-    }
-
-    public void setArtist(String artist) {
-        this.artist = artist;
     }
 
     public String getTitle() {

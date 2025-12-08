@@ -5,6 +5,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 
 import com.app.trackd.model.Album;
+import com.app.trackd.model.ref.AlbumArtistCrossRef;
 
 import java.util.List;
 
@@ -12,7 +13,10 @@ import java.util.List;
 public interface AlbumDao {
 
     @Insert
-    void insert(Album album);
+    long insert(Album album);
+
+    @Insert
+    void insertCrossRef(AlbumArtistCrossRef ref);
 
     @Query("SELECT * FROM Album ORDER BY id DESC LIMIT 10")
     List<Album> getRecentAlbums();

@@ -1,78 +1,91 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/screen_padding">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/screen_padding">
+
+    <TextView
+            android:padding="@dimen/margin_medium"
+            android:id="@+id/tvActivityCamera"
+            android:text="Capture an album cover to check"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
-        android:id="@+id/cameraContainer"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+            android:id="@+id/cameraContainer"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvActivityCamera">
 
         <androidx.camera.view.PreviewView
-            android:id="@+id/cameraPreview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+                android:id="@+id/cameraPreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
         <ImageView
-            android:id="@+id/imageCaptured"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:visibility="gone" />
+                android:id="@+id/imageCaptured"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:visibility="gone" />
     </FrameLayout>
 
     <ImageButton
-        android:id="@+id/btnPickFromGallery"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_margin="12dp"
-        android:background="@drawable/round_button"
-        android:padding="12dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_gallery"
-        app:layout_constraintBottom_toTopOf="@+id/btnTakePhoto"
-        app:layout_constraintEnd_toEndOf="@+id/cameraContainer" />
+            android:id="@+id/btnPickFromGallery"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="12dp"
+            android:background="@drawable/round_button"
+            android:padding="12dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_gallery"
+            app:layout_constraintBottom_toTopOf="@+id/btnTakePhoto"
+            app:layout_constraintEnd_toEndOf="@+id/cameraContainer" />
 
     <ImageButton
-        android:id="@+id/btnTakePhoto"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_margin="12dp"
-        android:background="@drawable/round_button"
-        android:padding="12dp"
-        android:scaleType="centerInside"
-        app:layout_constraintBottom_toBottomOf="@+id/cameraContainer"
-        app:layout_constraintEnd_toEndOf="@+id/cameraContainer" />
+            android:id="@+id/btnTakePhoto"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="12dp"
+            android:background="@drawable/round_button"
+            android:padding="12dp"
+            android:scaleType="centerInside"
+            app:layout_constraintBottom_toBottomOf="@+id/cameraContainer"
+            app:layout_constraintEnd_toEndOf="@+id/cameraContainer" />
 
     <!-- RecyclerView for matched albums -->
     <TextView
-        android:id="@+id/tvMatchesResults"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:padding="@dimen/padding_small"
-        android:textColor="#2b1b18"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerViewMatches"
-        app:layout_constraintTop_toBottomOf="@+id/cameraContainer" />
+            android:id="@+id/tvMatchesResults"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/padding_small"
+            android:textColor="#2b1b18"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/recyclerViewMatches"
+            app:layout_constraintTop_toBottomOf="@+id/cameraContainer" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewMatches"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="#FFF"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvMatchesResults" />
+            android:id="@+id/recyclerViewMatches"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="#FFF"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvMatchesResults" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 package com.app.trackd.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,7 +8,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.trackd.R;
+import com.app.trackd.database.AppDatabase;
 import com.app.trackd.model.Album;
+import com.app.trackd.model.Artist;
 import com.app.trackd.util.ImageUtils;
 import com.bumptech.glide.Glide;
 
@@ -41,7 +44,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.RecentItem
     @Override
     public RecentItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new RecentItemViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_recent, parent, false));
+                .inflate(R.layout.item_recent_layout, parent, false));
     }
 
     @Override
@@ -63,13 +66,13 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.RecentItem
         for (int i = 0; i < 4; i++) {
             if (i < nextFour.size()) {
                 // Load cover
+                Log.d("ADAPTER", "Loading cover for album: " + nextFour.get(i).getTitle() + " base64: " + nextFour.get(i).getCover().substring(0, 20));
                 Glide.with(holder.itemView)
                         .load(ImageUtils.toBitmap(nextFour.get(i).getCover()))
                         .placeholder(R.drawable.ic_gallery)
                         .centerCrop()
                         .into(ivs[i]);
             } else {
-                // Not enough → keep placeholder
                 ivs[i].setImageResource(R.drawable.ic_gallery);
                 ivs[i].setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             }
@@ -79,6 +82,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.RecentItem
 
         // Hide text areas
         holder.tvTitle.setVisibility(View.GONE);
+        holder.tvArtist.setVisibility(View.GONE);
         holder.tvSubtitle.setVisibility(View.GONE);
 
         // Show "Show all" text
@@ -94,7 +98,8 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.RecentItem
     }
 
     private void bindNormalView(RecentItemViewHolder holder, Album album) {
-        holder.tvTitle.setText(album.getArtist() + " – " + album.getTitle());
+        // Set placeholder title until artists are loaded
+        holder.tvTitle.setText(album.getTitle());
         holder.tvSubtitle.setText(album.getFormat().name() + " | " + album.getYear());
         holder.ivAlbumCover.setImageBitmap(ImageUtils.toBitmap(album.getCover()));
         holder.itemView.setOnClickListener(v -> {
@@ -102,23 +107,41 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.RecentItem
         });
         holder.ivAlbumCover.setVisibility(View.VISIBLE);
         holder.glFourContainer.setVisibility(View.GONE);
-    }
 
+        // Fetch artists asynchronously
+        new Thread(() -> {
+            AppDatabase db = AppDatabase.get(holder.itemView.getContext());
+            List<Artist> artists = db.albumArtistDao().getArtistsForAlbum(album.getId(), 2); // assumes you have this DAO method
+            String artistNames = "";
+            if (artists != null && !artists.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < artists.size(); i++) {
+                    sb.append(artists.get(i).getDisplayName());
+                    if (i < artists.size() - 1) sb.append(", ");
+                }
+                artistNames = sb.toString();
+            }
+
+            final String finalArtistNames = artistNames;
+            holder.itemView.post(() -> holder.tvArtist.setText(finalArtistNames));
+        }).start();
+    }
 
     @Override
     public int getItemCount() {
-        return albums.size();
+        return Math.min(albums.size(), 4);
     }
 
     static class RecentItemViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvSubtitle, tvShowAll;
+        TextView tvTitle, tvArtist, tvSubtitle, tvShowAll;
         ImageView ivAlbumCover;
         View glFourContainer;
         ImageView iv1, iv2, iv3, iv4;
 
         RecentItemViewHolder(@NonNull View v) {
             super(v);
-            tvTitle = v.findViewById(R.id.tvTitleArtist);
+            tvTitle = v.findViewById(R.id.tvTitle);
+            tvArtist = v.findViewById(R.id.tvArtist);
             tvSubtitle = v.findViewById(R.id.tvSubtitle);
             ivAlbumCover = v.findViewById(R.id.ivAlbumCover);
             tvShowAll = v.findViewById(R.id.tvShowAll);

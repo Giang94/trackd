@@ -3,6 +3,8 @@ package com.app.trackd.activity;
 import static android.view.View.GONE;
 import static com.app.trackd.util.ImageUtils.rotateBitmap;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -53,6 +55,15 @@ public class CameraActivity extends AppCompatActivity {
     private TFPhotoMatcher tfPhotoMatcher;
     private AlbumService albumService;
 
+    private final ActivityResultLauncher<String> cameraPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
+                if (granted) {
+                    startCamera();
+                } else {
+                    Log.d("CameraActivity", "Camera permission denied");
+                }
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +77,16 @@ public class CameraActivity extends AppCompatActivity {
         setupRecyclerView();
         setupGalleryButton();
         setupTakePhotoButton();
-        startCamera();
+        checkCameraPermissionAndStart();
+    }
+
+    private void checkCameraPermissionAndStart() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+            startCamera();
+        } else {
+            cameraPermissionLauncher.launch(Manifest.permission.CAMERA);
+        }
     }
 
     private void initViews() {
@@ -81,7 +101,8 @@ public class CameraActivity extends AppCompatActivity {
         int fullCount = albums.size();
         GridLayoutManager glm = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(glm);
-        recentAdapter = new RecentAdapter(new ArrayList<>(), fullCount, album -> {});
+        recentAdapter = new RecentAdapter(new ArrayList<>(), fullCount, album -> {
+        });
         recyclerView.setAdapter(recentAdapter);
     }
 

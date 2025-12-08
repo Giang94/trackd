@@ -7,14 +7,22 @@ import androidx.room.TypeConverters;
 
 import android.content.Context;
 
+import com.app.trackd.dao.AlbumArtistDao;
 import com.app.trackd.dao.AlbumDao;
+import com.app.trackd.dao.ArtistDao;
 import com.app.trackd.model.Album;
+import com.app.trackd.model.Artist;
+import com.app.trackd.model.ref.AlbumArtistCrossRef;
 
-@Database(entities = {Album.class}, version = 2, exportSchema = false)
+@Database(entities = {Album.class, Artist.class, AlbumArtistCrossRef.class}, version = 2, exportSchema = false)
 @TypeConverters({EmbeddingConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract AlbumDao albumDao();
+
+    public abstract ArtistDao artistDao();
+
+    public abstract AlbumArtistDao albumArtistDao();
 
     private static AppDatabase instance;
 
