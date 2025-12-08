@@ -23,6 +23,8 @@ import java.nio.ByteBuffer;
 
 public class ImageUtils {
 
+    private static final int MAX_SIZE = 360;
+
     public static String toBase64(Bitmap bitmap) {
         if (bitmap == null) return null;
 
@@ -123,6 +125,26 @@ public class ImageUtils {
 
         // Resize to desired size
         return Bitmap.createScaledBitmap(squareBitmap, size, size, true);
+    }
+
+    public static Bitmap resizeBitmapKeepRatio(Bitmap original) {
+        int width = original.getWidth();
+        int height = original.getHeight();
+
+        float ratio = (float) width / (float) height;
+
+        int newWidth;
+        int newHeight;
+
+        if (ratio > 1) {
+            newWidth = MAX_SIZE;
+            newHeight = (int) (MAX_SIZE / ratio);
+        } else {
+            newHeight = MAX_SIZE;
+            newWidth = (int) (MAX_SIZE * ratio);
+        }
+
+        return Bitmap.createScaledBitmap(original, newWidth, newHeight, true);
     }
 
     // Convert bitmap to grayscale

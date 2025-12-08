@@ -2,7 +2,7 @@ package com.app.trackd.service;
 
 import android.content.Context;
 
-import com.app.trackd.dao.AlbumDao;
+import com.app.trackd.dao.IAlbumDao;
 import com.app.trackd.database.AppDatabase;
 import com.app.trackd.model.Album;
 
@@ -10,7 +10,7 @@ import java.util.List;
 
 public class AlbumService {
 
-    private final AlbumDao dao;
+    private final IAlbumDao dao;
 
     public AlbumService(Context context) {
         dao = AppDatabase.get(context).albumDao();

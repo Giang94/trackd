@@ -1,5 +1,7 @@
 package com.app.trackd.activity;
 
+import static com.app.trackd.util.ImageUtils.resizeBitmapKeepRatio;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,9 +14,11 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -25,6 +29,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.app.trackd.R;
+import com.app.trackd.adapter.ArtistSuggestionAdapter;
 import com.app.trackd.common.OpenCVLoader;
 import com.app.trackd.common.SwipeBackHelper;
 import com.app.trackd.database.AlbumFormatConverter;
@@ -50,6 +55,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 
 public class AddAlbumActivity extends AppCompatActivity {
@@ -57,7 +63,8 @@ public class AddAlbumActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 101;
     private static final String DISCOGS_TOKEN = "YgPKoMgqNODZdUYKraucDYuTHZwRSyuYtxQLJmhI";
 
-    private EditText etTitle, etArtist, etYear;
+    private EditText etTitle, etYear;
+    private AutoCompleteTextView etArtist;
     private Spinner spFormat;
     private ImageView ivCover;
     private Button btnSave;
@@ -80,6 +87,7 @@ public class AddAlbumActivity extends AppCompatActivity {
         initDropdowns();
         initImagePicker();
         initBarcodeScanner();
+        loadArtistSuggestions();
         setupListeners();
     }
 
@@ -186,8 +194,9 @@ public class AddAlbumActivity extends AppCompatActivity {
                 Bitmap bitmap = BitmapFactory.decodeStream(is);
 
                 ivCover.setImageBitmap(bitmap);
-                coverBase64 = bitmapToBase64(bitmap);
-                currentBitmap = bitmap;
+                Bitmap resizedBitmap = resizeBitmapKeepRatio(bitmap);
+                coverBase64 = bitmapToBase64(resizedBitmap);
+                currentBitmap = resizedBitmap;
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -229,7 +238,8 @@ public class AddAlbumActivity extends AppCompatActivity {
 
         if (coverBase64 == null || coverBase64.isEmpty()) {
             Bitmap defaultBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cover_placeholder);
-            coverBase64 = ImageUtils.toBase64(defaultBitmap);
+            Bitmap resizedBitmap = resizeBitmapKeepRatio(defaultBitmap);
+            coverBase64 = ImageUtils.toBase64(resizedBitmap);
         }
 
         new Thread(() -> {
@@ -244,7 +254,7 @@ public class AddAlbumActivity extends AppCompatActivity {
                 if (trimmedName.isEmpty()) continue;
 
                 // 2. Normalize for comparison
-                String normalized = StringUtils.normalizeArtistName(trimmedName);
+                String normalized = StringUtils.normalize(trimmedName);
 
                 // 3. Check if artist exists
                 Artist artist = db.artistDao().findByNormalizedName(normalized);
@@ -322,8 +332,9 @@ public class AddAlbumActivity extends AppCompatActivity {
                                             public void onResourceReady(@NonNull Bitmap bitmap,
                                                                         @Nullable Transition<? super Bitmap> transition) {
                                                 ivCover.setImageBitmap(bitmap);
-                                                coverBase64 = bitmapToBase64(bitmap);
-                                                currentBitmap = bitmap;
+                                                Bitmap resizedBitmap = resizeBitmapKeepRatio(bitmap);
+                                                coverBase64 = bitmapToBase64(resizedBitmap);
+                                                currentBitmap = resizedBitmap;
                                             }
 
                                             @Override
@@ -357,5 +368,20 @@ public class AddAlbumActivity extends AppCompatActivity {
             default:
                 return 0; // CD
         }
+    }
+
+    private void loadArtistSuggestions() {
+        new Thread(() -> {
+            AppDatabase db = AppDatabase.get(this);
+            List<String> names = db.artistDao().getAllArtistNames();
+
+            runOnUiThread(() -> {
+                ArtistSuggestionAdapter adapter = new ArtistSuggestionAdapter(this, names);
+
+                MultiAutoCompleteTextView actv = (MultiAutoCompleteTextView) etArtist;
+                actv.setAdapter(adapter);
+                actv.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+            });
+        }).start();
     }
 }

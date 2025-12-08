@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/albumDetailsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <ImageView
+            android:id="@+id/blurBackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:alpha="0.8"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Top banner background -->
+    <FrameLayout
+            android:id="@+id/paddingViewTop"
+            android:layout_width="match_parent"
+            android:layout_height="125dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+                android:id="@+id/albumBanner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop" />
+    </FrameLayout>
+
+    <!-- Floating action menu (Edit, Delete, etc.) -->
+    <com.nambimobile.widgets.efab.ExpandableFabLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:elevation="7sp">
+
+        <com.nambimobile.widgets.efab.Overlay
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        <com.nambimobile.widgets.efab.ExpandableFab
+                android:id="@+id/mainFab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="24sp"
+                android:layout_marginBottom="16sp"
+                app:efab_color="@color/black"
+                app:efab_fabOptionSize="normal"
+                app:efab_firstFabOptionMarginPx="120"
+                app:efab_successiveFabOptionMarginPx="130" />
+
+        <com.nambimobile.widgets.efab.FabOption
+                android:padding="@dimen/padding_small"
+                android:id="@+id/fabEditAlbum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:efab_fabOptionSize="normal"
+                app:fab_color="@color/black"
+                app:fab_icon="@drawable/ic_edit"
+                app:label_marginPx="20"
+                app:label_text="Edit" />
+
+        <com.nambimobile.widgets.efab.FabOption
+                android:padding="@dimen/padding_small"
+                android:id="@+id/fabDeleteAlbum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:efab_fabOptionSize="normal"
+                app:fab_color="@color/black"
+                app:fab_icon="@drawable/ic_delete"
+                app:label_marginPx="20"
+                app:label_text="Delete" />
+    </com.nambimobile.widgets.efab.ExpandableFabLayout>
+
+    <!-- Floating cover card -->
+    <com.google.android.material.card.MaterialCardView
+            android:id="@+id/albumCoverCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24sp"
+            app:cardElevation="5sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+                android:id="@+id/albumCover"
+                android:layout_width="150sp"
+                android:layout_height="150sp"
+                android:scaleType="centerCrop"
+                android:transitionName="albumCover" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Main bottom content card -->
+    <com.google.android.material.card.MaterialCardView
+            android:id="@+id/detailsCard"
+            android:layout_width="match_parent"
+            android:layout_height="0sp"
+            android:layout_marginStart="16sp"
+            android:layout_marginEnd="16sp"
+            android:alpha="0.90"
+            app:cardElevation="4sp"
+            app:layout_constraintTop_toBottomOf="@id/paddingViewTop"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            <!-- Title (full length, wrap unlimited) -->
+            <TextView
+                    android:id="@+id/albumTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16sp"
+                    android:layout_marginTop="60sp"
+                    android:layout_marginEnd="16sp"
+                    android:layout_marginBottom="8sp"
+                    android:text="Very Very Long Album Title That Goes On Forever And Never Needs Ellipsize"
+                    android:textAlignment="center"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:lineSpacingExtra="2dp"
+                    android:transitionName="albumTitle" />
+
+            <!-- Year + Format -->
+            <com.google.android.flexbox.FlexboxLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="8sp"
+                    android:layout_marginEnd="8sp"
+                    android:layout_marginBottom="8sp"
+                    app:flexWrap="wrap"
+                    app:justifyContent="center">
+
+                <TextView
+                        android:id="@+id/albumYear"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8sp"
+                        android:text="1997"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                <TextView
+                        android:id="@+id/albumFormat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8sp"
+                        android:text="Vinyl / CD / Digital"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+            </com.google.android.flexbox.FlexboxLayout>
+
+            <!-- Scrollable content -->
+            <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8sp">
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                    <!-- Artists title -->
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Artists"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                    <!-- Artists list (each line = 1 artist) -->
+                    <LinearLayout
+                            android:id="@+id/artistListContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginStart="4sp" />
+
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

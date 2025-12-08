@@ -26,7 +26,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.trackd.R;
-import com.app.trackd.adapter.RecentAdapter;
+import com.app.trackd.adapter.RecentAlbumListAdapter;
 import com.app.trackd.common.OpenCVLoader;
 import com.app.trackd.common.SwipeBackHelper;
 import com.app.trackd.matcher.TFPhotoMatcher;
@@ -51,7 +51,7 @@ public class CameraActivity extends AppCompatActivity {
     private boolean isPhotoTaken = false;
 
     private List<Album> albums;
-    private RecentAdapter recentAdapter;
+    private RecentAlbumListAdapter recentAlbumListAdapter;
     private TFPhotoMatcher tfPhotoMatcher;
     private AlbumService albumService;
 
@@ -101,9 +101,9 @@ public class CameraActivity extends AppCompatActivity {
         int fullCount = albums.size();
         GridLayoutManager glm = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(glm);
-        recentAdapter = new RecentAdapter(new ArrayList<>(), fullCount, album -> {
+        recentAlbumListAdapter = new RecentAlbumListAdapter(new ArrayList<>(), fullCount, album -> {
         });
-        recyclerView.setAdapter(recentAdapter);
+        recyclerView.setAdapter(recentAlbumListAdapter);
     }
 
     private final ActivityResultLauncher<String> pickImageLauncher =
@@ -168,7 +168,7 @@ public class CameraActivity extends AppCompatActivity {
                 isPhotoTaken = false;
 
                 startCamera();
-                recentAdapter.updateData(new ArrayList<>());
+                recentAlbumListAdapter.updateData(new ArrayList<>());
             }
         });
     }
@@ -237,6 +237,6 @@ public class CameraActivity extends AppCompatActivity {
             recyclerView.setVisibility(View.VISIBLE);
         }
 
-        recentAdapter.updateData(topMatches);
+        recentAlbumListAdapter.updateData(topMatches);
     }
 }

@@ -41,24 +41,6 @@
                     android:padding="6dp" />
         </LinearLayout>
 
-        <!-- Search -->
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/search_input_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Search…"
-                app:endIconMode="custom"
-                app:endIconDrawable="@drawable/ic_search"
-                app:endIconContentDescription="Search">
-
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/search_input"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
         <LinearLayout
                 android:layout_marginTop="8dp"
                 android:layout_width="match_parent"
@@ -69,12 +51,17 @@
 
             <!-- Total Items Card -->
             <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cvTotal"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
                     app:cardCornerRadius="8dp"
-                    app:cardElevation="4dp">
+                    app:cardBackgroundColor="#FFFFFFFF"
+                    app:cardElevation="6dp"
+                    app:strokeColor="#E0E0E0"
+                    app:strokeWidth="1dp"
+                    app:cardUseCompatPadding="true">
 
                 <LinearLayout
                         android:layout_width="match_parent"
@@ -82,12 +69,6 @@
                         android:orientation="vertical"
                         android:gravity="center"
                         android:padding="12dp">
-
-                    <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/ic_total"
-                            android:contentDescription="Total items" />
 
                     <TextView
                             android:id="@+id/tvTotalItems"
@@ -115,7 +96,11 @@
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
                     app:cardCornerRadius="8dp"
-                    app:cardElevation="4dp">
+                    app:cardBackgroundColor="#FFFFFFFF"
+                    app:cardElevation="6dp"
+                    app:strokeColor="#E0E0E0"
+                    app:strokeWidth="1dp"
+                    app:cardUseCompatPadding="true">
 
                 <LinearLayout
                         android:layout_width="match_parent"
@@ -123,12 +108,6 @@
                         android:orientation="vertical"
                         android:gravity="center"
                         android:padding="12dp">
-
-                    <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/ic_vinyl"
-                            android:contentDescription="Vinyl" />
 
                     <TextView
                             android:id="@+id/tvVinyl"
@@ -154,8 +133,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
                     app:cardCornerRadius="8dp"
-                    app:cardElevation="4dp">
+                    app:cardBackgroundColor="#FFFFFFFF"
+                    app:cardElevation="6dp"
+                    app:strokeColor="#E0E0E0"
+                    app:strokeWidth="1dp"
+                    app:cardUseCompatPadding="true">
 
                 <LinearLayout
                         android:layout_width="match_parent"
@@ -163,12 +147,6 @@
                         android:orientation="vertical"
                         android:gravity="center"
                         android:padding="12dp">
-
-                    <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@drawable/ic_cd"
-                            android:contentDescription="CDs" />
 
                     <TextView
                             android:id="@+id/tvCds"

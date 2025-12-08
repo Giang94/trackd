@@ -10,7 +10,7 @@ import java.util.List;
 
 public class AlbumWithArtists {
     @Embedded
-    public Album album;
+    private Album album;
 
     @Relation(
             parentColumn = "id",
@@ -21,5 +21,21 @@ public class AlbumWithArtists {
                     entityColumn = "artistId"
             )
     )
-    public List<Artist> artists;
+    private List<Artist> artists;
+
+    public Album getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(Album album) {
+        this.album = album;
+    }
+
+    public List<Artist> getArtists() {
+        return artists;
+    }
+
+    public void setArtists(List<Artist> artists) {
+        this.artists = artists;
+    }
 }

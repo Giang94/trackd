@@ -1,34 +1,39 @@
 package com.app.trackd.activity;
 
+import static com.app.trackd.activity.AlbumDetailsActivity.EXTRA_ALBUM_ID_TO_ALBUM_DETAILS;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.trackd.R;
-import com.app.trackd.adapter.RecentAdapter;
+import com.app.trackd.adapter.AlbumListAdapter;
+import com.app.trackd.adapter.RecentAlbumListAdapter;
+import com.app.trackd.common.DoubleTapHelper;
 import com.app.trackd.common.TwoFingerZoomHelper;
 import com.app.trackd.model.Album;
+import com.app.trackd.model.AlbumWithArtists;
 import com.app.trackd.service.AlbumService;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.Chip;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    MaterialCardView cvTotal;
     TextView tvTotalItems, tvVinyl, tvCds;
     ImageView ivProfile;
     RecyclerView rvRecent;
-    RecentAdapter adapter;
+    RecentAlbumListAdapter adapter;
     List<Album> albums;
     AlbumService albumService;
     private GestureDetector gestureDetector;
@@ -39,24 +44,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         TwoFingerZoomHelper.enableTwoFingerZoom(this);
+        DoubleTapHelper.enableDoubleTap(this);
 
-        setupGestures();
         initViews();
         setupChips();
         setupData();
-    }
-
-    private void setupGestures() {
-        gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onDoubleTap(@NonNull MotionEvent e) {
-                openAddAlbumActivity();
-                return true;
-            }
-        });
-
-        View root = findViewById(android.R.id.content);
-        root.setOnTouchListener((v, event) -> gestureDetector.onTouchEvent(event));
     }
 
     @Override
@@ -68,11 +60,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        cvTotal = findViewById(R.id.cvTotal);
         tvTotalItems = findViewById(R.id.tvTotalItems);
         tvVinyl = findViewById(R.id.tvVinyl);
         tvCds = findViewById(R.id.tvCds);
         rvRecent = findViewById(R.id.rvRecent);
         ivProfile = findViewById(R.id.ivProfile);
+
+        cvTotal.setOnClickListener(v -> {
+            Intent i = new Intent(MainActivity.this, AlbumListActivity.class);
+            startActivity(i);
+        });
     }
 
     private void setupChips() {
@@ -106,15 +104,16 @@ public class MainActivity extends AppCompatActivity {
     private void setupRecycler() {
         int fullCount = albums.size();
 
-        adapter = new RecentAdapter(albums, fullCount, album -> {
+        adapter = new RecentAlbumListAdapter(albums, fullCount, album -> {
+            openAlbumDetails(album);
         });
 
         rvRecent.setLayoutManager(new GridLayoutManager(this, 2));
         rvRecent.setAdapter(adapter);
 
         adapter.setShowAllCallback(() -> {
-//            Intent i = new Intent(MainActivity.this, AllAlbumsActivity.class);
-//            startActivity(i);
+            Intent i = new Intent(MainActivity.this, AlbumListActivity.class);
+            startActivity(i);
         });
     }
 
@@ -144,8 +143,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void openAddAlbumActivity() {
-        Intent i = new Intent(MainActivity.this, AddAlbumActivity.class);
+    private void openAlbumDetails(Album album) {
+        Intent i = new Intent(this, AlbumDetailsActivity.class);
+        i.putExtra(EXTRA_ALBUM_ID_TO_ALBUM_DETAILS, album.getId());
         startActivity(i);
     }
 }

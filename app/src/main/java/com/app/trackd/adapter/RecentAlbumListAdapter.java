@@ -12,6 +12,7 @@ import com.app.trackd.database.AppDatabase;
 import com.app.trackd.model.Album;
 import com.app.trackd.model.Artist;
 import com.app.trackd.util.ImageUtils;
+import com.app.trackd.util.StringUtils;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.RecentItemViewHolder> {
+public class RecentAlbumListAdapter extends RecyclerView.Adapter<RecentAlbumListAdapter.RecentItemViewHolder> {
 
     private static final int VIEW_TYPE_NORMAL = 0;
     private static final int VIEW_TYPE_MORE = 1;
@@ -34,7 +35,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.RecentItem
     private List<Album> albums;
     private OnItemClick listener;
 
-    public RecentAdapter(List<Album> albums, int fullCount, OnItemClick listener) {
+    public RecentAlbumListAdapter(List<Album> albums, int fullCount, OnItemClick listener) {
         this.albums = albums;
         this.fullCount = fullCount;
         this.listener = listener;
@@ -111,19 +112,9 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.RecentItem
         // Fetch artists asynchronously
         new Thread(() -> {
             AppDatabase db = AppDatabase.get(holder.itemView.getContext());
-            List<Artist> artists = db.albumArtistDao().getArtistsForAlbum(album.getId(), 2); // assumes you have this DAO method
-            String artistNames = "";
-            if (artists != null && !artists.isEmpty()) {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < artists.size(); i++) {
-                    sb.append(artists.get(i).getDisplayName());
-                    if (i < artists.size() - 1) sb.append(", ");
-                }
-                artistNames = sb.toString();
-            }
-
-            final String finalArtistNames = artistNames;
-            holder.itemView.post(() -> holder.tvArtist.setText(finalArtistNames));
+            List<Artist> artists = db.albumArtistDao().getArtistsForAlbum(album.getId(), 2);
+            List<String> artistNames = artists.stream().map(a -> a.displayName).toList();
+            holder.itemView.post(() -> holder.tvArtist.setText(StringUtils.formatArtists(artistNames)));
         }).start();
     }
 
