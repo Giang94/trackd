@@ -60,4 +60,7 @@ public interface IAlbumDao {
 
     @Update
     void updateAlbum(Album album);
+
+    @Query("SELECT * FROM album WHERE id IN (SELECT albumId FROM album_tag WHERE tagId = :tagId)")
+    List<Album> getAlbumsByTag(long tagId);
 }

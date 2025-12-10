@@ -190,71 +190,6 @@
                     android:nestedScrollingEnabled="false"
                     android:layout_marginTop="8dp" />
 
-            <!-- Browse by -->
-            <!--            <TextView-->
-            <!--                    android:layout_width="wrap_content"-->
-            <!--                    android:layout_height="wrap_content"-->
-            <!--                    android:layout_marginTop="16dp"-->
-            <!--                    android:text="Browse by"-->
-            <!--                    android:textStyle="bold"-->
-            <!--                    android:textSize="16sp"-->
-            <!--                    android:textColor="#2b1b18" />-->
-
-            <!--            <LinearLayout-->
-            <!--                    android:layout_marginTop="8dp"-->
-            <!--                    android:layout_width="match_parent"-->
-            <!--                    android:layout_height="wrap_content"-->
-            <!--                    android:orientation="horizontal">-->
-
-            <!--                <com.google.android.material.chip.Chip-->
-            <!--                        style="@style/Widget.MaterialComponents.Chip.Choice"-->
-            <!--                        android:id="@+id/chipArtist"-->
-            <!--                        android:layout_width="wrap_content"-->
-            <!--                        android:layout_height="wrap_content"-->
-            <!--                        android:text="Artist" />-->
-
-            <!--                <com.google.android.material.chip.Chip-->
-            <!--                        style="@style/Widget.MaterialComponents.Chip.Choice"-->
-            <!--                        android:id="@+id/chipYear"-->
-            <!--                        android:layout_width="wrap_content"-->
-            <!--                        android:layout_height="wrap_content"-->
-            <!--                        android:text="Year"-->
-            <!--                        android:layout_marginStart="8dp" />-->
-
-            <!--                <com.google.android.material.chip.Chip-->
-            <!--                        style="@style/Widget.MaterialComponents.Chip.Choice"-->
-            <!--                        android:id="@+id/chipFormat"-->
-            <!--                        android:text="Format"-->
-            <!--                        android:layout_width="wrap_content"-->
-            <!--                        android:layout_height="wrap_content"-->
-            <!--                        android:layout_marginStart="8dp" />-->
-
-            <!--                <com.google.android.material.chip.Chip-->
-            <!--                        style="@style/Widget.MaterialComponents.Chip.Choice"-->
-            <!--                        android:id="@+id/chipGenre"-->
-            <!--                        android:layout_width="wrap_content"-->
-            <!--                        android:layout_height="wrap_content"-->
-            <!--                        android:text="Genre"-->
-            <!--                        android:layout_marginStart="8dp" />-->
-            <!--            </LinearLayout>-->
-
-            <!-- Collections -->
-            <!--            <TextView-->
-            <!--                    android:layout_width="wrap_content"-->
-            <!--                    android:layout_height="wrap_content"-->
-            <!--                    android:layout_marginTop="16dp"-->
-            <!--                    android:text="Collections"-->
-            <!--                    android:textStyle="bold"-->
-            <!--                    android:textSize="16sp"-->
-            <!--                    android:textColor="#2b1b18" />-->
-
-            <!--            <LinearLayout-->
-            <!--                    android:id="@+id/llCollections"-->
-            <!--                    android:layout_width="match_parent"-->
-            <!--                    android:layout_height="wrap_content"-->
-            <!--                    android:orientation="vertical"-->
-            <!--                    android:layout_marginTop="8dp" />-->
-
             <!-- bottom padding -->
             <View
                     android:layout_height="24dp"
@@ -265,7 +200,6 @@
     <!-- Floating Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabAddAlbum"
-            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"

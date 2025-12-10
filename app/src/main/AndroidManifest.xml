@@ -26,12 +26,20 @@
         <activity
                 android:name=".activity.AddAlbumActivity"
                 android:exported="false"
+                android:windowSoftInputMode="adjustResize|stateHidden"
                 android:label="@string/title_activity_add_album"
                 android:theme="@style/Theme.Trackd" />
         <activity
                 android:name=".activity.EditAlbumActivity"
                 android:exported="false"
+                android:windowSoftInputMode="adjustResize|stateHidden"
                 android:label="@string/title_activity_add_album"
+                android:theme="@style/Theme.Trackd" />
+        <activity
+                android:name=".activity.TaggingActivity"
+                android:exported="false"
+                android:windowSoftInputMode="adjustResize|stateHidden"
+                android:label="@string/title_activity_tagging"
                 android:theme="@style/Theme.Trackd" />
         <activity
                 android:name=".activity.MainActivity"

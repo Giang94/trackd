@@ -12,12 +12,25 @@ import android.content.Context;
 
 import com.app.trackd.dao.IAlbumArtistDao;
 import com.app.trackd.dao.IAlbumDao;
+import com.app.trackd.dao.IAlbumTagDao;
 import com.app.trackd.dao.IArtistDao;
+import com.app.trackd.dao.ITagDao;
 import com.app.trackd.model.Album;
 import com.app.trackd.model.Artist;
+import com.app.trackd.model.Tag;
 import com.app.trackd.model.ref.AlbumArtistCrossRef;
+import com.app.trackd.model.ref.AlbumTagCrossRef;
 
-@Database(entities = {Album.class, Artist.class, AlbumArtistCrossRef.class}, version = 3, exportSchema = false)
+@Database(entities =
+        {
+                Album.class,
+                Artist.class,
+                AlbumArtistCrossRef.class,
+                Tag.class,
+                AlbumTagCrossRef.class
+        },
+        version = 3, exportSchema = false)
+
 @TypeConverters({EmbeddingConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -26,6 +39,10 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract IArtistDao artistDao();
 
     public abstract IAlbumArtistDao albumArtistDao();
+
+    public abstract ITagDao tagDao();
+
+    public abstract IAlbumTagDao albumTagDao();
 
     private static AppDatabase instance;
 

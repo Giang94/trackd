@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey;
 
 @Entity
 public class Artist {
+
     @PrimaryKey(autoGenerate = true)
     public long id;
     public String displayName;

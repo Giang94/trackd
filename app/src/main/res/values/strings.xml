@@ -5,4 +5,5 @@
     <string name="title_activity_camera">CameraActivity</string>
     <string name="title_activity_album_list">AlbumListActivity</string>
     <string name="title_activity_album_details">AlbumDetailsActivity</string>
+    <string name="title_activity_tagging">TaggingActivity</string>
 </resources>

@@ -15,10 +15,13 @@ import com.app.trackd.R;
 import com.app.trackd.adapter.RecentAlbumListAdapter;
 import com.app.trackd.common.TwoFingerDoubleTapHelper;
 import com.app.trackd.common.TwoFingerZoomHelper;
+import com.app.trackd.dao.ITagDao;
 import com.app.trackd.database.AppDatabase;
 import com.app.trackd.fragment.AlbumDetailBottomSheet;
 import com.app.trackd.model.Album;
 import com.app.trackd.model.AlbumWithArtists;
+import com.app.trackd.model.Tag;
+import com.app.trackd.util.StringUtils;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -33,7 +36,6 @@ public class MainActivity extends FragmentActivity {
     private FloatingActionButton fabAddAlbum;
     private RecentAlbumListAdapter adapter;
     private List<AlbumWithArtists> albums;
-    private GestureDetector gestureDetector;
     private AppDatabase db;
 
     @Override
@@ -42,21 +44,28 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         db = AppDatabase.get(this);
+        seedTags(db, List.of("Autographed", "Boxset", "Limited Edition", "Deluxe"));
 
         TwoFingerZoomHelper.enableTwoFingerZoom(this);
         TwoFingerDoubleTapHelper.enableTwoFingerDoubleTap(this);
 
         initViews();
-//        setupChips();
         setupData();
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (gestureDetector != null) {
-            gestureDetector.onTouchEvent(ev);
-        }
-        return super.dispatchTouchEvent(ev);
+    public static void seedTags(AppDatabase db, List<String> tagsToSeed) {
+        ITagDao tagDao = db.tagDao();
+
+        new Thread(() -> {
+            for (String rawName : tagsToSeed) {
+                String normalized = StringUtils.normalize(rawName);
+
+                // Skip if exists
+                if (tagDao.findByNormalized(normalized) == null) {
+                    tagDao.insert(new Tag(rawName));
+                }
+            }
+        }).start();
     }
 
     private void initViews() {
@@ -74,17 +83,11 @@ public class MainActivity extends FragmentActivity {
         });
 
         fabAddAlbum.setOnClickListener(v -> {
-            Intent i = new Intent(MainActivity.this, AddAlbumActivity.class);
+            Intent i = new Intent(MainActivity.this, TaggingActivity.class);
+            i.putExtra(TaggingActivity.EXTRA_ALBUM_ID, 1L);
             startActivity(i);
         });
     }
-
-//    private void setupChips() {
-//        Chip chipArtist = findViewById(R.id.chipArtist);
-//        chipArtist.setOnClickListener(v -> {
-//            // TODO: browse by artist
-//        });
-//    }
 
     private void setupData() {
         List<Album> recentAlbums = db.albumDao().getRecentAlbums(7);
@@ -92,7 +95,6 @@ public class MainActivity extends FragmentActivity {
                 .getAlbumsWithArtistsByIds(recentAlbums.stream().map(Album::getId).toList());
         setupRecycler();
         updateStats();
-//        populateCollections();
     }
 
     @Override
@@ -132,23 +134,10 @@ public class MainActivity extends FragmentActivity {
         tvCds.setText(String.valueOf(cds));
     }
 
-//    private void populateCollections() {
-//        LinearLayout ll = findViewById(R.id.llCollections);
-//        String[] names = new String[]{"Classical Essentials", "Opera Collection", "J-Pop Favorites", "Limited Editions"};
-//        for (String s : names) {
-//            TextView t = new TextView(this);
-//            t.setText("• " + s);
-//            t.setTextSize(15f);
-//            t.setPadding(0, 8, 0, 8);
-//            ll.addView(t);
-//        }
-//    }
-
     private void openAlbumDetails(AlbumWithArtists album) {
         AlbumDetailBottomSheet sheet = new AlbumDetailBottomSheet(album);
         sheet.show(getSupportFragmentManager(), "album_detail_sheet");
         sheet.setOnAlbumDeletedListener(albumId -> {
-            // refresh RecyclerView
             refreshData();
         });
     }
