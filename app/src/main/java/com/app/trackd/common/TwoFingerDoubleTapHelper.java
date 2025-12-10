@@ -5,13 +5,13 @@ import android.content.Intent;
 
 import com.app.trackd.activity.AddAlbumActivity;
 
-public class DoubleTapHelper {
+public class TwoFingerDoubleTapHelper {
 
-    public static void enableDoubleTap(Activity activity) {
-        DoubleTapLayout layout = new DoubleTapLayout(activity);
+    public static void enableTwoFingerDoubleTap(Activity activity) {
+        TwoFingerDoubleTapLayout layout = new TwoFingerDoubleTapLayout(activity);
         layout.attachToActivity(activity);
 
-        layout.setOnDoubleTapListener(() -> {
+        layout.setOnTwoFingerDoubleTapListener(() -> {
             Intent intent = new Intent(activity, AddAlbumActivity.class);
             activity.startActivity(intent);
         });

@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.trackd.R;
-import com.app.trackd.database.AppDatabase;
 import com.app.trackd.model.Album;
 import com.app.trackd.model.AlbumWithArtists;
 import com.app.trackd.model.Artist;
@@ -50,7 +49,6 @@ public class AlbumListAdapter extends RecyclerView.Adapter<AlbumListAdapter.Albu
         // Title
         holder.tvTitle.setText(album.getTitle());
 
-        AppDatabase db = AppDatabase.get(holder.itemView.getContext());
         List<String> artistNames = artists.stream().map(a -> a.displayName).toList();
         holder.tvArtists.setText(StringUtils.formatArtists(artistNames));
 
@@ -59,7 +57,7 @@ public class AlbumListAdapter extends RecyclerView.Adapter<AlbumListAdapter.Albu
         holder.tvYear.setText(yearString);
 
         // Format
-        String formatString = "Format: " + album.getFormat();
+        String formatString = "Format: " + album.getFormat().getDisplayName();
         holder.tvFormat.setText(formatString);
 
         if (album.getCover() != null) {

@@ -1,96 +1,129 @@
 package com.app.trackd.activity;
 
-import static com.app.trackd.activity.AlbumDetailsActivity.EXTRA_ALBUM_ID_TO_ALBUM_DETAILS;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.trackd.R;
 import com.app.trackd.adapter.AlbumListAdapter;
-import com.app.trackd.common.DoubleTapHelper;
+import com.app.trackd.common.TwoFingerDoubleTapHelper;
 import com.app.trackd.common.TwoFingerZoomHelper;
 import com.app.trackd.database.AppDatabase;
+import com.app.trackd.fragment.AlbumDetailBottomSheet;
 import com.app.trackd.model.Album;
 import com.app.trackd.model.AlbumWithArtists;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AlbumListActivity extends AppCompatActivity {
 
-    RecyclerView rvAlbums;
-    TextInputEditText searchInput;
-    AlbumListAdapter adapter;
-    List<AlbumWithArtists> items = new ArrayList<>();
+    private RecyclerView rvAlbums;
+    private TextInputLayout searchInputLayout;
+    private TextInputEditText searchInput;
+    private TextView tvTitle;
+    private FloatingActionButton fabAddAlbum;
 
-    AppDatabase db;
+    private AlbumListAdapter adapter;
+    private final List<AlbumWithArtists> albums = new ArrayList<>();
 
-    int PAGE_SIZE = 10;
-    int currentOffset = 0;
-    boolean isLoading = false;
-    boolean noMore = false;
+    private AppDatabase db;
+
+    private static final int PAGE_SIZE = 10;
+    private int currentOffset = 0;
+    private boolean isLoading = false;
+    private boolean noMore = false;
+
+    // --- ACTIVITY RESULT HANDLER ---
+    private final ActivityResultLauncher<Intent> editAlbumLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == RESULT_OK &&
+                                result.getData() != null) {
+
+                            long id = result.getData().getLongExtra("updatedAlbumId", -1);
+                            if (id != -1) updateSingleAlbum(id);
+                        }
+                    });
+
+    // ---------------------------------------------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_list);
 
-        DoubleTapHelper.enableDoubleTap(this);
-        TwoFingerZoomHelper.enableTwoFingerZoom(this);
-
-        rvAlbums = findViewById(R.id.rvAlbums);
-        rvAlbums.setLayoutManager(new LinearLayoutManager(this));
-
-        db = AppDatabase.get(this);
-
-        adapter = new AlbumListAdapter(
-                items,
-                this::loadPagedAlbums,
-                album -> openAlbumDetails(album)
-        );
-        rvAlbums.setAdapter(adapter);
+        initGestures();
+        initDatabase();
+        initViews();
+        initRecycler();
+        initAddButton();
+        initSearch();
 
         loadPagedAlbums();
-        setupSearchInput();
     }
 
-    private void loadPagedAlbums() {
-        if (isLoading || noMore) return;
-        isLoading = true;
-
-        // 1) Load base album list
-        List<Album> baseAlbums = db.albumDao().getAlbumsPaged(currentOffset, PAGE_SIZE);
-
-        if (baseAlbums.isEmpty()) {
-            noMore = true;
-            isLoading = false;
-            return;
-        }
-
-        // 3) Load AlbumWithArtists for these IDs
-        List<AlbumWithArtists> fullData = db.albumDao()
-                .getAlbumsWithArtistsByIds(baseAlbums.stream().map(Album::getId).toList());
-
-        // 4) Add to adapter list
-        items.addAll(fullData);
-        adapter.notifyDataSetChanged();
-
-        // 5) Update offset
-        currentOffset += baseAlbums.size();
-
-        isLoading = false;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateHeader();
     }
 
-    private void setupSearchInput() {
+    // ---------------------------------------------------------------------
+    // INIT
+    // ---------------------------------------------------------------------
+
+    private void initGestures() {
+        TwoFingerDoubleTapHelper.enableTwoFingerDoubleTap(this);
+        TwoFingerZoomHelper.enableTwoFingerZoom(this);
+    }
+
+    private void initDatabase() {
+        db = AppDatabase.get(this);
+    }
+
+    private void initViews() {
+        tvTitle = findViewById(R.id.tvTitle);
+        rvAlbums = findViewById(R.id.rvAlbums);
         searchInput = findViewById(R.id.searchInput);
+        searchInputLayout = findViewById(R.id.searchInputLayout);
+        updateHeader();
+    }
+
+    private void initRecycler() {
+        rvAlbums.setLayoutManager(new LinearLayoutManager(this));
+
+        adapter = new AlbumListAdapter(
+                albums,
+                this::loadPagedAlbums,
+                this::openAlbumDetails
+        );
+
+        rvAlbums.setAdapter(adapter);
+    }
+
+    private void initAddButton() {
+        fabAddAlbum = findViewById(R.id.fabAddAlbum);
+        fabAddAlbum.setOnClickListener(v ->
+                startActivity(new Intent(this, AddAlbumActivity.class))
+        );
+    }
+
+    private void initSearch() {
         searchInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -98,41 +131,143 @@ public class AlbumListActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) {
+                    searchInputLayout.setEndIconDrawable(R.drawable.ic_edit_clear);
+                    searchInputLayout.setEndIconContentDescription("Clear");
+                } else {
+                    searchInputLayout.setEndIconDrawable(R.drawable.ic_search);
+                    searchInputLayout.setEndIconContentDescription("Search");
+                }
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-                String text = editable.toString().trim();
+                handleSearch(editable.toString().trim());
+            }
+        });
 
-                if (text.isEmpty()) {
-                    Log.d("FILTER", "Clearing search, reloading full list");
-
-                    items.clear();
-                    adapter.notifyDataSetChanged();
-
-                    currentOffset = 0;
-                    noMore = false;
-                    isLoading = false;
-
-                    loadPagedAlbums();
-                } else {
-                    Log.d("FILTER", "Searching for: " + text);
-                    new Thread(() -> {
-                        List<Album> results = db.albumDao().searchAlbums("%" + text + "%");
-                        List<AlbumWithArtists> fullData = db.albumDao()
-                                .getAlbumsWithArtistsByIds(results.stream().map(Album::getId).toList());
-                        runOnUiThread(() -> {
-                            adapter.updateList(fullData);
-                        });
-                    }).start();
-                }
+        searchInputLayout.setEndIconOnClickListener(v -> {
+            if (searchInput.getText() != null && searchInput.getText().length() > 0) {
+                searchInput.setText("");
+            } else {
+                searchInput.requestFocus();
             }
         });
     }
 
+    // ---------------------------------------------------------------------
+    // SEARCH HANDLING
+    // ---------------------------------------------------------------------
+
+    private void handleSearch(String text) {
+        if (text.isEmpty()) {
+            resetFullList();
+            loadPagedAlbums();
+            return;
+        }
+
+        Log.d("FILTER", "Searching: " + text);
+
+        new Thread(() -> {
+            List<Album> results =
+                    db.albumDao().searchAlbums("%" + text + "%");
+
+            List<Long> ids = results.stream()
+                    .map(Album::getId)
+                    .collect(Collectors.toList());
+
+            List<AlbumWithArtists> fullData =
+                    db.albumDao().getAlbumsWithArtistsByIds(ids);
+
+            runOnUiThread(() -> adapter.updateList(fullData));
+        }).start();
+    }
+
+    private void resetFullList() {
+        albums.clear();
+        adapter.notifyDataSetChanged();
+
+        currentOffset = 0;
+        noMore = false;
+        isLoading = false;
+    }
+
+    // ---------------------------------------------------------------------
+    // PAGINATION
+    // ---------------------------------------------------------------------
+
+    private void loadPagedAlbums() {
+        if (isLoading || noMore) return;
+        isLoading = true;
+
+        new Thread(() -> {
+            List<Album> page =
+                    db.albumDao().getAlbumsPaged(currentOffset, PAGE_SIZE);
+
+            if (page.isEmpty()) {
+                noMore = true;
+                isLoading = false;
+                return;
+            }
+
+            List<Long> ids = page.stream()
+                    .map(Album::getId)
+                    .collect(Collectors.toList());
+
+            List<AlbumWithArtists> fullData =
+                    db.albumDao().getAlbumsWithArtistsByIds(ids);
+
+            runOnUiThread(() -> {
+                albums.addAll(fullData);
+                adapter.notifyDataSetChanged();
+                currentOffset += page.size();
+                isLoading = false;
+            });
+        }).start();
+    }
+
+    // ---------------------------------------------------------------------
+    // DETAILS + UPDATE
+    // ---------------------------------------------------------------------
+
     private void openAlbumDetails(AlbumWithArtists album) {
-        Intent i = new Intent(this, AlbumDetailsActivity.class);
-        i.putExtra(EXTRA_ALBUM_ID_TO_ALBUM_DETAILS, album.getAlbum().getId());
-        startActivity(i);
+        AlbumDetailBottomSheet sheet = new AlbumDetailBottomSheet(album);
+
+        sheet.setOnAlbumEditListener(albumId -> {
+            Intent intent = new Intent(this, EditAlbumActivity.class);
+            intent.putExtra("albumId", albumId);
+            editAlbumLauncher.launch(intent);
+        });
+
+        sheet.show(getSupportFragmentManager(), "album_detail_sheet");
+    }
+
+    private void updateHeader() {
+        int count = db.albumDao().getAlbumCount();
+        tvTitle.setText("Albums (" + count + ")");
+    }
+
+    private void updateSingleAlbum(long albumId) {
+        new Thread(() -> {
+            AlbumWithArtists updated =
+                    db.albumDao().getAlbumWithArtistsById(albumId);
+
+            int index = findAlbumIndex(albumId);
+            if (index == -1) return;
+
+            runOnUiThread(() -> {
+                albums.set(index, updated);
+                adapter.notifyItemChanged(index);
+            });
+        }).start();
+    }
+
+    private int findAlbumIndex(long albumId) {
+        for (int i = 0; i < albums.size(); i++) {
+            if (albums.get(i).getAlbum().getId() == albumId) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

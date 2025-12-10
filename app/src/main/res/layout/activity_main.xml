@@ -1,259 +1,278 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/scroll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:background="@color/white">
+        android:layout_height="match_parent">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
+            android:id="@+id/scroll"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:background="@color/white">
 
-        <!-- Header -->
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingTop="4dp"
-                android:paddingBottom="12dp">
+                android:padding="16dp"
+                android:orientation="vertical">
 
-            <TextView
-                    android:id="@+id/tvTitle"
-                    android:layout_width="0dp"
+            <!-- Header -->
+            <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="TRACKD"
-                    android:textSize="28sp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="12dp">
+
+                <TextView
+                        android:id="@+id/tvTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="TRACKD"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
+                        android:textColor="#2b1b18" />
+
+                <ImageView
+                        android:id="@+id/ivProfile"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_person_24"
+                        android:contentDescription="profile"
+                        android:padding="6dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                    android:layout_marginTop="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal"
+                    android:weightSum="3">
+
+                <!-- Total Items Card -->
+                <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cvTotal"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        app:cardCornerRadius="8dp"
+                        app:cardBackgroundColor="#FFFFFFFF"
+                        app:cardElevation="6dp"
+                        app:strokeColor="#E0E0E0"
+                        app:strokeWidth="1dp"
+                        app:cardUseCompatPadding="true">
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="12dp">
+
+                        <TextView
+                                android:id="@+id/tvTotalItems"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textStyle="bold"
+                                android:textSize="18sp"
+                                android:layout_marginTop="4dp" />
+
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Total"
+                                android:textSize="12sp"
+                                android:textColor="#555555"
+                                android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Vinyl Card -->
+                <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        app:cardCornerRadius="8dp"
+                        app:cardBackgroundColor="#FFFFFFFF"
+                        app:cardElevation="6dp"
+                        app:strokeColor="#E0E0E0"
+                        app:strokeWidth="1dp"
+                        app:cardUseCompatPadding="true">
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="12dp">
+
+                        <TextView
+                                android:id="@+id/tvVinyl"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textStyle="bold"
+                                android:textSize="18sp"
+                                android:layout_marginTop="4dp" />
+
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Vinyl"
+                                android:textSize="12sp"
+                                android:textColor="#555555"
+                                android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- CDs Card -->
+                <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        app:cardCornerRadius="8dp"
+                        app:cardBackgroundColor="#FFFFFFFF"
+                        app:cardElevation="6dp"
+                        app:strokeColor="#E0E0E0"
+                        app:strokeWidth="1dp"
+                        app:cardUseCompatPadding="true">
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="12dp">
+
+                        <TextView
+                                android:id="@+id/tvCds"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textStyle="bold"
+                                android:textSize="18sp"
+                                android:layout_marginTop="4dp" />
+
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="CDs"
+                                android:textSize="12sp"
+                                android:textColor="#555555"
+                                android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <!-- Recently Added -->
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Recently Added"
                     android:textStyle="bold"
+                    android:textSize="16sp"
                     android:textColor="#2b1b18" />
 
-            <ImageView
-                    android:id="@+id/ivProfile"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_person_24"
-                    android:contentDescription="profile"
-                    android:padding="6dp" />
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvRecent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:layout_marginTop="8dp" />
+
+            <!-- Browse by -->
+            <!--            <TextView-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_marginTop="16dp"-->
+            <!--                    android:text="Browse by"-->
+            <!--                    android:textStyle="bold"-->
+            <!--                    android:textSize="16sp"-->
+            <!--                    android:textColor="#2b1b18" />-->
+
+            <!--            <LinearLayout-->
+            <!--                    android:layout_marginTop="8dp"-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:orientation="horizontal">-->
+
+            <!--                <com.google.android.material.chip.Chip-->
+            <!--                        style="@style/Widget.MaterialComponents.Chip.Choice"-->
+            <!--                        android:id="@+id/chipArtist"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:text="Artist" />-->
+
+            <!--                <com.google.android.material.chip.Chip-->
+            <!--                        style="@style/Widget.MaterialComponents.Chip.Choice"-->
+            <!--                        android:id="@+id/chipYear"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:text="Year"-->
+            <!--                        android:layout_marginStart="8dp" />-->
+
+            <!--                <com.google.android.material.chip.Chip-->
+            <!--                        style="@style/Widget.MaterialComponents.Chip.Choice"-->
+            <!--                        android:id="@+id/chipFormat"-->
+            <!--                        android:text="Format"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:layout_marginStart="8dp" />-->
+
+            <!--                <com.google.android.material.chip.Chip-->
+            <!--                        style="@style/Widget.MaterialComponents.Chip.Choice"-->
+            <!--                        android:id="@+id/chipGenre"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:text="Genre"-->
+            <!--                        android:layout_marginStart="8dp" />-->
+            <!--            </LinearLayout>-->
+
+            <!-- Collections -->
+            <!--            <TextView-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_marginTop="16dp"-->
+            <!--                    android:text="Collections"-->
+            <!--                    android:textStyle="bold"-->
+            <!--                    android:textSize="16sp"-->
+            <!--                    android:textColor="#2b1b18" />-->
+
+            <!--            <LinearLayout-->
+            <!--                    android:id="@+id/llCollections"-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:orientation="vertical"-->
+            <!--                    android:layout_marginTop="8dp" />-->
+
+            <!-- bottom padding -->
+            <View
+                    android:layout_height="24dp"
+                    android:layout_width="match_parent" />
         </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
-        <LinearLayout
-                android:layout_marginTop="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_horizontal"
-                android:weightSum="3">
+    <!-- Floating Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAddAlbum"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="24dp"
+            android:contentDescription="Add album"
+            app:srcCompat="@drawable/ic_add"
+            app:backgroundTint="@color/black"
+            app:tint="@color/white" />
 
-            <!-- Total Items Card -->
-            <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cvTotal"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    app:cardCornerRadius="8dp"
-                    app:cardBackgroundColor="#FFFFFFFF"
-                    app:cardElevation="6dp"
-                    app:strokeColor="#E0E0E0"
-                    app:strokeWidth="1dp"
-                    app:cardUseCompatPadding="true">
-
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="12dp">
-
-                    <TextView
-                            android:id="@+id/tvTotalItems"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textStyle="bold"
-                            android:textSize="18sp"
-                            android:layout_marginTop="4dp" />
-
-                    <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Total"
-                            android:textSize="12sp"
-                            android:textColor="#555555"
-                            android:layout_marginTop="2dp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Vinyl Card -->
-            <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    app:cardCornerRadius="8dp"
-                    app:cardBackgroundColor="#FFFFFFFF"
-                    app:cardElevation="6dp"
-                    app:strokeColor="#E0E0E0"
-                    app:strokeWidth="1dp"
-                    app:cardUseCompatPadding="true">
-
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="12dp">
-
-                    <TextView
-                            android:id="@+id/tvVinyl"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textStyle="bold"
-                            android:textSize="18sp"
-                            android:layout_marginTop="4dp" />
-
-                    <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Vinyl"
-                            android:textSize="12sp"
-                            android:textColor="#555555"
-                            android:layout_marginTop="2dp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- CDs Card -->
-            <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    app:cardCornerRadius="8dp"
-                    app:cardBackgroundColor="#FFFFFFFF"
-                    app:cardElevation="6dp"
-                    app:strokeColor="#E0E0E0"
-                    app:strokeWidth="1dp"
-                    app:cardUseCompatPadding="true">
-
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="12dp">
-
-                    <TextView
-                            android:id="@+id/tvCds"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textStyle="bold"
-                            android:textSize="18sp"
-                            android:layout_marginTop="4dp" />
-
-                    <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="CDs"
-                            android:textSize="12sp"
-                            android:textColor="#555555"
-                            android:layout_marginTop="2dp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-        </LinearLayout>
-
-        <!-- Recently Added -->
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Recently Added"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="#2b1b18" />
-
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvRecent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:layout_marginTop="8dp" />
-
-        <!-- Browse by -->
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Browse by"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="#2b1b18" />
-
-        <LinearLayout
-                android:layout_marginTop="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-            <com.google.android.material.chip.Chip
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:id="@+id/chipArtist"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Artist" />
-
-            <com.google.android.material.chip.Chip
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:id="@+id/chipYear"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Year"
-                    android:layout_marginStart="8dp" />
-
-            <com.google.android.material.chip.Chip
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:id="@+id/chipFormat"
-                    android:text="Format"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp" />
-
-            <com.google.android.material.chip.Chip
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:id="@+id/chipGenre"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Genre"
-                    android:layout_marginStart="8dp" />
-        </LinearLayout>
-
-        <!-- Collections -->
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Collections"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="#2b1b18" />
-
-        <LinearLayout
-                android:id="@+id/llCollections"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="8dp" />
-
-        <!-- bottom padding -->
-        <View
-                android:layout_height="24dp"
-                android:layout_width="match_parent" />
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

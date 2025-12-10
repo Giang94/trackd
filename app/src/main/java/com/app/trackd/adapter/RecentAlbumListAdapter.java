@@ -7,18 +7,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.app.trackd.R;
-import com.app.trackd.database.AppDatabase;
 import com.app.trackd.model.Album;
+import com.app.trackd.model.AlbumWithArtists;
 import com.app.trackd.model.Artist;
 import com.app.trackd.util.ImageUtils;
 import com.app.trackd.util.StringUtils;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class RecentAlbumListAdapter extends RecyclerView.Adapter<RecentAlbumListAdapter.RecentItemViewHolder> {
 
@@ -29,13 +29,13 @@ public class RecentAlbumListAdapter extends RecyclerView.Adapter<RecentAlbumList
     private ShowAllCallback showAllCallback;
 
     public interface OnItemClick {
-        void onClick(Album album);
+        void onClick(AlbumWithArtists album);
     }
 
-    private List<Album> albums;
+    private List<AlbumWithArtists> albums;
     private OnItemClick listener;
 
-    public RecentAlbumListAdapter(List<Album> albums, int fullCount, OnItemClick listener) {
+    public RecentAlbumListAdapter(List<AlbumWithArtists> albums, int fullCount, OnItemClick listener) {
         this.albums = albums;
         this.fullCount = fullCount;
         this.listener = listener;
@@ -59,17 +59,18 @@ public class RecentAlbumListAdapter extends RecyclerView.Adapter<RecentAlbumList
 
     private void bindMoreView(RecentItemViewHolder holder) {
         // Items after index 3 → covers 4,5,6,7
-        List<Album> nextFour = albums.subList(3, Math.min(7, albums.size()));
+        List<AlbumWithArtists> nextFour = albums.subList(3, Math.min(7, albums.size()));
 
         ImageView[] ivs = {holder.iv1, holder.iv2, holder.iv3, holder.iv4};
 
         // Fill squares
         for (int i = 0; i < 4; i++) {
             if (i < nextFour.size()) {
+                Album current = nextFour.get(i).getAlbum();
                 // Load cover
-                Log.d("ADAPTER", "Loading cover for album: " + nextFour.get(i).getTitle() + " base64: " + nextFour.get(i).getCover().substring(0, 20));
+                Log.d("ADAPTER", "Loading cover for album: " + current.getTitle() + " base64: " + current.getCover().substring(0, 20));
                 Glide.with(holder.itemView)
-                        .load(ImageUtils.toBitmap(nextFour.get(i).getCover()))
+                        .load(ImageUtils.toBitmap(current.getCover()))
                         .placeholder(R.drawable.ic_gallery)
                         .centerCrop()
                         .into(ivs[i]);
@@ -98,24 +99,23 @@ public class RecentAlbumListAdapter extends RecyclerView.Adapter<RecentAlbumList
         });
     }
 
-    private void bindNormalView(RecentItemViewHolder holder, Album album) {
-        // Set placeholder title until artists are loaded
+    private void bindNormalView(RecentItemViewHolder holder, AlbumWithArtists albumWithArtists) {
+        Album album = albumWithArtists.getAlbum();
         holder.tvTitle.setText(album.getTitle());
-        holder.tvSubtitle.setText(album.getFormat().name() + " | " + album.getYear());
+
+        String yearStr = album.getYear() == 0 ? "Unknown" : album.getYear() + "";
+        String subtitleStr = album.getFormat().getDisplayName() + " • " + yearStr;
+        holder.tvSubtitle.setText(subtitleStr);
         holder.ivAlbumCover.setImageBitmap(ImageUtils.toBitmap(album.getCover()));
         holder.itemView.setOnClickListener(v -> {
-            if (listener != null) listener.onClick(album);
+            if (listener != null) listener.onClick(albumWithArtists);
         });
         holder.ivAlbumCover.setVisibility(View.VISIBLE);
         holder.glFourContainer.setVisibility(View.GONE);
 
-        // Fetch artists asynchronously
-        new Thread(() -> {
-            AppDatabase db = AppDatabase.get(holder.itemView.getContext());
-            List<Artist> artists = db.albumArtistDao().getArtistsForAlbum(album.getId(), 2);
-            List<String> artistNames = artists.stream().map(a -> a.displayName).toList();
-            holder.itemView.post(() -> holder.tvArtist.setText(StringUtils.formatArtists(artistNames)));
-        }).start();
+        List<Artist> artists = albumWithArtists.getArtists().subList(0, Math.min(2, albumWithArtists.getArtists().size()));
+        List<String> artistNames = artists.stream().map(a -> a.displayName).toList();
+        holder.itemView.post(() -> holder.tvArtist.setText(StringUtils.formatArtists(artistNames)));
     }
 
     @Override
@@ -154,7 +154,7 @@ public class RecentAlbumListAdapter extends RecyclerView.Adapter<RecentAlbumList
         return VIEW_TYPE_NORMAL;
     }
 
-    public void updateData(List<Album> newList) {
+    public void updateData(List<AlbumWithArtists> newList) {
         this.albums = newList;
         notifyDataSetChanged();
     }

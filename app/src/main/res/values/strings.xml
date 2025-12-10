@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">trackd</string>
     <string name="title_activity_add_album">AddAlbumActivity</string>
+    <string name="title_activity_edit_album">EditAlbumActivity</string>
     <string name="title_activity_camera">CameraActivity</string>
     <string name="title_activity_album_list">AlbumListActivity</string>
     <string name="title_activity_album_details">AlbumDetailsActivity</string>

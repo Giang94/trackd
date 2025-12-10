@@ -3,7 +3,7 @@ package com.app.trackd.common;
 import android.app.Activity;
 import android.content.Intent;
 
-import com.app.trackd.activity.CameraActivity;
+import com.app.trackd.activity.MatchAlbumActivity;
 
 public class TwoFingerZoomHelper {
 
@@ -12,7 +12,7 @@ public class TwoFingerZoomHelper {
         layout.attachToActivity(activity);
 
         layout.setOnZoomOutListener(() -> {
-            Intent intent = new Intent(activity, CameraActivity.class);
+            Intent intent = new Intent(activity, MatchAlbumActivity.class);
             activity.startActivity(intent);
         });
     }

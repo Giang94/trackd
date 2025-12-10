@@ -23,6 +23,11 @@ public class AlbumWithArtists {
     )
     private List<Artist> artists;
 
+    public AlbumWithArtists(Album album, List<Artist> artists) {
+        this.album = album;
+        this.artists = artists;
+    }
+
     public Album getAlbum() {
         return album;
     }

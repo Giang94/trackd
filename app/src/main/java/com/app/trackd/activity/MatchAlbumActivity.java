@@ -26,12 +26,11 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.trackd.R;
-import com.app.trackd.adapter.RecentAlbumListAdapter;
+import com.app.trackd.adapter.MatchAlbumListAdapter;
 import com.app.trackd.common.OpenCVLoader;
-import com.app.trackd.common.SwipeBackHelper;
+import com.app.trackd.database.AppDatabase;
 import com.app.trackd.matcher.TFPhotoMatcher;
 import com.app.trackd.model.Album;
-import com.app.trackd.service.AlbumService;
 import com.app.trackd.util.ImageUtils;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -40,7 +39,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 
-public class CameraActivity extends AppCompatActivity {
+public class MatchAlbumActivity extends AppCompatActivity {
 
     private PreviewView previewView;
     private RecyclerView recyclerView;
@@ -51,9 +50,9 @@ public class CameraActivity extends AppCompatActivity {
     private boolean isPhotoTaken = false;
 
     private List<Album> albums;
-    private RecentAlbumListAdapter recentAlbumListAdapter;
+    private MatchAlbumListAdapter matchAlbumListAdapter;
     private TFPhotoMatcher tfPhotoMatcher;
-    private AlbumService albumService;
+    private AppDatabase db;
 
     private final ActivityResultLauncher<String> cameraPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
@@ -67,10 +66,10 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_camera);
+        setContentView(R.layout.activity_match_album);
 
-        SwipeBackHelper.enableSwipeBack(this);
         OpenCVLoader.init();
+        db = AppDatabase.get(this);
 
         loadAlbumsAndInitMatcher();
         initViews();
@@ -101,9 +100,8 @@ public class CameraActivity extends AppCompatActivity {
         int fullCount = albums.size();
         GridLayoutManager glm = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(glm);
-        recentAlbumListAdapter = new RecentAlbumListAdapter(new ArrayList<>(), fullCount, album -> {
-        });
-        recyclerView.setAdapter(recentAlbumListAdapter);
+        matchAlbumListAdapter = new MatchAlbumListAdapter(new ArrayList<>());
+        recyclerView.setAdapter(matchAlbumListAdapter);
     }
 
     private final ActivityResultLauncher<String> pickImageLauncher =
@@ -168,14 +166,13 @@ public class CameraActivity extends AppCompatActivity {
                 isPhotoTaken = false;
 
                 startCamera();
-                recentAlbumListAdapter.updateData(new ArrayList<>());
+                matchAlbumListAdapter.updateData(new ArrayList<>());
             }
         });
     }
 
     private void loadAlbumsAndInitMatcher() {
-        albumService = new AlbumService(this);
-        albums = albumService.getAll();
+        albums = db.albumDao().getAllAlbums();
         // photoMatcher = new ORBPhotoMatcher();
         tfPhotoMatcher = new TFPhotoMatcher(this);
     }
@@ -226,7 +223,6 @@ public class CameraActivity extends AppCompatActivity {
 
         // Use photoMatcher to find top matches
         List<Album> topMatches = tfPhotoMatcher.findTopMatches(bitmap, albums, 5);
-
         if (topMatches.isEmpty()) {
             tvMatchesResults.setText("No matches found");
             tvMatchesResults.setVisibility(View.VISIBLE);
@@ -237,6 +233,6 @@ public class CameraActivity extends AppCompatActivity {
             recyclerView.setVisibility(View.VISIBLE);
         }
 
-        recentAlbumListAdapter.updateData(topMatches);
+        matchAlbumListAdapter.updateData(topMatches);
     }
 }

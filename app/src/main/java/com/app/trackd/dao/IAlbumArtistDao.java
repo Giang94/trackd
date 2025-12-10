@@ -25,4 +25,10 @@ public interface IAlbumArtistDao {
             "INNER JOIN AlbumArtistCrossRef aa ON a.id = aa.artistId " +
             "WHERE aa.albumId = :albumId ")
     List<Artist> getArtistsForAlbum(long albumId);
+
+    @Query("DELETE FROM AlbumArtistCrossRef WHERE albumId = :albumId AND artistId = :artistId")
+    void deleteCrossRef(long albumId, long artistId);
+
+    @Query("SELECT artistId FROM AlbumArtistCrossRef WHERE albumId = :albumId")
+    List<Long> getArtistIdsForAlbum(long albumId);
 }

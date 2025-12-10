@@ -13,19 +13,21 @@ import java.sql.Blob;
 public class Album {
 
     @PrimaryKey(autoGenerate = true)
-    public long id;
-    public String title;
-    public int year;
-    public AlbumFormat format;
-    public String cover;
+    private long id;
+    private String title;
+    private int year;
+    private AlbumFormat format;
+    private String cover;
+    private String spotifyUrl;
     private float[] embedding;
 
-    public Album(long id, String title, int year, AlbumFormat format, String cover, float[] embedding) {
+    public Album(long id, String title, int year, AlbumFormat format, String cover, String spotifyUrl, float[] embedding) {
         this.id = id;
         this.title = title;
         this.year = year;
         this.format = format;
         this.cover = cover;
+        this.spotifyUrl = spotifyUrl;
         this.embedding = embedding;
     }
 
@@ -75,5 +77,13 @@ public class Album {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getSpotifyUrl() {
+        return spotifyUrl;
+    }
+
+    public void setSpotifyUrl(String spotifyUrl) {
+        this.spotifyUrl = spotifyUrl;
     }
 }

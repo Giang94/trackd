@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
@@ -31,7 +30,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.app.trackd.R;
 import com.app.trackd.adapter.ArtistSuggestionAdapter;
 import com.app.trackd.common.OpenCVLoader;
-import com.app.trackd.common.SwipeBackHelper;
 import com.app.trackd.database.AlbumFormatConverter;
 import com.app.trackd.database.AppDatabase;
 import com.app.trackd.matcher.TFPhotoMatcher;
@@ -50,7 +48,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -59,11 +56,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class AddAlbumActivity extends AppCompatActivity {
-
-    private static final int PICK_IMAGE = 101;
     private static final String DISCOGS_TOKEN = "YgPKoMgqNODZdUYKraucDYuTHZwRSyuYtxQLJmhI";
 
-    private EditText etTitle, etYear;
+    private EditText etTitle, etYear, etSpotifyUrl;
     private AutoCompleteTextView etArtist;
     private Spinner spFormat;
     private ImageView ivCover;
@@ -80,7 +75,6 @@ public class AddAlbumActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_album);
 
-        SwipeBackHelper.enableSwipeBack(this);
         OpenCVLoader.init();
 
         initViews();
@@ -95,6 +89,7 @@ public class AddAlbumActivity extends AppCompatActivity {
         etTitle = findViewById(R.id.etTitle);
         etArtist = findViewById(R.id.etArtist);
         etYear = findViewById(R.id.etYear);
+        etSpotifyUrl = findViewById(R.id.etSpotifyUrl);
         lyBarcode = findViewById(R.id.lyBarcode);
         spFormat = findViewById(R.id.spFormat);
         ivCover = findViewById(R.id.ivCover);
@@ -165,12 +160,18 @@ public class AddAlbumActivity extends AppCompatActivity {
         pickImageLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data != null && data.getData() != null) {
-                            Uri selectedImageUri = data.getData();
-                            // Set the image to your ImageView, e.g., with Glide
-                            Glide.with(this).load(selectedImageUri).into(ivCover);
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        Uri imgUri = result.getData().getData();
+                        try {
+                            InputStream is = getContentResolver().openInputStream(imgUri);
+                            Bitmap bitmap = BitmapFactory.decodeStream(is);
+
+                            ivCover.setImageBitmap(bitmap);
+                            Bitmap resizedBitmap = resizeBitmapKeepRatio(bitmap);
+                            coverBase64 = ImageUtils.toBase64(resizedBitmap);
+                            currentBitmap = bitmap;
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -183,37 +184,11 @@ public class AddAlbumActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK && data != null) {
-            Uri imgUri = data.getData();
-            try {
-                InputStream is = getContentResolver().openInputStream(imgUri);
-                Bitmap bitmap = BitmapFactory.decodeStream(is);
-
-                ivCover.setImageBitmap(bitmap);
-                Bitmap resizedBitmap = resizeBitmapKeepRatio(bitmap);
-                coverBase64 = bitmapToBase64(resizedBitmap);
-                currentBitmap = resizedBitmap;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private String bitmapToBase64(Bitmap bm) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Bitmap scaled = Bitmap.createScaledBitmap(bm, 300, 300, true);
-        scaled.compress(Bitmap.CompressFormat.JPEG, 90, baos);
-        return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
-    }
-
     private void saveAlbumWithArtists() {
         String title = etTitle.getText().toString().trim();
         String artistInput = etArtist.getText().toString().trim();
         String yearStr = etYear.getText().toString().trim();
+        String spotifyUrl = etSpotifyUrl.getText().toString().trim();
 
         if (title.isEmpty() || artistInput.isEmpty()) {
             Toast.makeText(this, "Should provide album name and artist", Toast.LENGTH_SHORT).show();
@@ -246,7 +221,7 @@ public class AddAlbumActivity extends AppCompatActivity {
             AppDatabase db = AppDatabase.get(this);
 
             // 1. Insert album
-            Album album = new Album(0, title, parsedYear.value, format, coverBase64, embedding);
+            Album album = new Album(0, title, parsedYear.value, format, coverBase64, spotifyUrl, embedding);
             long albumId = db.albumDao().insert(album);
 
             for (String name : artistNames) {
@@ -333,8 +308,8 @@ public class AddAlbumActivity extends AppCompatActivity {
                                                                         @Nullable Transition<? super Bitmap> transition) {
                                                 ivCover.setImageBitmap(bitmap);
                                                 Bitmap resizedBitmap = resizeBitmapKeepRatio(bitmap);
-                                                coverBase64 = bitmapToBase64(resizedBitmap);
-                                                currentBitmap = resizedBitmap;
+                                                coverBase64 = ImageUtils.toBase64(resizedBitmap);
+                                                currentBitmap = bitmap;
                                             }
 
                                             @Override
