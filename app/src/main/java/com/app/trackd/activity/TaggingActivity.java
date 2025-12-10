@@ -2,21 +2,31 @@ package com.app.trackd.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.app.trackd.R;
 import com.app.trackd.database.AppDatabase;
+import com.app.trackd.model.Album;
+import com.app.trackd.model.AlbumWithArtists;
+import com.app.trackd.model.Artist;
 import com.app.trackd.model.Tag;
 import com.app.trackd.model.ref.AlbumTagCrossRef;
+import com.app.trackd.util.ImageUtils;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.chip.Chip;
 
@@ -29,10 +39,14 @@ public class TaggingActivity extends AppCompatActivity {
     public static final String EXTRA_ALBUM_ID = "albumId";
 
     private long albumId;
+    private AlbumWithArtists albumWithArtists;
 
     private FlexboxLayout chipGroup;
     private EditText newTagInput;
-    private Button btnSave, btnAddTag;
+    private ImageButton btnAddTag;
+    private Button btnSave;
+    private ImageView ivCover;
+    private TextView albumTitle, albumArtist;
 
     private AppDatabase db;
     private List<Tag> allTags;
@@ -50,6 +64,7 @@ public class TaggingActivity extends AppCompatActivity {
         }
 
         db = AppDatabase.get(this);
+        albumWithArtists = db.albumDao().getAlbumWithArtistsById(albumId);
 
         setupLayout();
         loadTags();
@@ -69,15 +84,39 @@ public class TaggingActivity extends AppCompatActivity {
             return true;
         });
 
-        newTagInput = findViewById(R.id.etNewTag);
         newTagInput.setInputType(InputType.TYPE_CLASS_TEXT);
+        newTagInput.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        newTagInput.setSingleLine(true);
 
-        btnAddTag = findViewById(R.id.btnAddTag);
-        btnSave = findViewById(R.id.btnSaveTags);
+        ivCover = findViewById(R.id.ivCover);
+        albumTitle = findViewById(R.id.albumTitle);
+        albumArtist = findViewById(R.id.albumArtist);
 
+        Album album = albumWithArtists.getAlbum();
+
+        if (album.getCover() != null) {
+            Bitmap coverBitmap = ImageUtils.toBitmap(album.getCover());
+            ivCover.setImageBitmap(coverBitmap);
+        }
+        albumTitle.setText(album.getTitle());
+
+        List<String> artists = albumWithArtists.getArtists().stream()
+                .map(Artist::getDisplayName)
+                .toList();
+
+        albumArtist.setText(TextUtils.join(" • ", artists));
     }
 
     private void setupAddTagButton() {
+        newTagInput.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                btnAddTag.performClick();
+                return true;
+            }
+            return false;
+        });
+
+        // Tick button logic
         btnAddTag.setOnClickListener(v -> {
             String name = newTagInput.getText().toString().trim();
             if (!name.isEmpty()) {
@@ -85,6 +124,7 @@ public class TaggingActivity extends AppCompatActivity {
                     long id = db.tagDao().insert(new Tag(name));
                     Tag tag = new Tag(name);
                     tag.setId(id);
+
                     runOnUiThread(() -> {
                         addChip(tag);
                         allTags.add(tag);
@@ -151,24 +191,20 @@ public class TaggingActivity extends AppCompatActivity {
         chip.setCheckable(true);
         chip.setTag(tag.getId());
         chip.setCloseIconVisible(false);
-        chip.setTag(R.id.delete_mode, false); // default not in delete mode
+        chip.setTag(R.id.delete_mode, false);
 
         chip.setOnCloseIconClickListener(v -> {
-            // 1. First cancel ongoing animation
             chip.clearAnimation();
 
-            // 2. Delete data in DB in background
             new Thread(() -> {
                 db.albumTagDao().deleteAllByTagId(tag.getId());
                 db.tagDao().delete(tag);
             }).start();
 
-            // 3. Remove from UI
             runOnUiThread(() -> {
                 chipGroup.removeView(chip);
                 allTags.remove(tag);
 
-                // If still in delete mode, re-show X icons on remaining chips
                 if (deleteMode) {
                     for (int i = 0; i < chipGroup.getChildCount(); i++) {
                         ((Chip) chipGroup.getChildAt(i)).setCloseIconVisible(true);
@@ -176,7 +212,6 @@ public class TaggingActivity extends AppCompatActivity {
                 }
             });
         });
-
 
         attachChipLongPress(chip);
 
@@ -200,6 +235,7 @@ public class TaggingActivity extends AppCompatActivity {
     private void enterDeleteMode() {
         if (deleteMode) return;
         deleteMode = true;
+
         for (int i = 0; i < chipGroup.getChildCount(); i++) {
             Chip chip = (Chip) chipGroup.getChildAt(i);
             chip.setCloseIconVisible(true);
@@ -210,6 +246,7 @@ public class TaggingActivity extends AppCompatActivity {
 
     private void exitDeleteMode() {
         deleteMode = false;
+
         for (int i = 0; i < chipGroup.getChildCount(); i++) {
             Chip chip = (Chip) chipGroup.getChildAt(i);
             chip.setCloseIconVisible(false);
@@ -230,6 +267,7 @@ public class TaggingActivity extends AppCompatActivity {
             chipGroup.getLocationOnScreen(loc);
             float x = ev.getRawX();
             float y = ev.getRawY();
+
             if (x < loc[0] || x > loc[0] + chipGroup.getWidth() ||
                     y < loc[1] || y > loc[1] + chipGroup.getHeight()) {
                 exitDeleteMode();

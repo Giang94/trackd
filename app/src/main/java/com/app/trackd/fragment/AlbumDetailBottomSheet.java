@@ -1,10 +1,12 @@
 package com.app.trackd.fragment;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,25 +18,33 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.app.trackd.R;
+import com.app.trackd.activity.MainActivity;
+import com.app.trackd.activity.TaggingActivity;
 import com.app.trackd.database.AppDatabase;
 import com.app.trackd.model.Album;
 import com.app.trackd.model.AlbumWithArtists;
 import com.app.trackd.model.Artist;
+import com.app.trackd.model.Tag;
 import com.app.trackd.util.ImageUtils;
 import com.app.trackd.util.StringUtils;
+import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.chip.Chip;
 
 import java.util.List;
+import java.util.Random;
 
 public class AlbumDetailBottomSheet extends BottomSheetDialogFragment {
 
     private ImageView albumCover;
     private TextView albumTitle, albumYear, albumFormat;
     private LinearLayout artistListContainer, openInContainer;
-    private ImageButton btnOpenSpotify, btnDelete, btnEdit;
+    private ImageButton btnOpenSpotify, btnDelete, btnEdit, btnTag;
+    private FlexboxLayout chipGroupTags;
 
     private final AlbumWithArtists albumWithArtists;
 
@@ -60,6 +70,8 @@ public class AlbumDetailBottomSheet extends BottomSheetDialogFragment {
         btnOpenSpotify = view.findViewById(R.id.btnOpenSpotify);
         btnEdit = view.findViewById(R.id.btnEdit);
         btnDelete = view.findViewById(R.id.btnDelete);
+        btnTag = view.findViewById(R.id.btnTag);
+        chipGroupTags = view.findViewById(R.id.chipGroupTags);
 
         btnDelete.setOnClickListener(v -> {
             new Thread(() -> {
@@ -88,9 +100,25 @@ public class AlbumDetailBottomSheet extends BottomSheetDialogFragment {
             dismiss();
         });
 
-        populateAlbumData();
+        btnTag.setOnClickListener(v -> {
+            Intent i = new Intent(this.getContext(), TaggingActivity.class);
+            i.putExtra(TaggingActivity.EXTRA_ALBUM_ID, albumWithArtists.getAlbum().getId());
+            startActivity(i);
+        });
 
+        populateAlbumData();
+        loadTags();
         return view;
+    }
+
+    private void loadTags() {
+        long albumId = albumWithArtists.getAlbum().getId();
+
+        AppDatabase db = AppDatabase.get(this.getContext());
+        List<Tag> tags = db.tagDao().getTagsForAlbum(albumId);
+        if (tags != null && tags.size() > 0) {
+            tags.forEach(this::addChip);
+        }
     }
 
     @Override
@@ -192,5 +220,41 @@ public class AlbumDetailBottomSheet extends BottomSheetDialogFragment {
 
     public void setOnAlbumEditListener(OnAlbumEditListener listener) {
         this.editListener = listener;
+    }
+
+    private Chip addChip(Tag tag) {
+        Chip chip = new Chip(this.getContext());
+        chip.setText(tag.getName());
+        chip.setCheckable(true);
+        chip.setTag(tag.getId());
+        chip.setCloseIconVisible(false);
+        chip.setTag(R.id.delete_mode, false);
+        chip.setChipBackgroundColor(ColorStateList.valueOf(getRandomChipColor()));
+        chip.setTextColor(Color.WHITE);
+
+        FlexboxLayout.LayoutParams lp = new FlexboxLayout.LayoutParams(
+                FlexboxLayout.LayoutParams.WRAP_CONTENT,
+                FlexboxLayout.LayoutParams.WRAP_CONTENT);
+        int margin = dpToPx(4);
+        lp.setMargins(margin, 0, margin, 0);
+        chip.setLayoutParams(lp);
+        chipGroupTags.addView(chip);
+        return chip;
+    }
+
+    private int dpToPx(int dp) {
+        float scale = getResources().getDisplayMetrics().density;
+        return Math.round(dp * scale);
+    }
+
+    private int getRandomChipColor() {
+        int[] chipColors = new int[]{
+                R.color.chip_red,
+                R.color.chip_blue,
+                R.color.chip_green,
+                R.color.chip_yellow
+        };
+        int index = new Random().nextInt(chipColors.length);
+        return ContextCompat.getColor(this.getContext(), chipColors[index]);
     }
 }

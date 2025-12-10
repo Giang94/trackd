@@ -1,12 +1,14 @@
 package com.app.trackd.activity;
 
+import static com.app.trackd.activity.EditAlbumActivity.EXTRA_ALBUM_ID;
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -112,9 +114,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void setupRecycler() {
-        int fullCount = albums.size();
-
-        adapter = new RecentAlbumListAdapter(albums, fullCount, this::openAlbumDetails);
+        adapter = new RecentAlbumListAdapter(albums, this::openAlbumDetails);
 
         rvRecent.setLayoutManager(new GridLayoutManager(this, 2));
         rvRecent.setAdapter(adapter);
@@ -134,11 +134,54 @@ public class MainActivity extends FragmentActivity {
         tvCds.setText(String.valueOf(cds));
     }
 
+    private final ActivityResultLauncher<Intent> editAlbumLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == RESULT_OK &&
+                                result.getData() != null) {
+
+                            long id = result.getData().getLongExtra(EditAlbumActivity.EXTRA_UPDATED_ALBUM_ID, -1);
+                            if (id != -1) updateSingleAlbum(id);
+                        }
+                    });
+
+    private void updateSingleAlbum(long albumId) {
+        new Thread(() -> {
+            AlbumWithArtists updated =
+                    db.albumDao().getAlbumWithArtistsById(albumId);
+
+            int index = findAlbumIndex(albumId);
+            if (index == -1) return;
+
+            runOnUiThread(() -> {
+                albums.set(index, updated);
+                adapter.notifyItemChanged(index);
+            });
+        }).start();
+    }
+
+    private int findAlbumIndex(long albumId) {
+        for (int i = 0; i < albums.size(); i++) {
+            if (albums.get(i).getAlbum().getId() == albumId) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     private void openAlbumDetails(AlbumWithArtists album) {
         AlbumDetailBottomSheet sheet = new AlbumDetailBottomSheet(album);
-        sheet.show(getSupportFragmentManager(), "album_detail_sheet");
+
+        sheet.setOnAlbumEditListener(albumId -> {
+            Intent intent = new Intent(this, EditAlbumActivity.class);
+            intent.putExtra(EXTRA_ALBUM_ID, albumId);
+            editAlbumLauncher.launch(intent);
+        });
         sheet.setOnAlbumDeletedListener(albumId -> {
             refreshData();
         });
+
+        sheet.show(getSupportFragmentManager(), "album_detail_sheet");
     }
 }

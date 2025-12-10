@@ -22,4 +22,9 @@
 
     <color name="trackd_statusbar">#1E1E1E</color>
     <color name="trackd_navbar">#1E1E1E</color>
+
+    <color name="chip_red">#EF5350</color>
+    <color name="chip_blue">#42A5F5</color>
+    <color name="chip_green">#66BB6A</color>
+    <color name="chip_yellow">#FFCA28</color>
 </resources>

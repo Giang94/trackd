@@ -24,8 +24,6 @@ public class RecentAlbumListAdapter extends RecyclerView.Adapter<RecentAlbumList
 
     private static final int VIEW_TYPE_NORMAL = 0;
     private static final int VIEW_TYPE_MORE = 1;
-
-    private int fullCount;
     private ShowAllCallback showAllCallback;
 
     public interface OnItemClick {
@@ -35,9 +33,8 @@ public class RecentAlbumListAdapter extends RecyclerView.Adapter<RecentAlbumList
     private List<AlbumWithArtists> albums;
     private OnItemClick listener;
 
-    public RecentAlbumListAdapter(List<AlbumWithArtists> albums, int fullCount, OnItemClick listener) {
+    public RecentAlbumListAdapter(List<AlbumWithArtists> albums, OnItemClick listener) {
         this.albums = albums;
-        this.fullCount = fullCount;
         this.listener = listener;
     }
 
@@ -148,7 +145,7 @@ public class RecentAlbumListAdapter extends RecyclerView.Adapter<RecentAlbumList
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 3 && fullCount > 4) {
+        if (position == 3 && albums.size() > 4) {
             return VIEW_TYPE_MORE;
         }
         return VIEW_TYPE_NORMAL;

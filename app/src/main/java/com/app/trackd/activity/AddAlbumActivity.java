@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -18,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.MultiAutoCompleteTextView;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -58,6 +60,7 @@ import java.util.Objects;
 public class AddAlbumActivity extends AppCompatActivity {
     private static final String DISCOGS_TOKEN = "YgPKoMgqNODZdUYKraucDYuTHZwRSyuYtxQLJmhI";
 
+    private ScrollView scrollView;
     private EditText etTitle, etYear, etSpotifyUrl;
     private AutoCompleteTextView etArtist;
     private Spinner spFormat;
@@ -94,6 +97,14 @@ public class AddAlbumActivity extends AppCompatActivity {
         spFormat = findViewById(R.id.spFormat);
         ivCover = findViewById(R.id.ivCover);
         btnSave = findViewById(R.id.btnSave);
+
+        scrollView = findViewById(R.id.scrollView);
+        scrollView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            View focused = getCurrentFocus();
+            if (focused != null) {
+                scrollView.smoothScrollTo(0, focused.getBottom());
+            }
+        });
     }
 
     private void initDropdowns() {

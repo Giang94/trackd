@@ -1,128 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:titleTextColor="@color/black">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:titleTextColor="@color/black">
 
     <LinearLayout
-            android:padding="@dimen/screen_padding"
-            android:gravity="top"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:orientation="vertical"
+        android:padding="@dimen/screen_padding">
 
         <LinearLayout
-                android:id="@+id/barcodeScanHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:paddingTop="4dp"
-                android:paddingBottom="12dp">
+            android:id="@+id/barcodeScanHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingTop="4dp"
+            android:paddingBottom="12dp">
 
             <TextView
-                    android:id="@+id/tvTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Add an album"
-                    android:textAlignment="center"
-                    android:textSize="@dimen/header_text_size"
-                    android:textStyle="bold"
-                    android:textColor="#2b1b18" />
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add an album"
+                android:textAlignment="center"
+                android:textColor="#2b1b18"
+                android:textSize="@dimen/header_text_size"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="16dp">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    app:endIconDrawable="@drawable/ic_scan"
-                    app:endIconMode="custom"
-                    android:hint="Scan barcode"
-                    android:id="@+id/lyBarcode">
+                android:id="@+id/lyBarcode"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Scan barcode"
+                app:endIconDrawable="@drawable/ic_scan"
+                app:endIconMode="custom">
 
                 <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etBarcode"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="number"
-                        android:imeOptions="actionGo"
-                        android:singleLine="true" />
+                    android:id="@+id/etBarcode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionGo"
+                    android:inputType="number"
+                    android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
         <ImageView
-                android:layout_margin="@dimen/margin_large"
-                android:id="@+id/ivCover"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_gravity="center"
-                android:src="@drawable/cover_placeholder"
-                android:scaleType="centerCrop"
-                android:background="#ddd" />
+            android:id="@+id/ivCover"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/margin_large"
+            android:background="#ddd"
+            android:scaleType="centerCrop"
+            android:src="@drawable/cover_placeholder" />
 
         <EditText
-                android:layout_marginLeft="@dimen/margin_large"
-                android:layout_marginRight="@dimen/margin_large"
-                android:layout_marginTop="@dimen/margin_medium"
-                android:id="@+id/etTitle"
-                android:hint="Album title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+            android:id="@+id/etTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_large"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:layout_marginRight="@dimen/margin_large"
+            android:hint="Album title"
+            android:imeOptions="actionNext"
+            android:singleLine="true" />
 
         <MultiAutoCompleteTextView
-                android:layout_marginLeft="@dimen/margin_large"
-                android:layout_marginRight="@dimen/margin_large"
-                android:id="@+id/etArtist"
-                android:completionThreshold="1"
-                android:hint="Artist"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_medium" />
+            android:id="@+id/etArtist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_large"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:layout_marginRight="@dimen/margin_large"
+            android:completionThreshold="1"
+            android:hint="Artist"
+            android:imeOptions="actionNext"
+            android:singleLine="true" />
 
         <EditText
-                android:layout_marginLeft="@dimen/margin_large"
-                android:layout_marginRight="@dimen/margin_large"
-                android:id="@+id/etYear"
-                android:hint="Year"
-                android:inputType="number"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_medium" />
+            android:id="@+id/etYear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_large"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:layout_marginRight="@dimen/margin_large"
+            android:hint="Year"
+            android:imeOptions="actionNext"
+            android:inputType="number" />
 
         <Spinner
-                android:layout_marginLeft="@dimen/margin_large"
-                android:layout_marginRight="@dimen/margin_large"
-                android:id="@+id/spFormat"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_medium" />
+            android:id="@+id/spFormat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_large"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:layout_marginRight="@dimen/margin_large" />
 
         <EditText
-                android:layout_marginLeft="@dimen/margin_large"
-                android:layout_marginRight="@dimen/margin_large"
-                android:id="@+id/etSpotifyUrl"
-                android:hint="Spotify URL"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_medium" />
+            android:id="@+id/etSpotifyUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_large"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:layout_marginRight="@dimen/margin_large"
+            android:hint="Spotify URL"
+            android:singleLine="true" />
 
         <Button
-                android:layout_marginLeft="@dimen/margin_large"
-                android:layout_marginRight="@dimen/margin_large"
-                android:id="@+id/btnSave"
-                android:text="Save Album"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_medium" />
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_large"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:layout_marginRight="@dimen/margin_large"
+            android:text="Save Album" />
     </LinearLayout>
 
 </ScrollView>

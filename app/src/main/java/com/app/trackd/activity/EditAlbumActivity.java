@@ -9,11 +9,13 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.MultiAutoCompleteTextView;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -39,6 +41,9 @@ import java.util.stream.Stream;
 
 public class EditAlbumActivity extends AppCompatActivity {
 
+    public static final String EXTRA_ALBUM_ID = "albumId";
+    public static final String EXTRA_UPDATED_ALBUM_ID = "updatedAlbumId";
+    private ScrollView scrollView;
     private ImageView ivCover;
     private EditText etTitle, etYear, etSpotifyUrl;
     private MultiAutoCompleteTextView etArtist;
@@ -65,10 +70,18 @@ public class EditAlbumActivity extends AppCompatActivity {
         etSpotifyUrl = findViewById(R.id.etSpotifyUrl);
         btnSave = findViewById(R.id.btnSave);
 
+        scrollView = findViewById(R.id.scrollView);
+        scrollView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            View focused = getCurrentFocus();
+            if (focused != null) {
+                scrollView.smoothScrollTo(0, focused.getBottom());
+            }
+        });
+
         setupFormatDropdown();
 
         // Example: Get album data from intent
-        long albumId = getIntent().getLongExtra("albumId", 0);
+        long albumId = getIntent().getLongExtra(EXTRA_ALBUM_ID, 0);
         if (albumId == 0) {
             Toast.makeText(this, "Invalid album ID", Toast.LENGTH_SHORT).show();
             finish();
@@ -138,7 +151,7 @@ public class EditAlbumActivity extends AppCompatActivity {
 
         Toast.makeText(this, "Album updated!", Toast.LENGTH_SHORT).show();
         Intent result = new Intent();
-        result.putExtra("updatedAlbumId", albumId);
+        result.putExtra(EXTRA_UPDATED_ALBUM_ID, albumId);
         setResult(RESULT_OK, result);
         finish();
     }
@@ -255,7 +268,7 @@ public class EditAlbumActivity extends AppCompatActivity {
                 .map(Artist::getDisplayName)
                 .toList();
 
-        etArtist.setText(TextUtils.join(", ", artists));
+        etArtist.setText(TextUtils.join(" • ", artists));
 
         etSpotifyUrl.setText(album.getSpotifyUrl());
     }

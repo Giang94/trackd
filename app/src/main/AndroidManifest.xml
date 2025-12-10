@@ -1,49 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        package="com.app.trackd">
+    package="com.app.trackd">
 
     <uses-feature
-            android:name="android.hardware.camera"
-            android:required="false" />
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
-            android:allowBackup="true"
-            android:label="Trackd"
-            android:theme="@style/Theme.Trackd">
+        android:allowBackup="true"
+        android:label="Trackd"
+        android:theme="@style/Theme.Trackd">
         <activity
-                android:name=".activity.AlbumListActivity"
-                android:exported="false"
-                android:label="@string/title_activity_album_list"
-                android:theme="@style/Theme.Trackd" />
+            android:name=".activity.AlbumListActivity"
+            android:exported="false"
+            android:label="@string/title_activity_album_list"
+            android:theme="@style/Theme.Trackd" />
         <activity
-                android:name=".activity.MatchAlbumActivity"
-                android:exported="false"
-                android:label="@string/title_activity_camera"
-                android:theme="@style/Theme.Trackd" />
+            android:name=".activity.MatchAlbumActivity"
+            android:exported="false"
+            android:label="@string/title_activity_camera"
+            android:theme="@style/Theme.Trackd" />
         <activity
-                android:name=".activity.AddAlbumActivity"
-                android:exported="false"
-                android:windowSoftInputMode="adjustResize|stateHidden"
-                android:label="@string/title_activity_add_album"
-                android:theme="@style/Theme.Trackd" />
+            android:name=".activity.AddAlbumActivity"
+            android:exported="false"
+            android:label="@string/title_activity_add_album"
+            android:theme="@style/Theme.Trackd"
+            android:windowSoftInputMode="adjustResize" />
         <activity
-                android:name=".activity.EditAlbumActivity"
-                android:exported="false"
-                android:windowSoftInputMode="adjustResize|stateHidden"
-                android:label="@string/title_activity_add_album"
-                android:theme="@style/Theme.Trackd" />
+            android:name=".activity.EditAlbumActivity"
+            android:exported="false"
+            android:label="@string/title_activity_edit_album"
+            android:theme="@style/Theme.Trackd"
+            android:windowSoftInputMode="adjustResize" />
         <activity
-                android:name=".activity.TaggingActivity"
-                android:exported="false"
-                android:windowSoftInputMode="adjustResize|stateHidden"
-                android:label="@string/title_activity_tagging"
-                android:theme="@style/Theme.Trackd" />
+            android:name=".activity.TaggingActivity"
+            android:exported="false"
+            android:label="@string/title_activity_tagging"
+            android:theme="@style/Theme.Trackd"
+            android:windowSoftInputMode="adjustResize" />
         <activity
-                android:name=".activity.MainActivity"
-                android:exported="true">
+            android:name=".activity.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -51,9 +51,9 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".activity.BarcodeScanActivity"
-                android:exported="false"
-                android:theme="@style/Theme.Trackd" />
+            android:name=".activity.BarcodeScanActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Trackd" />
     </application>
 
 </manifest>

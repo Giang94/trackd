@@ -1,5 +1,7 @@
 package com.app.trackd.activity;
 
+import static com.app.trackd.activity.EditAlbumActivity.EXTRA_ALBUM_ID;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -9,7 +11,7 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AlbumListActivity extends AppCompatActivity {
+public class AlbumListActivity extends FragmentActivity {
 
     private RecyclerView rvAlbums;
     private TextInputLayout searchInputLayout;
@@ -55,7 +57,7 @@ public class AlbumListActivity extends AppCompatActivity {
                         if (result.getResultCode() == RESULT_OK &&
                                 result.getData() != null) {
 
-                            long id = result.getData().getLongExtra("updatedAlbumId", -1);
+                            long id = result.getData().getLongExtra(EditAlbumActivity.EXTRA_UPDATED_ALBUM_ID, -1);
                             if (id != -1) updateSingleAlbum(id);
                         }
                     });
@@ -235,8 +237,13 @@ public class AlbumListActivity extends AppCompatActivity {
 
         sheet.setOnAlbumEditListener(albumId -> {
             Intent intent = new Intent(this, EditAlbumActivity.class);
-            intent.putExtra("albumId", albumId);
+            intent.putExtra(EXTRA_ALBUM_ID, albumId);
             editAlbumLauncher.launch(intent);
+        });
+        sheet.setOnAlbumDeletedListener(albumId -> {
+            resetFullList();
+            updateHeader();
+            loadPagedAlbums();
         });
 
         sheet.show(getSupportFragmentManager(), "album_detail_sheet");
