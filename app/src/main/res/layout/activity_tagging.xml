@@ -3,7 +3,8 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:titleTextColor="@color/black">
 
     <LinearLayout
             android:orientation="vertical"
@@ -32,13 +33,24 @@
         </LinearLayout>
 
         <!-- Existing tags as chips -->
-        <com.google.android.material.chip.ChipGroup
+        <com.google.android.flexbox.FlexboxLayout
                 android:id="@+id/chipGroupTags"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:singleLine="false"
-                app:chipSpacing="8dp"
+                app:flexWrap="wrap"
+                app:justifyContent="center"
+                app:alignItems="center"
+                android:clipChildren="false"
                 android:layout_marginBottom="@dimen/margin_medium" />
+        <!--        <com.google.android.material.chip.ChipGroup-->
+        <!--                android:id="@+id/chipGroupTags"-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                app:singleLine="false"-->
+        <!--                app:chipSpacingHorizontal="4dp"-->
+        <!--                app:chipSpacingVertical="0dp"-->
+        <!--                app:chipAlignmentMode="center"-->
+        <!--                android:layout_marginBottom="@dimen/margin_medium" />-->
 
         <!-- Add new tag -->
         <EditText
@@ -47,21 +59,27 @@
                 android:layout_height="wrap_content"
                 android:hint="Add new tag"
                 android:inputType="text"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:layout_marginRight="@dimen/margin_large"
                 android:layout_marginBottom="@dimen/margin_small" />
 
         <Button
+                android:layout_marginLeft="@dimen/margin_large"
+                android:layout_marginRight="@dimen/margin_large"
                 android:id="@+id/btnAddTag"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Add Tag"
-                android:layout_marginBottom="@dimen/margin_medium" />
+                android:text="Add Tag" />
 
         <!-- Save selected tags -->
         <Button
+                android:layout_marginLeft="@dimen/margin_large"
+                android:layout_marginRight="@dimen/margin_large"
                 android:id="@+id/btnSaveTags"
+                android:text="Save tags"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Save" />
+                android:layout_marginTop="@dimen/margin_medium" />
 
     </LinearLayout>
 </ScrollView>

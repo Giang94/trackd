@@ -4,14 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,8 +17,8 @@ import com.app.trackd.R;
 import com.app.trackd.database.AppDatabase;
 import com.app.trackd.model.Tag;
 import com.app.trackd.model.ref.AlbumTagCrossRef;
+import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +30,9 @@ public class TaggingActivity extends AppCompatActivity {
 
     private long albumId;
 
-    private ChipGroup chipGroup;
+    private FlexboxLayout chipGroup;
     private EditText newTagInput;
-    private Button btnSave;
+    private Button btnSave, btnAddTag;
 
     private AppDatabase db;
     private List<Tag> allTags;
@@ -44,6 +41,7 @@ public class TaggingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_tagging);
 
         albumId = getIntent().getLongExtra(EXTRA_ALBUM_ID, -1);
         if (albumId == -1) {
@@ -60,17 +58,10 @@ public class TaggingActivity extends AppCompatActivity {
     }
 
     private void setupLayout() {
-        ScrollView scrollView = new ScrollView(this);
-        LinearLayout container = new LinearLayout(this);
-        container.setOrientation(LinearLayout.VERTICAL);
-        int padding = dpToPx(16);
-        container.setPadding(padding, padding, padding, padding);
-        scrollView.addView(container);
-        setContentView(scrollView);
-
-        chipGroup = new ChipGroup(this);
-        chipGroup.setSingleLine(false);
-        container.addView(chipGroup);
+        chipGroup = findViewById(R.id.chipGroupTags);
+        newTagInput = findViewById(R.id.etNewTag);
+        btnAddTag = findViewById(R.id.btnAddTag);
+        btnSave = findViewById(R.id.btnSaveTags);
 
         // Long press anywhere in chipGroup to enter delete mode
         chipGroup.setOnLongClickListener(v -> {
@@ -78,22 +69,15 @@ public class TaggingActivity extends AppCompatActivity {
             return true;
         });
 
-        newTagInput = new EditText(this);
-        newTagInput.setHint("Add new tag");
+        newTagInput = findViewById(R.id.etNewTag);
         newTagInput.setInputType(InputType.TYPE_CLASS_TEXT);
-        container.addView(newTagInput);
 
-        Button btnAddTag = new Button(this);
-        btnAddTag.setText("Add Tag");
-        container.addView(btnAddTag);
+        btnAddTag = findViewById(R.id.btnAddTag);
+        btnSave = findViewById(R.id.btnSaveTags);
 
-        btnSave = new Button(this);
-        btnSave.setText("Save");
-        container.addView(btnSave);
     }
 
     private void setupAddTagButton() {
-        Button btnAddTag = (Button) ((LinearLayout) chipGroup.getParent()).getChildAt(2);
         btnAddTag.setOnClickListener(v -> {
             String name = newTagInput.getText().toString().trim();
             if (!name.isEmpty()) {
@@ -196,6 +180,12 @@ public class TaggingActivity extends AppCompatActivity {
 
         attachChipLongPress(chip);
 
+        FlexboxLayout.LayoutParams lp = new FlexboxLayout.LayoutParams(
+                FlexboxLayout.LayoutParams.WRAP_CONTENT,
+                FlexboxLayout.LayoutParams.WRAP_CONTENT);
+        int margin = dpToPx(4);
+        lp.setMargins(margin, 0, margin, 0);
+        chip.setLayoutParams(lp);
         chipGroup.addView(chip);
         return chip;
     }
