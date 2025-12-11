@@ -247,6 +247,7 @@ public class AlbumDetailBottomSheet extends BottomSheetDialogFragment {
         return Math.round(dp * scale);
     }
 
+    int lastColor = -1;
     private int getRandomChipColor() {
         int[] chipColors = new int[]{
                 R.color.chip_red,
@@ -254,7 +255,12 @@ public class AlbumDetailBottomSheet extends BottomSheetDialogFragment {
                 R.color.chip_green,
                 R.color.chip_yellow
         };
-        int index = new Random().nextInt(chipColors.length);
-        return ContextCompat.getColor(this.getContext(), chipColors[index]);
+        int index;
+        do {
+            index = new Random().nextInt(chipColors.length);
+        } while (index == lastColor);
+
+        lastColor = index;
+        return ContextCompat.getColor(requireContext(), chipColors[index]);
     }
 }

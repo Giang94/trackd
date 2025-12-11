@@ -57,7 +57,7 @@ public class TwoFingerZoomLayout extends FrameLayout {
 
         decor.removeViewAt(0);
         this.addView(content);
-        decor.addView(this);
+        decor.addView(this, 0);
     }
 
     @Override

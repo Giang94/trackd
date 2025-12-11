@@ -1,213 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/scroll"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:fillViewport="true">
+            android:id="@+id/scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
 
             <!-- Header -->
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingTop="4dp"
-                android:paddingBottom="12dp">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
                 <TextView
-                    android:id="@+id/tvTitle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="TRACKD"
-                    android:textColor="#2b1b18"
-                    android:textSize="28sp"
-                    android:textStyle="bold" />
+                        android:id="@+id/tvTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="TRACK'D"
+                        android:textColor="#2B1B18"
+                        android:textSize="26sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.02" />
 
                 <ImageView
-                    android:id="@+id/ivProfile"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:contentDescription="profile"
-                    android:padding="6dp"
-                    android:src="@drawable/ic_person_24" />
+                        android:id="@+id/ivProfile"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:background="@drawable/lux_circle_bg"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_person_24"
+                        android:contentDescription="profile" />
             </LinearLayout>
 
+            <!-- Stats Row -->
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal"
-                android:weightSum="3">
-
-                <!-- Total Items Card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cvTotal"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_weight="1"
-                    app:cardBackgroundColor="#FFFFFFFF"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="6dp"
-                    app:cardUseCompatPadding="true"
-                    app:strokeColor="#E0E0E0"
-                    app:strokeWidth="1dp">
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:weightSum="3">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                <!-- STAT CARD TEMPLATE APPLIED 3x -->
+                <include
+                        layout="@layout/item_stat_card"
+                        android:id="@+id/cardTotal"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="12dp">
+                        android:layout_weight="1"
+                        android:layout_marginEnd="10dp" />
 
-                        <TextView
-                            android:id="@+id/tvTotalItems"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="0"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="Total"
-                            android:textColor="#555555"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Vinyl Card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_weight="1"
-                    app:cardBackgroundColor="#FFFFFFFF"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="6dp"
-                    app:cardUseCompatPadding="true"
-                    app:strokeColor="#E0E0E0"
-                    app:strokeWidth="1dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                <include
+                        layout="@layout/item_stat_card"
+                        android:id="@+id/cardVinyl"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="12dp">
+                        android:layout_weight="1"
+                        android:layout_marginEnd="10dp" />
 
-                        <TextView
-                            android:id="@+id/tvVinyl"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="0"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="Vinyl"
-                            android:textColor="#555555"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- CDs Card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_weight="1"
-                    app:cardBackgroundColor="#FFFFFFFF"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="6dp"
-                    app:cardUseCompatPadding="true"
-                    app:strokeColor="#E0E0E0"
-                    app:strokeWidth="1dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                <include
+                        layout="@layout/item_stat_card"
+                        android:id="@+id/cardCds"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="12dp">
-
-                        <TextView
-                            android:id="@+id/tvCds"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="0"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="CDs"
-                            android:textColor="#555555"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
+                        android:layout_weight="1" />
             </LinearLayout>
 
             <!-- Recently Added -->
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Recently Added"
-                android:textColor="#2b1b18"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="28dp"
+                    android:text="Recently Added"
+                    android:textColor="#2B1B18"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.015" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvRecent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:nestedScrollingEnabled="false" />
+                    android:id="@+id/rvRecent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:nestedScrollingEnabled="false" />
 
-            <!-- bottom padding -->
             <View
-                android:layout_width="match_parent"
-                android:layout_height="24dp" />
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
     <!-- Floating Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAddAlbum"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="24dp"
-        android:contentDescription="Add album"
-        android:visibility="gone"
-        app:backgroundTint="@color/black"
-        app:srcCompat="@drawable/ic_add"
-        app:tint="@color/white" />
+            android:id="@+id/fabAddAlbum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="24dp"
+            android:visibility="gone"
+            app:backgroundTint="#2B1B18"
+            app:tint="#FFFFFF"
+            app:srcCompat="@drawable/ic_add" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

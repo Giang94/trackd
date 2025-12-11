@@ -1,14 +1,13 @@
 package com.app.trackd.database;
 
-import androidx.annotation.NonNull;
+import static com.app.trackd.database.AppDatabase.DATABASE_VERSION;
+
+import android.content.Context;
+
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
-import androidx.room.migration.Migration;
-import androidx.sqlite.db.SupportSQLiteDatabase;
-
-import android.content.Context;
 
 import com.app.trackd.dao.IAlbumArtistDao;
 import com.app.trackd.dao.IAlbumDao;
@@ -29,10 +28,12 @@ import com.app.trackd.model.ref.AlbumTagCrossRef;
                 Tag.class,
                 AlbumTagCrossRef.class
         },
-        version = 3, exportSchema = false)
+        version = DATABASE_VERSION, exportSchema = false)
 
 @TypeConverters({EmbeddingConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
+
+    public static final int DATABASE_VERSION = 3;
 
     public abstract IAlbumDao albumDao();
 
@@ -46,13 +47,13 @@ public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase instance;
 
-    static final Migration MIGRATION_2_TO_3 = new Migration(2, 3) {
-        @Override
-        public void migrate(@NonNull SupportSQLiteDatabase database) {
-            // Add spotifyUrl column with default empty string (or null)
-            database.execSQL("ALTER TABLE Album ADD COLUMN spotifyUrl TEXT");
-        }
-    };
+//    static final Migration MIGRATION_2_TO_3 = new Migration(2, 3) {
+//        @Override
+//        public void migrate(@NonNull SupportSQLiteDatabase database) {
+//            // Add spotifyUrl column with default empty string (or null)
+//            database.execSQL("ALTER TABLE Album ADD COLUMN spotifyUrl TEXT");
+//        }
+//    };
 
     public static synchronized AppDatabase get(Context context) {
         if (instance == null) {
@@ -63,7 +64,7 @@ public abstract class AppDatabase extends RoomDatabase {
                             "trackd.db"
                     )
                     .allowMainThreadQueries()
-                    .addMigrations(MIGRATION_2_TO_3)
+//                    .addMigrations(MIGRATION_2_TO_3)
                     .build();
         }
         return instance;

@@ -17,7 +17,7 @@
     <color name="trackd_secondary_variant">#D32F2F</color>
     <color name="trackd_on_secondary">#FFFFFF</color>
 
-    <color name="trackd_background">#F5F5F5</color>     <!-- Clean light bg -->
+    <color name="trackd_background">#F9F6F1</color>     <!-- Clean light bg -->
     <color name="trackd_surface">#FFFFFF</color>
 
     <color name="trackd_statusbar">#1E1E1E</color>
@@ -27,4 +27,53 @@
     <color name="chip_blue">#42A5F5</color>
     <color name="chip_green">#66BB6A</color>
     <color name="chip_yellow">#FFCA28</color>
+
+    <color name="jp_bg">#F6F4EE</color>
+    <color name="jp_surface">#FFFFFF</color>
+    <color name="jp_primary">#2F2F2F</color>
+    <color name="jp_on_primary">#FFFFFF</color>
+
+    <!-- Accents -->
+    <color name="jp_accent">#6A8F76</color>       <!-- muted green -->
+    <color name="jp_accent_variant">#557A63</color>
+    <color name="jp_on_accent">#FFFFFF</color>
+
+    <!-- Supporting -->
+    <color name="jp_grey_soft">#DAD7D2</color>
+    <color name="jp_grey_medium">#9A968F</color>
+
+    <!-- Bars -->
+    <color name="jp_statusbar">#2F2F2F</color>
+    <color name="jp_navbar">#FFFFFF</color>
+
+    <!-- Chips pastel -->
+    <color name="jp_chip_red">#FFB4A2</color>
+    <color name="jp_chip_blue">#A9C9FF</color>
+    <color name="jp_chip_green">#B7E2C6</color>
+    <color name="jp_chip_yellow">#FFE6A7</color>
+
+    <!-- Backgrounds -->
+    <color name="vinyl_bg">#F4EFEA</color>           <!-- aged paper / cream -->
+    <color name="vinyl_surface">#E2D7CA</color>      <!-- cards / panels -->
+
+    <!-- Text -->
+    <color name="vinyl_text_primary">#3B2F2F</color> <!-- dark chocolate -->
+    <color name="vinyl_text_secondary">#6B5E57</color> <!-- softer brown / hint -->
+
+    <!-- Main Accent -->
+    <color name="vinyl_accent_primary">#C85C38</color> <!-- burnt orange / terracotta -->
+    <color name="vinyl_accent_variant">#E07B5B</color> <!-- lighter variant for hover / pressed -->
+
+    <!-- Secondary Accent -->
+    <color name="vinyl_accent_secondary">#6A8E7F</color> <!-- muted teal / vinyl sleeve color -->
+    <color name="vinyl_accent_secondary_variant">#8DB9A3</color>
+
+    <!-- Greys / Neutral -->
+    <color name="vinyl_grey_light">#DAD2C8</color>
+    <color name="vinyl_grey_medium">#A89F94</color>
+    <color name="vinyl_grey_dark">#5A5046</color>
+
+    <!-- System Bars -->
+    <color name="vinyl_statusbar">#3B2F2F</color>
+    <color name="vinyl_navbar">#F4EFEA</color>
 </resources>

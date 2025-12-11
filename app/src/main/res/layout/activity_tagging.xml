@@ -1,133 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    android:titleTextColor="@color/black">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/screen_padding">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/screen_padding">
 
         <!-- Header -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingTop="4dp"
-            android:paddingBottom="12dp">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingTop="4dp"
+                android:paddingBottom="12dp">
 
             <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tag Album"
-                android:textAlignment="center"
-                android:textColor="#2b1b18"
-                android:textSize="@dimen/header_text_size"
-                android:textStyle="bold" />
+                    android:id="@+id/tvTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tag Album"
+                    android:textAlignment="center"
+                    android:textColor="#2b1b18"
+                    android:textSize="@dimen/header_text_size"
+                    android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/padding_medium">
-
-            <ImageView
-                android:id="@+id/ivCover"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_gravity="center"
-                android:background="#ddd"
-                android:scaleType="centerCrop"
-                android:src="@drawable/cover_placeholder" />
-
-            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/padding_small">
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/padding_medium">
+
+            <ImageView
+                    android:id="@+id/ivCover"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center"
+                    android:background="#ddd"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/cover_placeholder" />
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/padding_small">
                 <!-- Album title -->
                 <TextView
-                    android:id="@+id/albumTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/padding_small"
-                    android:paddingRight="@dimen/padding_small"
-                    android:paddingBottom="@dimen/padding_small"
-                    android:text="Album Title"
-                    android:textAlignment="viewStart"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                        android:id="@+id/albumTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/padding_small"
+                        android:paddingRight="@dimen/padding_small"
+                        android:paddingBottom="@dimen/padding_small"
+                        android:text="Album Title"
+                        android:textAlignment="viewStart"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/albumArtist"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/padding_small"
-                    android:paddingRight="@dimen/padding_small"
-                    android:text="Album artists"
-                    android:textAlignment="viewStart"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                        android:id="@+id/albumArtist"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/padding_small"
+                        android:paddingRight="@dimen/padding_small"
+                        android:text="Album artists"
+                        android:textAlignment="viewStart"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
 
         <!-- Existing tags as chips -->
         <com.google.android.flexbox.FlexboxLayout
-            android:id="@+id/chipGroupTags"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_medium"
-            android:clipChildren="false"
-            app:alignItems="center"
-            app:flexWrap="wrap"
-            app:justifyContent="center" />
+                android:id="@+id/chipGroupTags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_medium"
+                android:clipChildren="false"
+                app:alignItems="center"
+                app:flexWrap="wrap"
+                app:justifyContent="center" />
 
         <!-- Add new tag -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_large"
-            android:layout_marginRight="@dimen/margin_large"
-            android:layout_marginBottom="@dimen/margin_small"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:layout_marginRight="@dimen/margin_large"
+                android:layout_marginBottom="@dimen/margin_small"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/etNewTag"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="Add new tag"
-                android:imeOptions="actionDone"
-                android:inputType="text"
-                android:singleLine="true" />
+                    android:id="@+id/etNewTag"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Add new tag"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:singleLine="true" />
 
             <ImageButton
-                android:id="@+id/btnAddTag"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Add Tag"
-                android:padding="8dp"
-                android:src="@drawable/ic_check" />
+                    android:id="@+id/btnAddTag"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Add Tag"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_check" />
         </LinearLayout>
 
 
         <!-- Save selected tags -->
         <Button
-            android:id="@+id/btnSaveTags"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_large"
-            android:layout_marginRight="@dimen/margin_large"
-            android:text="Save tags" />
+                android:id="@+id/btnSaveTags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:layout_marginRight="@dimen/margin_large"
+                android:text="Save tags" />
 
     </LinearLayout>
 </ScrollView>

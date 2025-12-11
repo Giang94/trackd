@@ -3,9 +3,13 @@ package com.app.trackd.activity;
 import static com.app.trackd.activity.EditAlbumActivity.EXTRA_ALBUM_ID;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -23,6 +27,7 @@ import com.app.trackd.fragment.AlbumDetailBottomSheet;
 import com.app.trackd.model.Album;
 import com.app.trackd.model.AlbumWithArtists;
 import com.app.trackd.model.Tag;
+import com.app.trackd.database.DatabaseHelper;
 import com.app.trackd.util.StringUtils;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -31,14 +36,18 @@ import java.util.List;
 
 public class MainActivity extends FragmentActivity {
 
-    private MaterialCardView cvTotal;
-    private TextView tvTotalItems, tvVinyl, tvCds;
+    View cardTotal, cardVinyl, cardCds;
+    TextView totalValue, vinylValue, cdsValue;
+    TextView totalLabel, vinylLabel, cdsLabel;
     private ImageView ivProfile;
     private RecyclerView rvRecent;
     private FloatingActionButton fabAddAlbum;
     private RecentAlbumListAdapter adapter;
     private List<AlbumWithArtists> albums;
     private AppDatabase db;
+    private DatabaseHelper databaseHelper;
+    private ActivityResultLauncher<Intent> exportLauncher;
+    private ActivityResultLauncher<Intent> importLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,13 +55,17 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         db = AppDatabase.get(this);
-        seedTags(db, List.of("Autographed", "Boxset", "Limited Edition", "Deluxe"));
+        databaseHelper = DatabaseHelper.get(this);
+
+        // seedTags(db, List.of("Autographed", "Boxset", "Limited Edition", "Deluxe"));
 
         TwoFingerZoomHelper.enableTwoFingerZoom(this);
         TwoFingerDoubleTapHelper.enableTwoFingerDoubleTap(this);
 
         initViews();
         setupData();
+        setupLaunchers();
+        setupMenu();
     }
 
     public static void seedTags(AppDatabase db, List<String> tagsToSeed) {
@@ -71,15 +84,29 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void initViews() {
-        cvTotal = findViewById(R.id.cvTotal);
-        tvTotalItems = findViewById(R.id.tvTotalItems);
-        tvVinyl = findViewById(R.id.tvVinyl);
-        tvCds = findViewById(R.id.tvCds);
+        cardTotal = findViewById(R.id.cardTotal);
+        cardVinyl = findViewById(R.id.cardVinyl);
+        cardCds = findViewById(R.id.cardCds);
+        // find the TextViews *inside* each included card
+        totalValue = cardTotal.findViewById(R.id.tvValue);
+        totalLabel = cardTotal.findViewById(R.id.tvLabel);
+
+        vinylValue = cardVinyl.findViewById(R.id.tvValue);
+        vinylLabel = cardVinyl.findViewById(R.id.tvLabel);
+
+        cdsValue = cardCds.findViewById(R.id.tvValue);
+        cdsLabel = cardCds.findViewById(R.id.tvLabel);
+        // Set values
+        totalLabel.setText("Total");
+        vinylLabel.setText("Vinyl");
+        cdsLabel.setText("CDs");
+
+
         rvRecent = findViewById(R.id.rvRecent);
         ivProfile = findViewById(R.id.ivProfile);
         fabAddAlbum = findViewById(R.id.fabAddAlbum);
 
-        cvTotal.setOnClickListener(v -> {
+        cardTotal.setOnClickListener(v -> {
             Intent i = new Intent(MainActivity.this, AlbumListActivity.class);
             startActivity(i);
         });
@@ -129,9 +156,9 @@ public class MainActivity extends FragmentActivity {
         int total = db.albumDao().getAlbumCount();
         int vinyl = db.albumDao().getAlbumCountByFormat("VINYL");
         int cds = db.albumDao().getAlbumCountByFormat("CD");
-        tvTotalItems.setText(String.valueOf(total));
-        tvVinyl.setText(String.valueOf(vinyl));
-        tvCds.setText(String.valueOf(cds));
+        totalValue.setText(String.valueOf(total));
+        vinylValue.setText(String.valueOf(vinyl));
+        cdsValue.setText(String.valueOf(cds));
     }
 
     private final ActivityResultLauncher<Intent> editAlbumLauncher =
@@ -183,5 +210,81 @@ public class MainActivity extends FragmentActivity {
         });
 
         sheet.show(getSupportFragmentManager(), "album_detail_sheet");
+    }
+
+    private void setupLaunchers() {
+
+        exportLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        Uri uri = result.getData().getData();
+                        databaseHelper.exportDatabase(uri);
+                        Toast.makeText(this, "Exported!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+
+        importLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        Uri uri = result.getData().getData();
+                        databaseHelper.importDatabase(uri);
+                        restartApp();
+                    }
+                }
+        );
+    }
+
+    private void setupMenu() {
+        ivProfile.setOnClickListener(v -> {
+            PopupMenu menu = new PopupMenu(this, v);
+            menu.getMenu().add("Export Database");
+            menu.getMenu().add("Import Database");
+
+            menu.setOnMenuItemClickListener(item -> {
+                if (item.getTitle().equals("Export Database")) {
+                    startExportPicker();
+                } else if (item.getTitle().equals("Import Database")) {
+                    startImportPicker();
+                }
+                return true;
+            });
+
+            menu.show();
+        });
+    }
+
+    private void startExportPicker() {
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("application/x-sqlite3");
+        intent.putExtra(Intent.EXTRA_TITLE, "trackd_backup.db");
+
+        exportLauncher.launch(intent);
+    }
+
+    private void startImportPicker() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+
+        importLauncher.launch(intent);
+    }
+
+    private void restartApp() {
+        Intent i = getBaseContext().getPackageManager()
+                .getLaunchIntentForPackage(getBaseContext().getPackageName());
+
+        if (i != null) {
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_NEW_TASK |
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(i);
+        }
+
+        finish();
+        Runtime.getRuntime().exit(0);
     }
 }

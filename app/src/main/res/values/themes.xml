@@ -25,5 +25,58 @@
         <item name="android:fitsSystemWindows">true</item>
     </style>
 
+    <style name="Theme.JPTrackd" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Core colors -->
+        <item name="colorPrimary">#42aaf5</item>
+        <item name="colorPrimaryVariant">@color/jp_accent_variant</item>
+        <item name="colorOnPrimary">@color/jp_on_primary</item>
 
+        <item name="colorSecondary">@color/jp_accent</item>
+        <item name="colorSecondaryVariant">@color/jp_accent_variant</item>
+        <item name="colorOnSecondary">@color/jp_on_accent</item>
+
+        <!-- Backgrounds -->
+        <item name="android:windowBackground">@color/jp_bg</item>
+        <item name="colorSurface">@color/jp_surface</item>
+
+        <!-- System bars -->
+        <item name="android:statusBarColor">@color/jp_statusbar</item>
+        <item name="android:navigationBarColor">@color/jp_navbar</item>
+
+        <!-- Make system bars opaque (so nothing goes under them again!) -->
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">never</item>
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
+
+
+    <style name="Theme.Trackd.Vintage" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Core Colors -->
+        <item name="colorPrimary">@color/vinyl_accent_primary</item>
+        <item name="colorPrimaryVariant">@color/vinyl_accent_variant</item>
+        <item name="colorOnPrimary">@color/vinyl_text_primary</item>
+
+        <item name="colorSecondary">@color/vinyl_accent_secondary</item>
+        <item name="colorSecondaryVariant">@color/vinyl_accent_secondary_variant</item>
+        <item name="colorOnSecondary">@color/vinyl_text_secondary</item>
+
+        <!-- Background / Surface -->
+        <item name="android:windowBackground">@color/vinyl_bg</item>
+        <item name="colorSurface">@color/vinyl_surface</item>
+        <item name="colorOnSurface">@color/vinyl_text_primary</item>
+
+        <!-- Text Colors -->
+        <item name="android:textColorPrimary">@color/vinyl_text_primary</item>
+        <item name="android:textColorSecondary">@color/vinyl_text_secondary</item>
+
+        <!-- Status / Navigation Bars -->
+        <item name="android:statusBarColor">@color/vinyl_statusbar</item>
+        <item name="android:navigationBarColor">@color/vinyl_navbar</item>
+
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">never</item>
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
 </resources>
