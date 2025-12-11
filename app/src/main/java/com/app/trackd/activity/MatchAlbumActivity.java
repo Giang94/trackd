@@ -132,7 +132,7 @@ public class MatchAlbumActivity extends AppCompatActivity {
             });
 
     private void setupGalleryButton() {
-        btnPickPhoto = findViewById(R.id.btnPickFromGallery);  // your new button
+        btnPickPhoto = findViewById(R.id.btnPickFromGallery);
 
         btnPickPhoto.setOnClickListener(v -> {
             pickImageLauncher.launch("image/*");
@@ -224,7 +224,7 @@ public class MatchAlbumActivity extends AppCompatActivity {
         }
 
         // Use photoMatcher to find top matches
-        List<Album> topMatches = tfPhotoMatcher.findTopMatches(bitmap, albums, 5);
+        List<Album> topMatches = tfPhotoMatcher.findTopMatches(bitmap, albums, 10);
         if (topMatches.isEmpty()) {
             tvMatchesResults.setText("No matches found");
             tvMatchesResults.setVisibility(View.VISIBLE);

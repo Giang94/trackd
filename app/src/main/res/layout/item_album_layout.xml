@@ -43,7 +43,6 @@
                     android:id="@+id/tvArtists"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textColor="#666666"
                     android:maxLines="1"
                     android:ellipsize="end"
                     android:textSize="14sp"
@@ -58,7 +57,6 @@
                     android:id="@+id/tvYear"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#888888"
                     android:textSize="12sp"
                     android:layout_marginTop="4dp"
                     app:layout_constraintBottom_toTopOf="@id/tvFormat"
@@ -69,7 +67,6 @@
                     android:id="@+id/tvFormat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#888888"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />

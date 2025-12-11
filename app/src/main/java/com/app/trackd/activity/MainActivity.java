@@ -33,7 +33,10 @@ import com.app.trackd.model.Tag;
 import com.app.trackd.util.StringUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends FragmentActivity {
 
@@ -275,7 +278,11 @@ public class MainActivity extends FragmentActivity {
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("application/x-sqlite3");
-        intent.putExtra(Intent.EXTRA_TITLE, "trackd_backup.db");
+
+        String time = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
+                .format(new Date());
+        String fileName = "trackd_backup_" + time + ".db";
+        intent.putExtra(Intent.EXTRA_TITLE, fileName);
 
         exportLauncher.launch(intent);
     }
