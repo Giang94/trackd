@@ -1,12 +1,16 @@
 package com.app.trackd.activity;
 
 import static com.app.trackd.activity.EditAlbumActivity.EXTRA_ALBUM_ID;
+import static com.app.trackd.activity.EditAlbumActivity.EXTRA_UPDATED_ALBUM_ID;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -17,13 +21,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.trackd.R;
 import com.app.trackd.adapter.AlbumListAdapter;
+import com.app.trackd.common.NoMultiTouchEditText;
 import com.app.trackd.common.TwoFingerDoubleTapHelper;
 import com.app.trackd.common.TwoFingerZoomHelper;
 import com.app.trackd.database.AppDatabase;
 import com.app.trackd.fragment.AlbumDetailBottomSheet;
+import com.app.trackd.fragment.AlbumFilterBottomSheet;
 import com.app.trackd.model.Album;
 import com.app.trackd.model.AlbumWithArtists;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.app.trackd.model.enums.AlbumFormat;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -33,65 +39,56 @@ import java.util.stream.Collectors;
 
 public class AlbumListActivity extends FragmentActivity {
 
+    public static final String EXTRA_FILTER_VINYL = "filterVinyl";
+    public static final String EXTRA_FILTER_CDS = "filterCds";
+
     private RecyclerView rvAlbums;
     private TextInputLayout searchInputLayout;
-    private TextInputEditText searchInput;
+    private NoMultiTouchEditText searchInput;
     private TextView tvTitle;
-    private FloatingActionButton fabAddAlbum;
+    private ImageButton btnFilter;
 
     private AlbumListAdapter adapter;
     private final List<AlbumWithArtists> albums = new ArrayList<>();
 
     private AppDatabase db;
 
-    private static final int PAGE_SIZE = 10;
-    private int currentOffset = 0;
-    private boolean isLoading = false;
-    private boolean noMore = false;
+    private boolean filterVinyl = true;
+    private boolean filterCds = true;
 
     // --- ACTIVITY RESULT HANDLER ---
-    private final ActivityResultLauncher<Intent> editAlbumLauncher =
-            registerForActivityResult(
-                    new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        if (result.getResultCode() == RESULT_OK &&
-                                result.getData() != null) {
-
-                            long id = result.getData().getLongExtra(EditAlbumActivity.EXTRA_UPDATED_ALBUM_ID, -1);
-                            if (id != -1) updateSingleAlbum(id);
-                        }
-                    });
-
-    // ---------------------------------------------------------------------
+    private final ActivityResultLauncher<Intent> editAlbumLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK &&
+                        result.getData() != null) {
+                    long id = result.getData().getLongExtra(EXTRA_UPDATED_ALBUM_ID, -1);
+                    if (id != -1) updateSingleAlbum(id);
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_list);
 
-        initGestures();
+        ViewGroup decor = (ViewGroup) getWindow().getDecorView();
+        for (int i = 0; i < decor.getChildCount(); i++) {
+            Log.d("DecorChild", "Child " + i + ": " + decor.getChildAt(i));
+        }
+
+        TwoFingerZoomHelper.enableTwoFingerZoom(this);
+        TwoFingerDoubleTapHelper.enableTwoFingerDoubleTap(this);
+
         initDatabase();
         initViews();
         initRecycler();
-        initAddButton();
         initSearch();
 
-        loadPagedAlbums();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        updateHeader();
-    }
-
-    // ---------------------------------------------------------------------
-    // INIT
-    // ---------------------------------------------------------------------
-
-    private void initGestures() {
-        TwoFingerDoubleTapHelper.enableTwoFingerDoubleTap(this);
-        TwoFingerZoomHelper.enableTwoFingerZoom(this);
+        // Read filter from intent
+        filterVinyl = getIntent().getBooleanExtra(EXTRA_FILTER_VINYL, true);
+        filterCds = getIntent().getBooleanExtra(EXTRA_FILTER_CDS, true);
+        applyCombinedFilter();
     }
 
     private void initDatabase() {
@@ -103,26 +100,15 @@ public class AlbumListActivity extends FragmentActivity {
         rvAlbums = findViewById(R.id.rvAlbums);
         searchInput = findViewById(R.id.searchInput);
         searchInputLayout = findViewById(R.id.searchInputLayout);
-        updateHeader();
+        btnFilter = findViewById(R.id.btnFilter);
+        btnFilter.setOnClickListener(v -> showFilterSheet());
+        updateHeader(albums);
     }
 
     private void initRecycler() {
         rvAlbums.setLayoutManager(new LinearLayoutManager(this));
-
-        adapter = new AlbumListAdapter(
-                albums,
-                this::loadPagedAlbums,
-                this::openAlbumDetails
-        );
-
+        adapter = new AlbumListAdapter(albums, this::applyCombinedFilter, this::openAlbumDetails);
         rvAlbums.setAdapter(adapter);
-    }
-
-    private void initAddButton() {
-        fabAddAlbum = findViewById(R.id.fabAddAlbum);
-        fabAddAlbum.setOnClickListener(v ->
-                startActivity(new Intent(this, AddAlbumActivity.class))
-        );
     }
 
     private void initSearch() {
@@ -144,7 +130,7 @@ public class AlbumListActivity extends FragmentActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                handleSearch(editable.toString().trim());
+                applyCombinedFilter();
             }
         });
 
@@ -157,81 +143,65 @@ public class AlbumListActivity extends FragmentActivity {
         });
     }
 
-    // ---------------------------------------------------------------------
-    // SEARCH HANDLING
-    // ---------------------------------------------------------------------
-
-    private void handleSearch(String text) {
-        if (text.isEmpty()) {
-            resetFullList();
-            loadPagedAlbums();
-            return;
-        }
-
-        Log.d("FILTER", "Searching: " + text);
-
-        new Thread(() -> {
-            List<Album> results =
-                    db.albumDao().searchAlbums("%" + text + "%");
-
-            List<Long> ids = results.stream()
-                    .map(Album::getId)
-                    .collect(Collectors.toList());
-
-            List<AlbumWithArtists> fullData =
-                    db.albumDao().getAlbumsWithArtistsByIds(ids);
-
-            runOnUiThread(() -> adapter.updateList(fullData));
-        }).start();
+    // ----------------- FILTER HANDLING -----------------
+    private void showFilterSheet() {
+        AlbumFilterBottomSheet sheet = new AlbumFilterBottomSheet(
+                filterVinyl,
+                filterCds,
+                (vinyl, cds) -> {
+                    filterVinyl = vinyl;
+                    filterCds = cds;
+                    applyCombinedFilter();
+                }
+        );
+        sheet.show(getSupportFragmentManager(), "album_filter_sheet");
     }
 
-    private void resetFullList() {
-        albums.clear();
-        adapter.notifyDataSetChanged();
-
-        currentOffset = 0;
-        noMore = false;
-        isLoading = false;
-    }
-
-    // ---------------------------------------------------------------------
-    // PAGINATION
-    // ---------------------------------------------------------------------
-
-    private void loadPagedAlbums() {
-        if (isLoading || noMore) return;
-        isLoading = true;
+    private void applyCombinedFilter() {
+        String text = searchInput.getText() != null ? searchInput.getText().toString().trim() : "";
 
         new Thread(() -> {
-            List<Album> page =
-                    db.albumDao().getAlbumsPaged(currentOffset, PAGE_SIZE);
+            List<Album> filtered;
 
-            if (page.isEmpty()) {
-                noMore = true;
-                isLoading = false;
-                return;
+            if (filterVinyl && filterCds) {
+                filtered = db.albumDao().getAllAlbums();
+            } else if (filterVinyl) {
+                filtered = db.albumDao().getAlbumsByFormats(AlbumFormat.getVinylNames());
+            } else if (filterCds) {
+                filtered = db.albumDao().getAlbumsByFormats(List.of(AlbumFormat.CD.name()));
+            } else {
+                filtered = db.albumDao().getAllAlbums();
             }
 
-            List<Long> ids = page.stream()
-                    .map(Album::getId)
-                    .collect(Collectors.toList());
+            // Fetch AlbumWithArtists for these albums
+            List<Long> ids = filtered.stream().map(Album::getId).toList();
 
-            List<AlbumWithArtists> fullData =
-                    db.albumDao().getAlbumsWithArtistsByIds(ids);
+            var data = new Object() {
+                List<AlbumWithArtists> values = new ArrayList<>();
+            };
+            data.values = db.albumDao().getAlbumsWithArtistsByIds(ids);
+
+            // Now filter by text input (album name OR artist name)
+            if (!text.isEmpty()) {
+                data.values = data.values.stream()
+                        .filter(awa -> awa.getAlbum().getTitle().toLowerCase()
+                                .contains(searchInput.getText().toString().trim().toLowerCase()) ||
+                                awa.getArtists().stream()
+                                        .anyMatch(ar -> ar.getDisplayName().toLowerCase()
+                                                .contains(searchInput.getText().toString().trim().toLowerCase()))
+                        )
+                        .collect(Collectors.toList());
+            }
 
             runOnUiThread(() -> {
-                albums.addAll(fullData);
-                adapter.notifyDataSetChanged();
-                currentOffset += page.size();
-                isLoading = false;
+                adapter.updateList(data.values);
+                updateHeader(data.values);
             });
         }).start();
     }
 
-    // ---------------------------------------------------------------------
-    // DETAILS + UPDATE
-    // ---------------------------------------------------------------------
 
+    // ----------------- DETAILS + UPDATE -----------------
     private void openAlbumDetails(AlbumWithArtists album) {
         AlbumDetailBottomSheet sheet = new AlbumDetailBottomSheet(album);
 
@@ -240,28 +210,23 @@ public class AlbumListActivity extends FragmentActivity {
             intent.putExtra(EXTRA_ALBUM_ID, albumId);
             editAlbumLauncher.launch(intent);
         });
+
         sheet.setOnAlbumDeletedListener(albumId -> {
-            resetFullList();
-            updateHeader();
-            loadPagedAlbums();
+            applyCombinedFilter();
         });
 
         sheet.show(getSupportFragmentManager(), "album_detail_sheet");
     }
 
-    private void updateHeader() {
-        int count = db.albumDao().getAlbumCount();
-        tvTitle.setText("Albums (" + count + ")");
+    private void updateHeader(List<AlbumWithArtists> currentList) {
+        tvTitle.setText("Albums (" + currentList.size() + ")");
     }
 
     private void updateSingleAlbum(long albumId) {
         new Thread(() -> {
-            AlbumWithArtists updated =
-                    db.albumDao().getAlbumWithArtistsById(albumId);
-
+            AlbumWithArtists updated = db.albumDao().getAlbumWithArtistsById(albumId);
             int index = findAlbumIndex(albumId);
             if (index == -1) return;
-
             runOnUiThread(() -> {
                 albums.set(index, updated);
                 adapter.notifyItemChanged(index);
@@ -271,10 +236,14 @@ public class AlbumListActivity extends FragmentActivity {
 
     private int findAlbumIndex(long albumId) {
         for (int i = 0; i < albums.size(); i++) {
-            if (albums.get(i).getAlbum().getId() == albumId) {
-                return i;
-            }
+            if (albums.get(i).getAlbum().getId() == albumId) return i;
         }
         return -1;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        TwoFingerZoomHelper.cleanup(this);
     }
 }

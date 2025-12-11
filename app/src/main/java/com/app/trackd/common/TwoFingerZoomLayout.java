@@ -51,14 +51,22 @@ public class TwoFingerZoomLayout extends FrameLayout {
         this.listener = listener;
     }
 
-    public void attachToActivity(Activity activity) {
-        ViewGroup decor = (ViewGroup) activity.getWindow().getDecorView();
-        View content = decor.getChildAt(0);
+    private View originalContent;
+    private ViewGroup originalParent;
 
-        decor.removeViewAt(0);
-        this.addView(content);
-        decor.addView(this, 0);
+    public void attachToActivity(Activity activity) {
+        originalParent = activity.findViewById(android.R.id.content);
+        originalContent = originalParent.getChildAt(0);
+
+        // Avoid double wrapping
+        if (originalContent.getParent() == this) return;
+
+        originalParent.removeView(originalContent);
+        this.addView(originalContent);
+
+        originalParent.addView(this);
     }
+
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {

@@ -1,5 +1,7 @@
 package com.app.trackd.activity;
 
+import static com.app.trackd.activity.AlbumListActivity.EXTRA_FILTER_CDS;
+import static com.app.trackd.activity.AlbumListActivity.EXTRA_FILTER_VINYL;
 import static com.app.trackd.activity.EditAlbumActivity.EXTRA_ALBUM_ID;
 
 import android.content.Intent;
@@ -23,13 +25,12 @@ import com.app.trackd.common.TwoFingerDoubleTapHelper;
 import com.app.trackd.common.TwoFingerZoomHelper;
 import com.app.trackd.dao.ITagDao;
 import com.app.trackd.database.AppDatabase;
+import com.app.trackd.database.DatabaseHelper;
 import com.app.trackd.fragment.AlbumDetailBottomSheet;
 import com.app.trackd.model.Album;
 import com.app.trackd.model.AlbumWithArtists;
 import com.app.trackd.model.Tag;
-import com.app.trackd.database.DatabaseHelper;
 import com.app.trackd.util.StringUtils;
-import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
@@ -108,6 +109,20 @@ public class MainActivity extends FragmentActivity {
 
         cardTotal.setOnClickListener(v -> {
             Intent i = new Intent(MainActivity.this, AlbumListActivity.class);
+            startActivity(i);
+        });
+
+        cardVinyl.setOnClickListener(v -> {
+            Intent i = new Intent(MainActivity.this, AlbumListActivity.class);
+            i.putExtra(EXTRA_FILTER_VINYL, true);
+            i.putExtra(EXTRA_FILTER_CDS, false);
+            startActivity(i);
+        });
+
+        cardCds.setOnClickListener(v -> {
+            Intent i = new Intent(MainActivity.this, AlbumListActivity.class);
+            i.putExtra(EXTRA_FILTER_VINYL, false);
+            i.putExtra(EXTRA_FILTER_CDS, true);
             startActivity(i);
         });
 
@@ -286,5 +301,11 @@ public class MainActivity extends FragmentActivity {
 
         finish();
         Runtime.getRuntime().exit(0);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        TwoFingerZoomHelper.cleanup(this);
     }
 }

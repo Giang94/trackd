@@ -1,170 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingLeft="@dimen/padding_medium"
-    android:paddingRight="@dimen/padding_medium">
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardContainer"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:elevation="8dp"
-        app:cardCornerRadius="16dp">
+        android:paddingLeft="@dimen/padding_medium"
+        android:paddingRight="@dimen/padding_medium">
+
+    <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:elevation="8dp"
+            app:cardCornerRadius="16dp">
 
         <!-- Add FrameLayout to overlay buttons -->
         <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
             <!-- SCROLL CONTENT -->
             <androidx.core.widget.NestedScrollView
-                android:id="@+id/scrollView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fillViewport="true"
-                android:padding="@dimen/padding_medium">
-
-                <LinearLayout
-                    android:id="@+id/contentContainer"
+                    android:id="@+id/scrollView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical">
+                    android:fillViewport="true"
+                    android:padding="@dimen/padding_medium">
+
+                <LinearLayout
+                        android:id="@+id/contentContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
                     <!-- Album cover -->
                     <ImageView
-                        android:id="@+id/albumCover"
-                        android:layout_width="200dp"
-                        android:layout_height="200dp"
-                        android:layout_gravity="center_horizontal"
-                        android:scaleType="centerCrop" />
+                            android:id="@+id/albumCover"
+                            android:layout_width="200dp"
+                            android:layout_height="200dp"
+                            android:layout_gravity="center_horizontal"
+                            android:scaleType="centerCrop" />
 
                     <!-- Existing tags as chips -->
                     <com.google.android.flexbox.FlexboxLayout
-                        android:id="@+id/chipGroupTags"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:clipChildren="false"
-                        app:alignItems="center"
-                        app:flexWrap="wrap"
-                        app:justifyContent="center" />
+                            android:id="@+id/chipGroupTags"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:clipChildren="false"
+                            app:alignItems="center"
+                            app:flexWrap="wrap"
+                            app:justifyContent="center" />
 
                     <!-- Album title -->
                     <TextView
-                        android:id="@+id/albumTitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:padding="@dimen/padding_small"
-                        android:text="Album Title"
-                        android:textAlignment="center"
-                        android:textSize="26sp"
-                        android:textStyle="bold" />
+                            android:id="@+id/albumTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:padding="@dimen/padding_small"
+                            android:text="Album Title"
+                            android:textAlignment="center"
+                            android:textSize="26sp"
+                            android:textStyle="bold" />
 
                     <!-- Divider -->
                     <com.google.android.material.divider.MaterialDivider
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/padding_small" />
-
-                    <!-- Album year + format -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/albumFormat"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:padding="@dimen/padding_small"
-                            android:text="Vinyl"
-                            android:textAlignment="center"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:padding="@dimen/padding_small"
-                            android:text="•"
-                            android:textAlignment="center"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/albumYear"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:padding="@dimen/padding_small"
-                            android:text="1997 •"
-                            android:textAlignment="center"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <!-- Divider -->
-                    <com.google.android.material.divider.MaterialDivider
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/padding_small" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:gravity="center"
-                        android:text="Artists"
-                        android:textAlignment="center"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="•"
-                        android:textAlignment="center"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <LinearLayout
-                        android:id="@+id/artistListContainer"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical" />
-
-                    <!-- Open In section -->
-                    <LinearLayout
-                        android:id="@+id/openInContainer"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:paddingTop="@dimen/padding_small">
-
-                        <com.google.android.material.divider.MaterialDivider
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:padding="@dimen/padding_small" />
 
+                    <!-- Album year + format -->
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
                         <TextView
+                                android:id="@+id/albumFormat"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="@dimen/padding_small"
+                                android:text="Vinyl"
+                                android:textAlignment="center"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="@dimen/padding_small"
+                                android:text="•"
+                                android:textAlignment="center"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                        <TextView
+                                android:id="@+id/albumYear"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="@dimen/padding_small"
+                                android:text="1997 •"
+                                android:textAlignment="center"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Divider -->
+                    <com.google.android.material.divider.MaterialDivider
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/padding_small" />
+
+                    <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Open in"
+                            android:gravity="center"
+                            android:text="Artists"
+                            android:textAlignment="center"
                             android:textSize="20sp"
                             android:textStyle="bold" />
 
-                        <TextView
+                    <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
@@ -173,55 +136,92 @@
                             android:textSize="16sp"
                             android:textStyle="bold" />
 
+                    <LinearLayout
+                            android:id="@+id/artistListContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical" />
+
+                    <!-- Open In section -->
+                    <LinearLayout
+                            android:id="@+id/openInContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:paddingTop="@dimen/padding_small">
+
+                        <com.google.android.material.divider.MaterialDivider
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="@dimen/padding_small" />
+
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="Open in"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                        <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="•"
+                                android:textAlignment="center"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
                         <ImageButton
-                            android:id="@+id/btnOpenSpotify"
-                            android:layout_width="wrap_content"
-                            android:layout_height="24dp"
-                            android:layout_gravity="center"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:contentDescription="Open in Spotify"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/ic_spotify_logo" />
+                                android:id="@+id/btnOpenSpotify"
+                                android:layout_width="wrap_content"
+                                android:layout_height="24dp"
+                                android:layout_gravity="center"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:contentDescription="Open in Spotify"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/ic_spotify_logo" />
                     </LinearLayout>
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>
 
             <!-- OVERLAY ICONS (edit, delete, etc.) -->
             <LinearLayout
-                android:id="@+id/topRightButtons"
-                android:layout_width="wrap_content"
-                android:layout_height="200dp"
-                android:layout_gravity="top|end"
-                android:layout_marginTop="@dimen/padding_medium"
-                android:gravity="center"
-                android:orientation="vertical">
+                    android:id="@+id/topRightButtons"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="@dimen/padding_medium"
+                    android:gravity="center"
+                    android:orientation="vertical">
 
                 <ImageButton
-                    android:id="@+id/btnTag"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_margin="@dimen/margin_small"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Tagging"
-                    android:src="@drawable/ic_tag" />
+                        android:id="@+id/btnTag"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_margin="@dimen/margin_small"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Tagging"
+                        android:src="@drawable/ic_tag" />
 
                 <ImageButton
-                    android:id="@+id/btnEdit"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_margin="@dimen/margin_small"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Edit"
-                    android:src="@drawable/ic_edit" />
+                        android:id="@+id/btnEdit"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_margin="@dimen/margin_small"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Edit"
+                        android:src="@drawable/ic_edit" />
 
                 <ImageButton
-                    android:id="@+id/btnDelete"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_margin="@dimen/margin_small"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Delete"
-                    android:src="@drawable/ic_delete" />
+                        android:id="@+id/btnDelete"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_margin="@dimen/margin_small"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Delete"
+                        android:src="@drawable/ic_delete" />
             </LinearLayout>
 
         </FrameLayout>

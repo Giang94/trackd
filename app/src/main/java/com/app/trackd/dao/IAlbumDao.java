@@ -63,4 +63,7 @@ public interface IAlbumDao {
 
     @Query("SELECT * FROM album WHERE id IN (SELECT albumId FROM album_tag WHERE tagId = :tagId)")
     List<Album> getAlbumsByTag(long tagId);
+
+    @Query("SELECT * FROM Album WHERE format IN (:formats)")
+    List<Album> getAlbumsByFormats(List<String> formats);
 }

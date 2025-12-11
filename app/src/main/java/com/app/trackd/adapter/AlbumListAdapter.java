@@ -30,6 +30,12 @@ public class AlbumListAdapter extends RecyclerView.Adapter<AlbumListAdapter.Albu
         this.albums = albums;
         this.loadMoreCallback = loadMoreCallback;
         this.listener = listener;
+        setHasStableIds(true);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return albums.get(position).getAlbum().getId();
     }
 
     @NonNull

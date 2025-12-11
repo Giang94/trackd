@@ -59,6 +59,7 @@
     <!-- Text -->
     <color name="vinyl_text_primary">#3B2F2F</color> <!-- dark chocolate -->
     <color name="vinyl_text_secondary">#6B5E57</color> <!-- softer brown / hint -->
+    <color name="vinyl_text_on_primary">#F4EFEA</color> <!-- softer brown / hint -->
 
     <!-- Main Accent -->
     <color name="vinyl_accent_primary">#C85C38</color> <!-- burnt orange / terracotta -->

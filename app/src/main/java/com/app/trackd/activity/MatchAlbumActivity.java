@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.app.trackd.R;
 import com.app.trackd.adapter.MatchAlbumListAdapter;
 import com.app.trackd.common.OpenCVLoader;
+import com.app.trackd.common.TwoFingerDoubleTapHelper;
 import com.app.trackd.database.AppDatabase;
 import com.app.trackd.matcher.TFPhotoMatcher;
 import com.app.trackd.model.Album;
@@ -68,6 +69,8 @@ public class MatchAlbumActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match_album);
 
+        TwoFingerDoubleTapHelper.enableTwoFingerDoubleTap(this);
+
         OpenCVLoader.init();
         db = AppDatabase.get(this);
 
@@ -97,7 +100,6 @@ public class MatchAlbumActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        int fullCount = albums.size();
         GridLayoutManager glm = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(glm);
         matchAlbumListAdapter = new MatchAlbumListAdapter(new ArrayList<>());
