@@ -9,14 +9,12 @@ import com.app.trackd.util.StringUtils;
 @Entity
 public class Tag {
 
-    @PrimaryKey(autoGenerate = true)
-    private long id;
-
     @NonNull
     public String name;
-
     @NonNull
     public String normalized;
+    @PrimaryKey(autoGenerate = true)
+    private long id;
 
     public Tag(@NonNull String name) {
         this.name = name;

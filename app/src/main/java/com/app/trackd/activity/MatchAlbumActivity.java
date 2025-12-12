@@ -22,7 +22,7 @@ import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.trackd.R;
@@ -49,12 +49,6 @@ public class MatchAlbumActivity extends AppCompatActivity {
     private TextView tvMatchesResults;
     private Bitmap latestBitmap;
     private boolean isPhotoTaken = false;
-
-    private List<Album> albums;
-    private MatchAlbumListAdapter matchAlbumListAdapter;
-    private TFPhotoMatcher tfPhotoMatcher;
-    private AppDatabase db;
-
     private final ActivityResultLauncher<String> cameraPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
                 if (granted) {
@@ -63,6 +57,34 @@ public class MatchAlbumActivity extends AppCompatActivity {
                     Log.d("CameraActivity", "Camera permission denied");
                 }
             });
+    private List<Album> albums;
+    private MatchAlbumListAdapter matchAlbumListAdapter;
+    private TFPhotoMatcher tfPhotoMatcher;
+    private final ActivityResultLauncher<String> pickImageLauncher =
+            registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+                if (uri != null) {
+                    try {
+                        Bitmap bitmap = ImageUtils.uriToBitmap(this, uri);
+
+                        // Show photo on screen
+                        ImageView imageCaptured = findViewById(R.id.imageCaptured);
+                        imageCaptured.setImageBitmap(bitmap);
+                        imageCaptured.setVisibility(View.VISIBLE);
+                        previewView.setVisibility(View.GONE);
+
+                        // Stop camera mode
+                        isPhotoTaken = true;
+                        btnTakePhoto.setImageResource(R.drawable.ic_redo);
+
+                        // Match
+                        matchAndShow(bitmap);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,42 +116,21 @@ public class MatchAlbumActivity extends AppCompatActivity {
     private void initViews() {
         previewView = findViewById(R.id.cameraPreview);
         btnTakePhoto = findViewById(R.id.btnTakePhoto);
-        btnTakePhoto.setImageResource(R.drawable.ic_camera);
+        btnTakePhoto.setImageResource(R.drawable.ic_specs);
         tvMatchesResults = findViewById(R.id.tvMatchesResults);
         recyclerView = findViewById(R.id.recyclerViewMatches);
     }
 
     private void setupRecyclerView() {
-        GridLayoutManager glm = new GridLayoutManager(this, 2);
-        recyclerView.setLayoutManager(glm);
+//        GridLayoutManager glm = new GridLayoutManager(this, 2);
+//        recyclerView.setLayoutManager(glm);
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+
+        recyclerView.setLayoutManager(layoutManager);
         matchAlbumListAdapter = new MatchAlbumListAdapter(new ArrayList<>());
         recyclerView.setAdapter(matchAlbumListAdapter);
     }
-
-    private final ActivityResultLauncher<String> pickImageLauncher =
-            registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
-                if (uri != null) {
-                    try {
-                        Bitmap bitmap = ImageUtils.uriToBitmap(this, uri);
-
-                        // Show photo on screen
-                        ImageView imageCaptured = findViewById(R.id.imageCaptured);
-                        imageCaptured.setImageBitmap(bitmap);
-                        imageCaptured.setVisibility(View.VISIBLE);
-                        previewView.setVisibility(View.GONE);
-
-                        // Stop camera mode
-                        isPhotoTaken = true;
-                        btnTakePhoto.setImageResource(R.drawable.ic_redo);
-
-                        // Match
-                        matchAndShow(bitmap);
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
 
     private void setupGalleryButton() {
         btnPickPhoto = findViewById(R.id.btnPickFromGallery);
@@ -164,7 +165,7 @@ public class MatchAlbumActivity extends AppCompatActivity {
                 tvMatchesResults.setVisibility(GONE);
                 recyclerView.setVisibility(View.GONE);
 
-                btnTakePhoto.setImageResource(R.drawable.ic_camera);
+                btnTakePhoto.setImageResource(R.drawable.ic_specs);
                 isPhotoTaken = false;
 
                 startCamera();

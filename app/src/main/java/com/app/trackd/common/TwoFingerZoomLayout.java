@@ -11,13 +11,10 @@ import android.widget.FrameLayout;
 public class TwoFingerZoomLayout extends FrameLayout {
 
     private static final float ZOOM_OUT_THRESHOLD = 0.9f; // pinch-out threshold
-    private OnZoomOutListener listener;
-
     private final android.view.ScaleGestureDetector scaleDetector;
-
-    public interface OnZoomOutListener {
-        void onZoomOut();
-    }
+    private OnZoomOutListener listener;
+    private View originalContent;
+    private ViewGroup originalParent;
 
     public TwoFingerZoomLayout(Context context) {
         this(context, null);
@@ -51,9 +48,6 @@ public class TwoFingerZoomLayout extends FrameLayout {
         this.listener = listener;
     }
 
-    private View originalContent;
-    private ViewGroup originalParent;
-
     public void attachToActivity(Activity activity) {
         originalParent = activity.findViewById(android.R.id.content);
         originalContent = originalParent.getChildAt(0);
@@ -66,7 +60,6 @@ public class TwoFingerZoomLayout extends FrameLayout {
 
         originalParent.addView(this);
     }
-
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
@@ -85,5 +78,9 @@ public class TwoFingerZoomLayout extends FrameLayout {
             return true;
         }
         return super.onTouchEvent(ev);
+    }
+
+    public interface OnZoomOutListener {
+        void onZoomOut();
     }
 }

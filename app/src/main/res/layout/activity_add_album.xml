@@ -27,7 +27,6 @@
                     android:layout_height="wrap_content"
                     android:text="Add an album"
                     android:textAlignment="center"
-                    android:textColor="#2b1b18"
                     android:textSize="@dimen/header_text_size"
                     android:textStyle="bold" />
         </LinearLayout>
@@ -68,6 +67,7 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/cover_placeholder" />
 
+
         <EditText
                 android:id="@+id/etTitle"
                 android:layout_width="match_parent"
@@ -76,8 +76,8 @@
                 android:layout_marginTop="@dimen/margin_medium"
                 android:layout_marginRight="@dimen/margin_large"
                 android:hint="Album title"
-                android:imeOptions="actionNext"
-                android:singleLine="true" />
+                android:inputType="textMultiLine"
+                android:maxLines="3" />
 
         <MultiAutoCompleteTextView
                 android:id="@+id/etArtist"
@@ -88,8 +88,8 @@
                 android:layout_marginRight="@dimen/margin_large"
                 android:completionThreshold="1"
                 android:hint="Artist"
-                android:imeOptions="actionNext"
-                android:singleLine="true" />
+                android:inputType="textMultiLine"
+                android:maxLines="3" />
 
         <EditText
                 android:id="@+id/etYear"
@@ -118,7 +118,8 @@
                 android:layout_marginTop="@dimen/margin_medium"
                 android:layout_marginRight="@dimen/margin_large"
                 android:hint="Spotify URL"
-                android:singleLine="true" />
+                android:inputType="textMultiLine"
+                android:maxLines="3" />
 
         <Button
                 android:id="@+id/btnSave"

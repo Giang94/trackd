@@ -9,15 +9,9 @@ import android.widget.FrameLayout;
 
 public class TwoFingerDoubleTapLayout extends FrameLayout {
 
-    public interface OnTwoFingerDoubleTapListener {
-        void onTwoFingerDoubleTap();
-    }
-
-    private OnTwoFingerDoubleTapListener listener;
-
     // timing thresholds
     private static final long DOUBLE_TAP_TIMEOUT = 250;
-
+    private OnTwoFingerDoubleTapListener listener;
     // state
     private int lastPointerCount = 0;
     private long lastTapTime = 0;
@@ -77,5 +71,9 @@ public class TwoFingerDoubleTapLayout extends FrameLayout {
                 lastPointerCount = 0;
                 break;
         }
+    }
+
+    public interface OnTwoFingerDoubleTapListener {
+        void onTwoFingerDoubleTap();
     }
 }

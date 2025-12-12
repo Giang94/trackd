@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,6 +41,7 @@ import com.app.trackd.model.Artist;
 import com.app.trackd.model.enums.AlbumFormat;
 import com.app.trackd.model.ref.AlbumArtistCrossRef;
 import com.app.trackd.util.ImageUtils;
+import com.app.trackd.util.SpotifyUrlHelper;
 import com.app.trackd.util.StringUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -86,6 +88,7 @@ public class AddAlbumActivity extends AppCompatActivity {
         initBarcodeScanner();
         loadArtistSuggestions();
         setupListeners();
+        setupEditTextFields();
     }
 
     private void initViews() {
@@ -105,6 +108,17 @@ public class AddAlbumActivity extends AppCompatActivity {
                 scrollView.smoothScrollTo(0, focused.getBottom());
             }
         });
+    }
+
+    private void setupEditTextFields() {
+        etTitle.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+        etTitle.setRawInputType(InputType.TYPE_CLASS_TEXT);
+
+        etArtist.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+        etArtist.setRawInputType(InputType.TYPE_CLASS_TEXT);
+
+        etSpotifyUrl.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        etSpotifyUrl.setRawInputType(InputType.TYPE_CLASS_TEXT);
     }
 
     private void initDropdowns() {
@@ -199,7 +213,8 @@ public class AddAlbumActivity extends AppCompatActivity {
         String title = etTitle.getText().toString().trim();
         String artistInput = etArtist.getText().toString().trim();
         String yearStr = etYear.getText().toString().trim();
-        String spotifyUrl = etSpotifyUrl.getText().toString().trim();
+        String spotifyFullUrl = etSpotifyUrl.getText().toString().trim();
+        String spotifyUrl = SpotifyUrlHelper.normalize(spotifyFullUrl);
 
         if (title.isEmpty() || artistInput.isEmpty()) {
             Toast.makeText(this, "Should provide album name and artist", Toast.LENGTH_SHORT).show();

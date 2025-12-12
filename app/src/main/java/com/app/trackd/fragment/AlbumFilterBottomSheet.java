@@ -11,21 +11,27 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.app.trackd.R;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class AlbumFilterBottomSheet extends BottomSheetDialogFragment {
 
-    public interface FilterListener {
-        void onFilterApplied(boolean vinyl, boolean cds);
-    }
-
-    private boolean preCheckVinyl, preCheckCds;
-    private FilterListener listener;
+    private static final float MAX_BOTTOM_SHEET_HEIGHT = 0.75f;
+    private final boolean preCheckVinyl;
+    private final boolean preCheckCds;
+    private final FilterListener listener;
 
     public AlbumFilterBottomSheet(boolean vinyl, boolean cds, FilterListener listener) {
         this.preCheckVinyl = vinyl;
         this.preCheckCds = cds;
         this.listener = listener;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        setupBehaviors();
     }
 
     @Nullable
@@ -54,8 +60,30 @@ public class AlbumFilterBottomSheet extends BottomSheetDialogFragment {
         return view;
     }
 
+    private void setupBehaviors() {
+        View bottomSheet = getDialog().findViewById(com.google.android.material.R.id.design_bottom_sheet);
+        if (bottomSheet != null) {
+            BottomSheetBehavior<View> behavior = BottomSheetBehavior.from(bottomSheet);
+
+            bottomSheet.post(() -> {
+                int maxHeight = (int) (getResources().getDisplayMetrics().heightPixels * MAX_BOTTOM_SHEET_HEIGHT);
+
+                bottomSheet.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                bottomSheet.requestLayout();
+
+                behavior.setPeekHeight(maxHeight, true);
+                behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                behavior.setSkipCollapsed(true);
+            });
+        }
+    }
+
     @Override
     public int getTheme() {
         return R.style.CustomBottomSheetDialogTheme;
+    }
+
+    public interface FilterListener {
+        void onFilterApplied(boolean vinyl, boolean cds);
     }
 }

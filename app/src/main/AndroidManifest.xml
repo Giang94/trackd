@@ -14,31 +14,37 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:allowBackup="true"
             android:label="Trackd"
-            android:theme="@style/Theme.Trackd.Vintage">
+            android:theme="@style/Theme.TrackD.MD">
         <activity
                 android:name=".activity.AlbumListActivity"
                 android:exported="false"
+                android:launchMode="singleInstance"
                 android:label="@string/title_activity_album_list" />
         <activity
                 android:name=".activity.MatchAlbumActivity"
                 android:exported="false"
+                android:launchMode="singleInstance"
                 android:label="@string/title_activity_camera" />
         <activity
                 android:name=".activity.AddAlbumActivity"
                 android:exported="false"
+                android:launchMode="singleInstance"
                 android:label="@string/title_activity_add_album"
                 android:windowSoftInputMode="adjustResize" />
         <activity
                 android:name=".activity.EditAlbumActivity"
                 android:exported="false"
+                android:launchMode="singleInstance"
                 android:label="@string/title_activity_edit_album"
                 android:windowSoftInputMode="adjustResize" />
         <activity
                 android:name=".activity.TaggingActivity"
                 android:exported="false"
+                android:launchMode="singleInstance"
                 android:label="@string/title_activity_tagging"
                 android:windowSoftInputMode="adjustResize" />
         <activity
+                android:launchMode="singleInstance"
                 android:name=".activity.MainActivity"
                 android:exported="true">
             <intent-filter>

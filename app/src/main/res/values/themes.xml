@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <style name="Theme.Trackd" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:forceDarkAllowed">false</item>
@@ -80,48 +80,53 @@
         <item name="android:fitsSystemWindows">true</item>
     </style>
 
-    <style name="Theme.TrackD.SoftNoir" parent="Theme.MaterialComponents.Light.NoActionBar">
 
-        <!-- Background -->
-        <item name="android:colorBackground">@color/color_background</item>
-        <item name="colorOnBackground">@color/color_on_background</item>
-
-        <!-- Surfaces -->
-        <item name="colorSurface">@color/color_surface</item>
-        <item name="colorOnSurface">@color/color_on_surface</item>
-
-        <item name="colorSurfaceVariant">@color/color_surface_variant</item>
-        <item name="colorOnSurfaceVariant">@color/color_on_surface_variant</item>
+    <style name="Theme.TrackD.MD" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Background & Surface -->
+        <item name="android:colorBackground">@color/td_bg</item>
+        <item name="colorSurface">@color/td_surface</item>
+        <item name="colorOnSurface">@color/td_onSurface</item>
+        <item name="colorOnBackground">@color/td_onBg</item>
 
         <!-- Primary -->
-        <item name="colorPrimary">@color/color_primary</item>
-        <item name="colorOnPrimary">@color/color_on_primary</item>
+        <item name="colorPrimary">@color/td_primary</item>
+        <item name="colorPrimaryVariant">@color/td_primaryVariant</item>
+        <item name="colorOnPrimary">@color/td_onPrimary</item>
 
         <!-- Secondary -->
-        <item name="colorSecondary">@color/color_secondary</item>
-        <item name="colorOnSecondary">@color/color_on_secondary</item>
+        <item name="colorSecondary">@color/td_secondary</item>
+        <item name="colorSecondaryVariant">@color/td_secondaryVariant</item>
+        <item name="colorOnSecondary">@color/td_onSecondary</item>
 
-        <!-- Tertiary -->
-        <item name="colorTertiary">@color/color_tertiary</item>
-        <item name="colorOnTertiary">@color/color_on_tertiary</item>
+        <!-- Accent -->
+        <item name="colorAccent">@color/td_accent</item>
 
-        <!-- Outline -->
-        <item name="colorOutline">@color/color_outline</item>
-        <item name="colorOutlineVariant">@color/color_outline_variant</item>
+        <!-- Text -->
+        <item name="android:textColor">@color/td_textPrimary</item>
 
-        <!-- Error -->
-        <item name="colorError">@color/color_error</item>
-        <item name="colorOnError">@color/color_on_error</item>
+        <!-- Card -->
+        <item name="cardViewStyle">@style/Widget.TrackD.CardView</item>
 
-        <!-- System bars -->
-        <item name="android:statusBarColor">@color/color_surface</item>
-        <item name="android:navigationBarColor">@color/color_surface</item>
-        <item name="android:windowLightStatusBar">false</item>
+        <!-- EditText -->
+        <item name="textInputStyle">@style/Widget.TrackD.TextInput</item>
 
-        <!-- Make system bars opaque (so nothing goes under them again!) -->
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowTranslucentNavigation">false</item>
         <item name="android:windowLayoutInDisplayCutoutMode">never</item>
         <item name="android:fitsSystemWindows">true</item>
+    </style>
+
+    <!-- CardView -->
+    <style name="Widget.TrackD.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/td_surface</item>
+        <item name="cardElevation">3dp</item>
+        <item name="cardUseCompatPadding">true</item>
+    </style>
+
+    <!-- TextInputs -->
+    <style name="Widget.TrackD.TextInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextColor">@color/td_textSecondary</item>
+        <item name="android:textColor">@color/td_textPrimary</item>
+        <item name="boxStrokeColor">@color/td_primary</item>
     </style>
 </resources>

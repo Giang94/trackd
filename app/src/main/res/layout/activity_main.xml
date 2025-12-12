@@ -29,7 +29,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="TRACK'D"
-                        android:textColor="#2B1B18"
                         android:textSize="26sp"
                         android:textStyle="bold"
                         android:letterSpacing="0.02" />
@@ -84,7 +83,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="28dp"
                     android:text="Recently Added"
-                    android:textColor="#2B1B18"
                     android:textSize="17sp"
                     android:textStyle="bold"
                     android:letterSpacing="0.015" />

@@ -31,8 +31,8 @@ import com.app.trackd.model.Tag;
 )
 public class AlbumTagCrossRef {
 
-    private long albumId;
-    private long tagId;
+    private final long albumId;
+    private final long tagId;
 
     public AlbumTagCrossRef(long albumId, long tagId) {
         this.albumId = albumId;

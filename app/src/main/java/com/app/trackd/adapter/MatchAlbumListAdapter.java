@@ -1,5 +1,10 @@
 package com.app.trackd.adapter;
 
+import static com.app.trackd.util.SizeUtils.dpToPx;
+
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.trackd.R;
@@ -30,11 +36,13 @@ public class MatchAlbumListAdapter extends RecyclerView.Adapter<MatchAlbumListAd
     @Override
     public RecentItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new RecentItemViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_recent_layout, parent, false));
+                .inflate(R.layout.item_match_result_layout, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecentItemViewHolder holder, int position) {
+        Context context = holder.itemView.getContext();
+
         Album album = albums.get(position);
         holder.tvTitle.setText(album.getTitle());
 
@@ -42,12 +50,68 @@ public class MatchAlbumListAdapter extends RecyclerView.Adapter<MatchAlbumListAd
         holder.tvSubtitle.setText(subtitleStr);
         holder.ivAlbumCover.setImageBitmap(ImageUtils.toBitmap(album.getCover()));
         holder.ivAlbumCover.setVisibility(View.VISIBLE);
-        holder.glFourContainer.setVisibility(View.GONE);
 
-        db = AppDatabase.get(holder.itemView.getContext());
+        db = AppDatabase.get(context);
         List<Artist> artists = db.albumArtistDao().getArtistsForAlbum(album.getId());
         List<String> artistNames = artists.stream().map(a -> a.displayName).toList();
         holder.itemView.post(() -> holder.tvArtist.setText(StringUtils.formatArtists(artistNames)));
+
+        // Badge logic
+        if (position < 3) {
+            holder.tvBadge.setText(String.valueOf(position + 1));
+            holder.tvBadge.setVisibility(View.VISIBLE);
+            int badgeColor, textColor;
+            switch (position) {
+                case 0:
+                    badgeColor = ContextCompat.getColor(context, R.color.first_badge_bg);
+                    textColor = ContextCompat.getColor(context, R.color.first_badge_text);
+                    break; // gold
+                case 1:
+                    badgeColor = ContextCompat.getColor(context, R.color.second_badge_bg);
+                    textColor = ContextCompat.getColor(context, R.color.second_badge_text);
+                    break; // silver
+                case 2:
+                    badgeColor = ContextCompat.getColor(context, R.color.third_badge_bg);
+                    textColor = ContextCompat.getColor(context, R.color.third_badge_text);
+                    break; // bronze
+                default:
+                    badgeColor = Color.GRAY;
+                    textColor = Color.WHITE;
+            }
+            GradientDrawable bg = (GradientDrawable) holder.tvBadge.getBackground().mutate();
+            bg.setColor(badgeColor);
+            holder.tvBadge.setBackground(bg);
+            holder.tvBadge.setTextColor(textColor);
+        } else {
+            holder.tvBadge.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onViewAttachedToWindow(@NonNull RecentItemViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+
+        RecyclerView parent = (RecyclerView) holder.itemView.getParent();
+        if (parent == null) return;
+
+        int parentWidth = parent.getWidth();
+        int spacing = dpToPx(holder.itemView.getContext(), 16);
+
+        int cardWidth;
+        int itemCount = getItemCount();
+
+        if (itemCount <= 2) {
+            // exactly 2 cards fill the parent
+            cardWidth = (parentWidth - spacing) / 2;
+        } else {
+            // peek for next card: reduce width a bit
+            // 2.5 cards visible at a time
+            cardWidth = (parentWidth - spacing) * 2 / 5; // 2/5 = 2.5 cards
+        }
+
+        ViewGroup.LayoutParams params = holder.itemView.getLayoutParams();
+        params.width = cardWidth;
+        holder.itemView.setLayoutParams(params);
     }
 
     @Override
@@ -55,11 +119,14 @@ public class MatchAlbumListAdapter extends RecyclerView.Adapter<MatchAlbumListAd
         return albums.size();
     }
 
+    public void updateData(List<Album> newList) {
+        this.albums = newList;
+        notifyDataSetChanged();
+    }
+
     static class RecentItemViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvArtist, tvSubtitle, tvShowAll;
+        TextView tvTitle, tvArtist, tvSubtitle, tvShowAll, tvBadge;
         ImageView ivAlbumCover;
-        View glFourContainer;
-        ImageView iv1, iv2, iv3, iv4;
 
         RecentItemViewHolder(@NonNull View v) {
             super(v);
@@ -68,18 +135,7 @@ public class MatchAlbumListAdapter extends RecyclerView.Adapter<MatchAlbumListAd
             tvSubtitle = v.findViewById(R.id.tvSubtitle);
             ivAlbumCover = v.findViewById(R.id.ivAlbumCover);
             tvShowAll = v.findViewById(R.id.tvShowAll);
-
-            glFourContainer = itemView.findViewById(R.id.includeFourCovers);
-
-            iv1 = itemView.findViewById(R.id.ivCover1);
-            iv2 = itemView.findViewById(R.id.ivCover2);
-            iv3 = itemView.findViewById(R.id.ivCover3);
-            iv4 = itemView.findViewById(R.id.ivCover4);
+            tvBadge = v.findViewById(R.id.tvBadge);
         }
-    }
-
-    public void updateData(List<Album> newList) {
-        this.albums = newList;
-        notifyDataSetChanged();
     }
 }

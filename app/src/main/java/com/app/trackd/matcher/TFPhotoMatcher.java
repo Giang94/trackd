@@ -1,6 +1,6 @@
 package com.app.trackd.matcher;
 
-import static org.tensorflow.lite.support.image.ImageProcessor.*;
+import static org.tensorflow.lite.support.image.ImageProcessor.Builder;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
@@ -27,10 +27,10 @@ import java.util.Comparator;
 import java.util.List;
 
 public class TFPhotoMatcher {
-    private Interpreter tflite;
     private final int MODEL_INPUT_SIZE = 224; // Standard for MobileNet
     private final int EMBEDDING_SIZE = 1280; // MobileNetV2 output vector size
     private final double ACCEPTED_SCORE = 0.25;
+    private Interpreter tflite;
 
     public TFPhotoMatcher(Context context) {
         try {

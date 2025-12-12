@@ -1,16 +1,5 @@
 package com.app.trackd.matcher;
 
-import android.graphics.Bitmap;
-import android.util.Log;
-
-import com.app.trackd.model.Album;
-import com.app.trackd.util.ImagePHash;
-import com.app.trackd.util.ImageUtils;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
 public class PhotoMatcher {
 
 //    private final ImagePHash pHash = new ImagePHash();

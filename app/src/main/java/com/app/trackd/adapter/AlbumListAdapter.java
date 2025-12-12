@@ -21,10 +21,10 @@ import java.util.List;
 
 public class AlbumListAdapter extends RecyclerView.Adapter<AlbumListAdapter.AlbumViewHolder> {
 
-    private List<AlbumWithArtists> albums;
-    private Runnable loadMoreCallback;
+    private final List<AlbumWithArtists> albums;
+    private final Runnable loadMoreCallback;
 
-    private OnAlbumClickListener listener;
+    private final OnAlbumClickListener listener;
 
     public AlbumListAdapter(List<AlbumWithArtists> albums, Runnable loadMoreCallback, OnAlbumClickListener listener) {
         this.albums = albums;
@@ -94,6 +94,10 @@ public class AlbumListAdapter extends RecyclerView.Adapter<AlbumListAdapter.Albu
         notifyDataSetChanged();
     }
 
+    public interface OnAlbumClickListener {
+        void onAlbumClick(AlbumWithArtists album);
+    }
+
     static class AlbumViewHolder extends RecyclerView.ViewHolder {
 
         ImageView ivCover;
@@ -108,10 +112,6 @@ public class AlbumListAdapter extends RecyclerView.Adapter<AlbumListAdapter.Albu
             tvYear = itemView.findViewById(R.id.tvYear);
             tvFormat = itemView.findViewById(R.id.tvFormat);
         }
-    }
-
-    public interface OnAlbumClickListener {
-        void onAlbumClick(AlbumWithArtists album);
     }
 
 }

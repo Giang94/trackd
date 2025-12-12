@@ -28,6 +28,16 @@
     <color name="chip_green">#66BB6A</color>
     <color name="chip_yellow">#FFCA28</color>
 
+    <!-- Medal backgrounds -->
+    <color name="first_badge_bg">#FFD700</color>   <!-- Gold -->
+    <color name="second_badge_bg">#C0C0C0</color>  <!-- Silver -->
+    <color name="third_badge_bg">#CD7F32</color>   <!-- Bronze -->
+
+    <!-- Medal text colors -->
+    <color name="first_badge_text">#3B2F00</color>  <!-- Dark brown on gold -->
+    <color name="second_badge_text">#2E2E2E</color> <!-- Dark gray on silver -->
+    <color name="third_badge_text">#2E1A00</color>  <!-- Dark brownish on bronze -->
+
     <color name="jp_bg">#F6F4EE</color>
     <color name="jp_surface">#FFFFFF</color>
     <color name="jp_primary">#2F2F2F</color>
@@ -78,44 +88,27 @@
     <color name="vinyl_statusbar">#3B2F2F</color>
     <color name="vinyl_navbar">#F4EFEA</color>
 
-    <!-- Primary Soft Noir Palette -->
-    <!-- Backgrounds -->
-    <color name="color_background">#121212</color>          <!-- Deep noir -->
-    <color name="color_on_background">#F5F1EB</color>        <!-- Soft ivory -->
-
-    <!-- Surface (cards, panels) -->
-    <color name="color_surface">#1A1A1A</color>
-    <color name="color_on_surface">#F2ECE5</color>
-
-    <color name="color_surface_variant">#2A2A2A</color>
-    <color name="color_on_surface_variant">#D0C7BE</color>
+    <!-- Background & Surfaces (VINTAGE) -->
+    <color name="td_bg">#F3E9D7</color>          <!-- warm parchment -->
+    <color name="td_surface">#E4D4B8</color>      <!-- tea-stained card -->
+    <color name="td_onBg">#2A2418</color>
+    <color name="td_onSurface">#2A2418</color>
 
     <!-- Primary -->
-    <color name="color_primary">#FFC857</color>              <!-- Warm amber -->
-    <color name="color_on_primary">#1A140A</color>           <!-- Dark contrast -->
-
-    <color name="color_primary_container">#3A2F20</color>
-    <color name="color_on_primary_container">#FFE9C4</color>
+    <color name="td_primary">#6B5637</color>      <!-- muted brown-olive -->
+    <color name="td_primaryVariant">#574528</color>
+    <color name="td_onPrimary">#F3E9D7</color>
 
     <!-- Secondary -->
-    <color name="color_secondary">#FF6D5A</color>            <!-- Coral -->
-    <color name="color_on_secondary">#1F0E0D</color>
+    <color name="td_secondary">#A9825A</color>     <!-- sepia tone -->
+    <color name="td_secondaryVariant">#8B6A48</color>
+    <color name="td_onSecondary">#2A2418</color>
 
-    <color name="color_secondary_container">#402A28</color>
-    <color name="color_on_secondary_container">#FFD9D4</color>
+    <!-- Accent -->
+    <color name="td_accent">#C49A6C</color>       <!-- antique brass -->
+    <color name="td_onAccent">#2A2418</color>
 
-    <!-- Tertiary -->
-    <color name="color_tertiary">#7DA2FF</color>
-    <color name="color_on_tertiary">#0D111E</color>
-
-    <color name="color_tertiary_container">#283046</color>
-    <color name="color_on_tertiary_container">#E5EBFF</color>
-
-    <!-- Outline -->
-    <color name="color_outline">#8C847B</color>
-    <color name="color_outline_variant">#5F5953</color>
-
-    <!-- Error -->
-    <color name="color_error">#FF6B6B</color>
-    <color name="color_on_error">#FFF4F4</color>
+    <!-- Text -->
+    <color name="td_textPrimary">#2A2418</color>  <!-- espresso -->
+    <color name="td_textSecondary">#6A5C45</color>
 </resources>

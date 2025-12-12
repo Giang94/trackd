@@ -1,5 +1,7 @@
 package com.app.trackd.activity;
 
+import static com.app.trackd.util.SizeUtils.dpToPx;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -218,7 +220,7 @@ public class TaggingActivity extends AppCompatActivity {
         FlexboxLayout.LayoutParams lp = new FlexboxLayout.LayoutParams(
                 FlexboxLayout.LayoutParams.WRAP_CONTENT,
                 FlexboxLayout.LayoutParams.WRAP_CONTENT);
-        int margin = dpToPx(4);
+        int margin = dpToPx(this, 4);
         lp.setMargins(margin, 0, margin, 0);
         chip.setLayoutParams(lp);
         chipGroup.addView(chip);
@@ -274,10 +276,5 @@ public class TaggingActivity extends AppCompatActivity {
             }
         }
         return super.dispatchTouchEvent(ev);
-    }
-
-    private int dpToPx(int dp) {
-        float scale = getResources().getDisplayMetrics().density;
-        return Math.round(dp * scale);
     }
 }

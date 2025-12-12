@@ -25,13 +25,8 @@ public class RecentAlbumListAdapter extends RecyclerView.Adapter<RecentAlbumList
     private static final int VIEW_TYPE_NORMAL = 0;
     private static final int VIEW_TYPE_MORE = 1;
     private ShowAllCallback showAllCallback;
-
-    public interface OnItemClick {
-        void onClick(AlbumWithArtists album);
-    }
-
     private List<AlbumWithArtists> albums;
-    private OnItemClick listener;
+    private final OnItemClick listener;
 
     public RecentAlbumListAdapter(List<AlbumWithArtists> albums, OnItemClick listener) {
         this.albums = albums;
@@ -120,6 +115,31 @@ public class RecentAlbumListAdapter extends RecyclerView.Adapter<RecentAlbumList
         return Math.min(albums.size(), 4);
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        if (position == 3 && albums.size() > 4) {
+            return VIEW_TYPE_MORE;
+        }
+        return VIEW_TYPE_NORMAL;
+    }
+
+    public void updateData(List<AlbumWithArtists> newList) {
+        this.albums = newList;
+        notifyDataSetChanged();
+    }
+
+    public void setShowAllCallback(ShowAllCallback callback) {
+        this.showAllCallback = callback;
+    }
+
+    public interface OnItemClick {
+        void onClick(AlbumWithArtists album);
+    }
+
+    public interface ShowAllCallback {
+        void onShowAll();
+    }
+
     static class RecentItemViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvArtist, tvSubtitle, tvShowAll;
         ImageView ivAlbumCover;
@@ -141,26 +161,5 @@ public class RecentAlbumListAdapter extends RecyclerView.Adapter<RecentAlbumList
             iv3 = itemView.findViewById(R.id.ivCover3);
             iv4 = itemView.findViewById(R.id.ivCover4);
         }
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        if (position == 3 && albums.size() > 4) {
-            return VIEW_TYPE_MORE;
-        }
-        return VIEW_TYPE_NORMAL;
-    }
-
-    public void updateData(List<AlbumWithArtists> newList) {
-        this.albums = newList;
-        notifyDataSetChanged();
-    }
-
-    public interface ShowAllCallback {
-        void onShowAll();
-    }
-
-    public void setShowAllCallback(ShowAllCallback callback) {
-        this.showAllCallback = callback;
     }
 }

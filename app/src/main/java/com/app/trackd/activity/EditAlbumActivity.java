@@ -8,8 +8,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +35,7 @@ import com.app.trackd.model.Artist;
 import com.app.trackd.model.enums.AlbumFormat;
 import com.app.trackd.model.ref.AlbumArtistCrossRef;
 import com.app.trackd.util.ImageUtils;
+import com.app.trackd.util.SpotifyUrlHelper;
 import com.app.trackd.util.StringUtils;
 
 import java.io.InputStream;
@@ -98,13 +101,26 @@ public class EditAlbumActivity extends AppCompatActivity {
         });
 
         setupImagePicker();
+        setupEditTextFields();
+    }
+
+    private void setupEditTextFields() {
+        etTitle.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+        etTitle.setRawInputType(InputType.TYPE_CLASS_TEXT);
+
+        etArtist.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+        etArtist.setRawInputType(InputType.TYPE_CLASS_TEXT);
+
+        etSpotifyUrl.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        etSpotifyUrl.setRawInputType(InputType.TYPE_CLASS_TEXT);
     }
 
     private void saveAlbum(long albumId) {
         String title = etTitle.getText().toString().trim();
         String artistInput = etArtist.getText().toString().trim();
         String yearStr = etYear.getText().toString().trim();
-        String spotifyUrl = etSpotifyUrl.getText().toString().trim();
+        String spotifyFullUrl = etSpotifyUrl.getText().toString().trim();
+        String spotifyUrl = SpotifyUrlHelper.normalize(spotifyFullUrl);
 
         if (title.isEmpty() || artistInput.isEmpty()) {
             Toast.makeText(this, "Should provide album name and artist", Toast.LENGTH_SHORT).show();
@@ -144,7 +160,7 @@ public class EditAlbumActivity extends AppCompatActivity {
         }
 
         // Update album table
-        db.albumDao().updateAlbum(album);
+        db.albumDao().update(album);
 
         // Update artist relationship
         updateArtistsForAlbum(albumId);
@@ -268,9 +284,9 @@ public class EditAlbumActivity extends AppCompatActivity {
                 .map(Artist::getDisplayName)
                 .toList();
 
-        etArtist.setText(TextUtils.join(" • ", artists));
+        etArtist.setText(TextUtils.join(", ", artists));
 
-        etSpotifyUrl.setText(album.getSpotifyUrl());
+        etSpotifyUrl.setText(SpotifyUrlHelper.toFullUrl(album.getSpotifyUrl()));
     }
 
     private int getFormatIndex(String format) {

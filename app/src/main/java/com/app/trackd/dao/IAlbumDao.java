@@ -9,7 +9,6 @@ import androidx.room.Update;
 
 import com.app.trackd.model.Album;
 import com.app.trackd.model.AlbumWithArtists;
-import com.app.trackd.model.ref.AlbumArtistCrossRef;
 
 import java.util.List;
 
@@ -59,7 +58,7 @@ public interface IAlbumDao {
     Album getAlbumById(long albumId);
 
     @Update
-    void updateAlbum(Album album);
+    void update(Album album);
 
     @Query("SELECT * FROM album WHERE id IN (SELECT albumId FROM album_tag WHERE tagId = :tagId)")
     List<Album> getAlbumsByTag(long tagId);

@@ -5,10 +5,6 @@ import androidx.room.PrimaryKey;
 
 import com.app.trackd.model.enums.AlbumFormat;
 
-import org.opencv.core.Mat;
-
-import java.sql.Blob;
-
 @Entity
 public class Album {
 

@@ -5,10 +5,19 @@ import android.graphics.Color;
 
 public class ImagePHash {
 
-    private int size = 32; // resize to 32x32
-    private int smallerSize = 8; // DCT size
+    private final int size = 32; // resize to 32x32
+    private final int smallerSize = 8; // DCT size
 
     public ImagePHash() {
+    }
+
+    public static int hammingDistance(String hash1, String hash2) {
+        if (hash1.length() != hash2.length()) return -1;
+        int counter = 0;
+        for (int i = 0; i < hash1.length(); i++) {
+            if (hash1.charAt(i) != hash2.charAt(i)) counter++;
+        }
+        return counter;
     }
 
     public String getHash(Bitmap img) {
@@ -44,15 +53,6 @@ public class ImagePHash {
             }
         }
         return hash.toString();
-    }
-
-    public static int hammingDistance(String hash1, String hash2) {
-        if (hash1.length() != hash2.length()) return -1;
-        int counter = 0;
-        for (int i = 0; i < hash1.length(); i++) {
-            if (hash1.charAt(i) != hash2.charAt(i)) counter++;
-        }
-        return counter;
     }
 
     private double[][] applyDCT(double[][] f) {

@@ -14,7 +14,7 @@ import java.util.List;
 
 public class ArtistSuggestionAdapter extends ArrayAdapter<String> {
 
-    private List<String> allArtists;
+    private final List<String> allArtists;
     private List<String> filteredArtists;
 
     public ArtistSuggestionAdapter(@NonNull Context context, @NonNull List<String> artists) {

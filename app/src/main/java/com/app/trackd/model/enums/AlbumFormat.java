@@ -18,10 +18,6 @@ public enum AlbumFormat {
         this.displayName = displayName;
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
-
     public static List<String> getNames() {
         return Arrays.stream(AlbumFormat.values())
                 .map(AlbumFormat::name)
@@ -36,5 +32,9 @@ public enum AlbumFormat {
         return Arrays.stream(AlbumFormat.values())
                 .map(AlbumFormat::getDisplayName)
                 .collect(Collectors.toList());
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 }

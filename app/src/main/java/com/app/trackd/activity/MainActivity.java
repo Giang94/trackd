@@ -49,9 +49,35 @@ public class MainActivity extends FragmentActivity {
     private RecentAlbumListAdapter adapter;
     private List<AlbumWithArtists> albums;
     private AppDatabase db;
+    private final ActivityResultLauncher<Intent> editAlbumLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == RESULT_OK &&
+                                result.getData() != null) {
+
+                            long id = result.getData().getLongExtra(EditAlbumActivity.EXTRA_UPDATED_ALBUM_ID, -1);
+                            if (id != -1) updateSingleAlbum(id);
+                        }
+                    });
     private DatabaseHelper databaseHelper;
     private ActivityResultLauncher<Intent> exportLauncher;
     private ActivityResultLauncher<Intent> importLauncher;
+
+    public static void seedTags(AppDatabase db, List<String> tagsToSeed) {
+        ITagDao tagDao = db.tagDao();
+
+        new Thread(() -> {
+            for (String rawName : tagsToSeed) {
+                String normalized = StringUtils.normalize(rawName);
+
+                // Skip if exists
+                if (tagDao.findByNormalized(normalized) == null) {
+                    tagDao.insert(new Tag(rawName));
+                }
+            }
+        }).start();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,21 +96,6 @@ public class MainActivity extends FragmentActivity {
         setupData();
         setupLaunchers();
         setupMenu();
-    }
-
-    public static void seedTags(AppDatabase db, List<String> tagsToSeed) {
-        ITagDao tagDao = db.tagDao();
-
-        new Thread(() -> {
-            for (String rawName : tagsToSeed) {
-                String normalized = StringUtils.normalize(rawName);
-
-                // Skip if exists
-                if (tagDao.findByNormalized(normalized) == null) {
-                    tagDao.insert(new Tag(rawName));
-                }
-            }
-        }).start();
     }
 
     private void initViews() {
@@ -178,18 +189,6 @@ public class MainActivity extends FragmentActivity {
         vinylValue.setText(String.valueOf(vinyl));
         cdsValue.setText(String.valueOf(cds));
     }
-
-    private final ActivityResultLauncher<Intent> editAlbumLauncher =
-            registerForActivityResult(
-                    new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        if (result.getResultCode() == RESULT_OK &&
-                                result.getData() != null) {
-
-                            long id = result.getData().getLongExtra(EditAlbumActivity.EXTRA_UPDATED_ALBUM_ID, -1);
-                            if (id != -1) updateSingleAlbum(id);
-                        }
-                    });
 
     private void updateSingleAlbum(long albumId) {
         new Thread(() -> {

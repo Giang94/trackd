@@ -34,26 +34,7 @@ import com.app.trackd.model.ref.AlbumTagCrossRef;
 public abstract class AppDatabase extends RoomDatabase {
 
     public static final int DATABASE_VERSION = 3;
-
-    public abstract IAlbumDao albumDao();
-
-    public abstract IArtistDao artistDao();
-
-    public abstract IAlbumArtistDao albumArtistDao();
-
-    public abstract ITagDao tagDao();
-
-    public abstract IAlbumTagDao albumTagDao();
-
     private static AppDatabase instance;
-
-//    static final Migration MIGRATION_2_TO_3 = new Migration(2, 3) {
-//        @Override
-//        public void migrate(@NonNull SupportSQLiteDatabase database) {
-//            // Add spotifyUrl column with default empty string (or null)
-//            database.execSQL("ALTER TABLE Album ADD COLUMN spotifyUrl TEXT");
-//        }
-//    };
 
     public static synchronized AppDatabase get(Context context) {
         if (instance == null) {
@@ -69,4 +50,22 @@ public abstract class AppDatabase extends RoomDatabase {
         }
         return instance;
     }
+
+    public abstract IAlbumDao albumDao();
+
+    public abstract IArtistDao artistDao();
+
+    public abstract IAlbumArtistDao albumArtistDao();
+
+    public abstract ITagDao tagDao();
+
+//    static final Migration MIGRATION_2_TO_3 = new Migration(2, 3) {
+//        @Override
+//        public void migrate(@NonNull SupportSQLiteDatabase database) {
+//            // Add spotifyUrl column with default empty string (or null)
+//            database.execSQL("ALTER TABLE Album ADD COLUMN spotifyUrl TEXT");
+//        }
+//    };
+
+    public abstract IAlbumTagDao albumTagDao();
 }

@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -39,21 +37,14 @@ public class AlbumListActivity extends FragmentActivity {
 
     public static final String EXTRA_FILTER_VINYL = "filterVinyl";
     public static final String EXTRA_FILTER_CDS = "filterCds";
-
+    private final List<AlbumWithArtists> albums = new ArrayList<>();
     private RecyclerView rvAlbums;
     private TextInputLayout searchInputLayout;
     private NoMultiTouchEditText searchInput;
     private TextView tvTitle;
     private ImageButton btnFilter;
-
     private AlbumListAdapter adapter;
-    private final List<AlbumWithArtists> albums = new ArrayList<>();
-
     private AppDatabase db;
-
-    private boolean filterVinyl = true;
-    private boolean filterCds = true;
-
     // --- ACTIVITY RESULT HANDLER ---
     private final ActivityResultLauncher<Intent> editAlbumLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -64,16 +55,13 @@ public class AlbumListActivity extends FragmentActivity {
                     if (id != -1) updateSingleAlbum(id);
                 }
             });
+    private boolean filterVinyl = true;
+    private boolean filterCds = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_list);
-
-        ViewGroup decor = (ViewGroup) getWindow().getDecorView();
-        for (int i = 0; i < decor.getChildCount(); i++) {
-            Log.d("DecorChild", "Child " + i + ": " + decor.getChildAt(i));
-        }
 
         TwoFingerZoomHelper.enableTwoFingerZoom(this);
         TwoFingerDoubleTapHelper.enableTwoFingerDoubleTap(this);
@@ -182,11 +170,9 @@ public class AlbumListActivity extends FragmentActivity {
             // Now filter by text input (album name OR artist name)
             if (!text.isEmpty()) {
                 data.values = data.values.stream()
-                        .filter(awa -> awa.getAlbum().getTitle().toLowerCase()
-                                .contains(searchInput.getText().toString().trim().toLowerCase()) ||
+                        .filter(awa -> awa.getAlbum().getTitle().toLowerCase().contains(text.toLowerCase()) ||
                                 awa.getArtists().stream()
-                                        .anyMatch(ar -> ar.getDisplayName().toLowerCase()
-                                                .contains(searchInput.getText().toString().trim().toLowerCase()))
+                                        .anyMatch(ar -> ar.getDisplayName().toLowerCase().contains(text.toLowerCase()))
                         )
                         .collect(Collectors.toList());
             }
