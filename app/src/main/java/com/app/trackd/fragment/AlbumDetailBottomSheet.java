@@ -100,7 +100,6 @@ public class AlbumDetailBottomSheet extends BottomSheetDialogFragment {
             if (editListener != null) {
                 editListener.onEditRequested(albumWithArtists.getAlbum().getId());
             }
-            dismiss();
         });
 
         btnTag.setOnClickListener(v -> {
