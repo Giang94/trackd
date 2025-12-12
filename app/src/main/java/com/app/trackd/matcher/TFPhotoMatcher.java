@@ -129,13 +129,9 @@ public class TFPhotoMatcher {
         Log.d("MATCHING", "--- Starting matching process ---");
         for (Album album : albums) {
             float similarity = this.calculateCosineSimilarity(vectorCaptured, album.getEmbedding());
-
-            Log.d("MATCHING", "Album: " + album.getTitle() + " - Similarity: " + similarity);
-
+            // Log.d("MATCHING", "Album: " + album.getTitle() + " - Similarity: " + similarity);
             results.add(new TFMatchResult(album, similarity));
         }
-        Log.d("MATCHING", "--- Finish matching process ---");
-
         // Sort by ascending distance (smaller = better)
         results.sort(Comparator.comparing((TFMatchResult a) -> a.similarity).reversed());
 
@@ -144,6 +140,7 @@ public class TFPhotoMatcher {
             if (results.get(i).similarity >= ACCEPTED_SCORE)
                 topMatches.add(results.get(i).album);
         }
+        Log.d("MATCHING", "--- Finish matching process. Processed " + albums.size() + " photo, likely matched " + topMatches.size() + " photo ---");
         return topMatches;
     }
 

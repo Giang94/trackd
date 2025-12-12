@@ -244,4 +244,10 @@ public class AlbumListActivity extends FragmentActivity {
         super.onDestroy();
         TwoFingerZoomHelper.cleanup(this);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        applyCombinedFilter();
+    }
 }

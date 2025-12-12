@@ -215,7 +215,6 @@ public class MatchAlbumActivity extends AppCompatActivity {
     }
 
     private void matchAndShow(Bitmap bitmap) {
-        Log.d("MATCHING", "Selected bitmap " + bitmap.describeContents());
         if (albums == null || albums.isEmpty()) {
             tvMatchesResults.setText("No matches found");
             tvMatchesResults.setVisibility(View.VISIBLE);
