@@ -8,7 +8,6 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +15,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.trackd.R;
+import com.app.trackd.common.SquareImageView;
 import com.app.trackd.database.AppDatabase;
 import com.app.trackd.model.Album;
 import com.app.trackd.model.Artist;
@@ -126,7 +126,7 @@ public class MatchAlbumListAdapter extends RecyclerView.Adapter<MatchAlbumListAd
 
     static class RecentItemViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvArtist, tvSubtitle, tvShowAll, tvBadge;
-        ImageView ivAlbumCover;
+        SquareImageView ivAlbumCover;
 
         RecentItemViewHolder(@NonNull View v) {
             super(v);

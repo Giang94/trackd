@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.trackd.R;
+import com.app.trackd.common.SquareImageView;
 import com.app.trackd.model.Album;
 import com.app.trackd.model.AlbumWithArtists;
 import com.app.trackd.model.Artist;
@@ -142,7 +143,7 @@ public class RecentAlbumListAdapter extends RecyclerView.Adapter<RecentAlbumList
 
     static class RecentItemViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvArtist, tvSubtitle, tvShowAll;
-        ImageView ivAlbumCover;
+        SquareImageView ivAlbumCover;
         View glFourContainer;
         ImageView iv1, iv2, iv3, iv4;
 

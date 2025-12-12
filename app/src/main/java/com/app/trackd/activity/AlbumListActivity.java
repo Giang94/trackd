@@ -144,46 +144,50 @@ public class AlbumListActivity extends FragmentActivity {
     }
 
     private void applyCombinedFilter() {
-        String text = searchInput.getText() != null ? searchInput.getText().toString().trim() : "";
+        // Capture text ONCE on UI thread
+        final String query = searchInput.getText() != null
+                ? searchInput.getText().toString().trim().toLowerCase()
+                : "";
 
         new Thread(() -> {
-            List<Album> filtered;
+            List<Album> filteredAlbums;
 
+            // Filter by format type
             if (filterVinyl && filterCds) {
-                filtered = db.albumDao().getAllAlbums();
+                filteredAlbums = db.albumDao().getAllAlbums();
             } else if (filterVinyl) {
-                filtered = db.albumDao().getAlbumsByFormats(AlbumFormat.getVinylNames());
+                filteredAlbums = db.albumDao().getAlbumsByFormats(AlbumFormat.getVinylNames());
             } else if (filterCds) {
-                filtered = db.albumDao().getAlbumsByFormats(List.of(AlbumFormat.CD.name()));
+                filteredAlbums = db.albumDao().getAlbumsByFormats(List.of(AlbumFormat.CD.name()));
             } else {
-                filtered = db.albumDao().getAllAlbums();
+                filteredAlbums = db.albumDao().getAllAlbums();
             }
 
-            // Fetch AlbumWithArtists for these albums
-            List<Long> ids = filtered.stream().map(Album::getId).toList();
+            // Get full AlbumWithArtists objects
+            List<Long> ids = filteredAlbums.stream().map(Album::getId).toList();
+            List<AlbumWithArtists> results =
+                    db.albumDao().getAlbumsWithArtistsByIds(ids);
 
-            var data = new Object() {
-                List<AlbumWithArtists> values = new ArrayList<>();
-            };
-            data.values = db.albumDao().getAlbumsWithArtistsByIds(ids);
-
-            // Now filter by text input (album name OR artist name)
-            if (!text.isEmpty()) {
-                data.values = data.values.stream()
-                        .filter(awa -> awa.getAlbum().getTitle().toLowerCase().contains(text.toLowerCase()) ||
-                                awa.getArtists().stream()
-                                        .anyMatch(ar -> ar.getDisplayName().toLowerCase().contains(text.toLowerCase()))
+            // Search filtering (NO UI calls)
+            if (!query.isEmpty()) {
+                results = results.stream()
+                        .filter(awa ->
+                                awa.getAlbum().getTitle().toLowerCase().contains(query)
+                                        || awa.getArtists().stream().anyMatch(a ->
+                                        a.getDisplayName().toLowerCase().contains(query))
                         )
                         .collect(Collectors.toList());
             }
 
+            // UI update
+            List<AlbumWithArtists> finalResults = results;
             runOnUiThread(() -> {
-                adapter.updateList(data.values);
-                updateHeader(data.values);
+                adapter.updateList(finalResults);
+                updateHeader(finalResults);
             });
+
         }).start();
     }
-
 
     // ----------------- DETAILS + UPDATE -----------------
     private void openAlbumDetails(AlbumWithArtists album) {

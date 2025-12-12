@@ -14,7 +14,7 @@
             android:layout_height="wrap_content">
 
         <!-- Cover fills top of card -->
-        <ImageView
+        <com.app.trackd.common.SquareImageView
                 android:id="@+id/ivAlbumCover"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
