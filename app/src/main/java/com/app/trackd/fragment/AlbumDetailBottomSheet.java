@@ -2,6 +2,7 @@ package com.app.trackd.fragment;
 
 import static com.app.trackd.util.SizeUtils.dpToPx;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
@@ -77,28 +78,34 @@ public class AlbumDetailBottomSheet extends BottomSheetDialogFragment {
         chipGroupTags = view.findViewById(R.id.chipGroupTags);
 
         btnDelete.setOnClickListener(v -> {
-            new Thread(() -> {
-                long id = albumWithArtists.getAlbum().getId();
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("Delete album")
+                    .setMessage("This action cannot be undone. Are you sure?")
+                    .setPositiveButton("Delete", (dialog, which) -> {
+                        new Thread(() -> {
+                            long id = albumWithArtists.getAlbum().getId();
 
-                // delete album + cross-table links
-                AppDatabase db = AppDatabase.get(requireContext());
-                db.albumDao().deleteArtistLinks(id);
-                db.albumDao().delete(albumWithArtists.getAlbum());
+                            AppDatabase db = AppDatabase.get(requireContext());
+                            db.albumDao().deleteArtistLinks(id);
+                            db.albumDao().delete(albumWithArtists.getAlbum());
 
-                // notify parent
-                if (deleteListener != null) {
-                    requireActivity().runOnUiThread(() -> deleteListener.onAlbumDeleted(id));
-                }
+                            if (deleteListener != null) {
+                                requireActivity().runOnUiThread(() ->
+                                        deleteListener.onAlbumDeleted(id)
+                                );
+                            }
 
-                // close bottom sheet
-                dismiss();
-
-            }).start();
+                            requireActivity().runOnUiThread(this::dismiss);
+                        }).start();
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
         });
 
         btnEdit.setOnClickListener(v -> {
             if (editListener != null) {
                 editListener.onEditRequested(albumWithArtists.getAlbum().getId());
+                dismiss();
             }
         });
 
@@ -106,6 +113,7 @@ public class AlbumDetailBottomSheet extends BottomSheetDialogFragment {
             Intent i = new Intent(this.getContext(), TaggingActivity.class);
             i.putExtra(TaggingActivity.EXTRA_ALBUM_ID, albumWithArtists.getAlbum().getId());
             startActivity(i);
+            dismiss();
         });
 
         populateAlbumData();
@@ -157,7 +165,7 @@ public class AlbumDetailBottomSheet extends BottomSheetDialogFragment {
         Album album = albumWithArtists.getAlbum();
 
         if (album.getCover() != null) {
-            Bitmap coverBitmap = ImageUtils.toBitmap(album.getCover());
+            Bitmap coverBitmap = ImageUtils.toBitmap(getContext(), album.getCover());
             albumCover.setImageBitmap(coverBitmap);
         }
 

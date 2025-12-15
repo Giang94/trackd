@@ -3,10 +3,13 @@ package com.app.trackd.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.ImageDecoder;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.YuvImage;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.net.Uri;
 import android.util.Base64;
@@ -14,6 +17,9 @@ import android.util.Base64;
 import androidx.annotation.OptIn;
 import androidx.camera.core.ExperimentalGetImage;
 import androidx.camera.core.ImageProxy;
+import androidx.core.content.ContextCompat;
+
+import com.app.trackd.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,18 +33,41 @@ public class ImageUtils {
         if (bitmap == null) return null;
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos); // or JPEG if you prefer smaller size
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] bytes = baos.toByteArray();
 
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
 
-    public static Bitmap toBitmap(String base64String) {
-        if (base64String == null || base64String.isEmpty()) return null;
+    public static Bitmap toBitmap(Context context, String base64String) {
+        if (base64String == null || base64String.isEmpty()) {
+            return drawableToBitmap(
+                    ContextCompat.getDrawable(context, R.drawable.cover_placeholder)
+            );
+        }
 
         byte[] bytes = Base64.decode(base64String, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
+
+    private static Bitmap drawableToBitmap(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(
+                drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(),
+                Bitmap.Config.ARGB_8888
+        );
+
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }
+
 
     @OptIn(markerClass = ExperimentalGetImage.class)
     public static Bitmap bitmapFromImageProxy(ImageProxy image) {

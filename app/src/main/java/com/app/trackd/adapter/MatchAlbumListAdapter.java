@@ -48,7 +48,7 @@ public class MatchAlbumListAdapter extends RecyclerView.Adapter<MatchAlbumListAd
 
         String subtitleStr = album.getFormat().getDisplayName() + " • " + album.getYear();
         holder.tvSubtitle.setText(subtitleStr);
-        holder.ivAlbumCover.setImageBitmap(ImageUtils.toBitmap(album.getCover()));
+        holder.ivAlbumCover.setImageBitmap(ImageUtils.toBitmap(holder.itemView.getContext(), album.getCover()));
         holder.ivAlbumCover.setVisibility(View.VISIBLE);
 
         db = AppDatabase.get(context);

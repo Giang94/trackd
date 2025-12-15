@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.app.trackd.model.Album;
-import com.app.trackd.util.ImageUtils;
 
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.Interpreter;
@@ -41,25 +40,6 @@ public class TFPhotoMatcher {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-    }
-
-    /**
-     * Main method to compare a captured Bitmap with a Base64 string from DB.
-     *
-     * @return similarity score (0.0 to 1.0)
-     */
-    public float compareCapturedWithDatabase(Bitmap capturedPhoto, String dbBase64String) {
-        // 1. Convert DB Base64 to Bitmap
-        Bitmap dbPhoto = ImageUtils.toBitmap(dbBase64String);
-
-        if (dbPhoto == null) return 0.0f;
-
-        // 2. Get embeddings (feature vectors) for both images
-        float[] vectorCaptured = getEmbedding(capturedPhoto);
-        float[] vectorDb = getEmbedding(dbPhoto);
-
-        // 3. Calculate similarity
-        return calculateCosineSimilarity(vectorCaptured, vectorDb);
     }
 
     public float[] getEmbedding(Bitmap bitmap) {

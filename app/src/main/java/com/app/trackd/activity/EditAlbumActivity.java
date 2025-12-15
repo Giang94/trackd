@@ -102,6 +102,7 @@ public class EditAlbumActivity extends AppCompatActivity {
 
         setupImagePicker();
         setupEditTextFields();
+        setupArtistSuggestions();
     }
 
     private void setupEditTextFields() {
@@ -265,7 +266,7 @@ public class EditAlbumActivity extends AppCompatActivity {
         Album album = albumWithArtists.getAlbum();
 
         if (album.getCover() != null) {
-            Bitmap coverBitmap = ImageUtils.toBitmap(album.getCover());
+            Bitmap coverBitmap = ImageUtils.toBitmap(this, album.getCover());
             ivCover.setImageBitmap(coverBitmap);
         }
 
@@ -287,6 +288,25 @@ public class EditAlbumActivity extends AppCompatActivity {
         etArtist.setText(TextUtils.join(", ", artists));
 
         etSpotifyUrl.setText(SpotifyUrlHelper.toFullUrl(album.getSpotifyUrl()));
+    }
+
+    private void setupArtistSuggestions() {
+        new Thread(() -> {
+            List<String> artistNames =
+                    db.artistDao().getAllArtistNames(); // we’ll add this DAO method
+
+            runOnUiThread(() -> {
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                        this,
+                        android.R.layout.simple_dropdown_item_1line,
+                        artistNames
+                );
+
+                etArtist.setAdapter(adapter);
+                etArtist.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+                etArtist.setThreshold(1); // start suggesting after 1 char
+            });
+        }).start();
     }
 
     private int getFormatIndex(String format) {

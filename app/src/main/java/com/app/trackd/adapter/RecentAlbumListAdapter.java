@@ -63,7 +63,7 @@ public class RecentAlbumListAdapter extends RecyclerView.Adapter<RecentAlbumList
                 // Load cover
                 Log.d("ADAPTER", "Loading cover for album: " + current.getTitle() + " base64: " + current.getCover().substring(0, 20));
                 Glide.with(holder.itemView)
-                        .load(ImageUtils.toBitmap(current.getCover()))
+                        .load(ImageUtils.toBitmap(holder.itemView.getContext(), current.getCover()))
                         .placeholder(R.drawable.ic_gallery)
                         .centerCrop()
                         .into(ivs[i]);
@@ -99,7 +99,7 @@ public class RecentAlbumListAdapter extends RecyclerView.Adapter<RecentAlbumList
         String yearStr = album.getYear() == 0 ? "Unknown" : album.getYear() + "";
         String subtitleStr = album.getFormat().getDisplayName() + " • " + yearStr;
         holder.tvSubtitle.setText(subtitleStr);
-        holder.ivAlbumCover.setImageBitmap(ImageUtils.toBitmap(album.getCover()));
+        holder.ivAlbumCover.setImageBitmap(ImageUtils.toBitmap(holder.itemView.getContext(), album.getCover()));
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onClick(albumWithArtists);
         });

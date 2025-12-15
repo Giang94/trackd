@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -257,15 +258,23 @@ public class MainActivity extends FragmentActivity {
     private void setupMenu() {
         ivProfile.setOnClickListener(v -> {
             PopupMenu menu = new PopupMenu(this, v);
+
             menu.getMenu().add("Export Database");
             menu.getMenu().add("Import Database");
 
             menu.setOnMenuItemClickListener(item -> {
-                if (item.getTitle().equals("Export Database")) {
-                    startExportPicker();
-                } else if (item.getTitle().equals("Import Database")) {
-                    startImportPicker();
+                String title = item.getTitle().toString();
+
+                switch (title) {
+                    case "Export Database":
+                        startExportPicker();
+                        break;
+
+                    case "Import Database":
+                        startImportPicker();
+                        break;
                 }
+
                 return true;
             });
 

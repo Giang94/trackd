@@ -175,7 +175,7 @@ public class MatchAlbumActivity extends AppCompatActivity {
     }
 
     private void loadAlbumsAndInitMatcher() {
-        albums = db.albumDao().getAllAlbums();
+        albums = db.albumDao().getAllAlbumsWithCoverAndEmbedding();
         // photoMatcher = new ORBPhotoMatcher();
         tfPhotoMatcher = new TFPhotoMatcher(this);
     }

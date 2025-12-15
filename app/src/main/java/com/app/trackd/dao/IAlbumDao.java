@@ -24,6 +24,9 @@ public interface IAlbumDao {
     @Query("SELECT * FROM Album ORDER BY id DESC")
     List<Album> getAllAlbums();
 
+    @Query("SELECT * FROM Album WHERE cover IS NOT NULL AND cover != '' AND embedding IS NOT NULL ORDER BY id DESC")
+    List<Album> getAllAlbumsWithCoverAndEmbedding();
+
     @Query("SELECT * FROM Album ORDER BY id DESC LIMIT :pageSize OFFSET :currentOffset")
     List<Album> getAlbumsPaged(int currentOffset, int pageSize);
 
@@ -34,13 +37,6 @@ public interface IAlbumDao {
     @Transaction
     @Query("SELECT * FROM Album WHERE id = :albumId")
     AlbumWithArtists getAlbumWithArtistsById(Long albumId);
-
-    @Query("SELECT DISTINCT al.* FROM Album al " +
-            "LEFT JOIN AlbumArtistCrossRef aa ON al.id = aa.albumId " +
-            "LEFT JOIN Artist ar ON ar.id = aa.artistId " +
-            "WHERE LOWER(al.title) LIKE LOWER(:query) " +
-            "   OR LOWER(ar.displayName) LIKE LOWER(:query)")
-    List<Album> searchAlbums(String query);
 
     @Query("SELECT COUNT(*) FROM Album")
     int getAlbumCount();
@@ -60,9 +56,68 @@ public interface IAlbumDao {
     @Update
     void update(Album album);
 
-    @Query("SELECT * FROM album WHERE id IN (SELECT albumId FROM album_tag WHERE tagId = :tagId)")
-    List<Album> getAlbumsByTag(long tagId);
+//    @Query("SELECT * FROM album WHERE id IN (SELECT albumId FROM album_tag WHERE tagId = :tagId)")
+//    List<Album> getAlbumsByTag(long tagId);
+//
+//    @Query("SELECT * FROM Album WHERE format IN (:formats)")
+//    List<Album> getAlbumsByFormats(List<String> formats);
+//
+//    @Transaction
+//    @Query(" SELECT * FROM Album " +
+//            " WHERE (:vinyl = 1 OR format NOT LIKE '%VINYL%') " +
+//            " AND (:cds = 1 OR format NOT LIKE '%CD%') " +
+//            " ORDER BY id DESC LIMIT :limit OFFSET :offset")
+//    List<AlbumWithArtists> getAlbumsPagedWithArtists(
+//            boolean vinyl,
+//            boolean cds,
+//            int limit,
+//            int offset
+//    );
+//    @Query(" SELECT DISTINCT al.* FROM Album al " +
+//            " LEFT JOIN AlbumArtistCrossRef aa ON al.id = aa.albumId" +
+//            " LEFT JOIN Artist ar ON ar.id = aa.artistId" +
+//            " WHERE LOWER(al.title) LIKE LOWER(:query)" +
+//            " OR LOWER(ar.displayName) LIKE LOWER(:query)" +
+//            " ORDER BY al.id DESC " +
+//            " LIMIT :limit OFFSET :offset")
+//    List<Album> searchAlbumsPaged(String query, int limit, int offset);
 
-    @Query("SELECT * FROM Album WHERE format IN (:formats)")
-    List<Album> getAlbumsByFormats(List<String> formats);
+    @Query(" SELECT * FROM Album " +
+            " WHERE format IN (:formats) " +
+            " ORDER BY id DESC " +
+            " LIMIT :limit OFFSET :offset "             )
+    List<Album> getAlbumsByFormatsPaged(List<String> formats, int limit, int offset);
+
+    @Query("SELECT COUNT(*) FROM album")
+    int countAllAlbums();
+
+    @Query("SELECT COUNT(*) FROM album WHERE format IN (:formats)")
+    int countAlbumsByFormats(List<String> formats);
+
+    @Query("SELECT COUNT(DISTINCT a.id) FROM album a " +
+            " LEFT JOIN AlbumArtistCrossRef aar ON a.id = aar.albumId " +
+            " LEFT JOIN artist ar ON aar.artistId = ar.id " +
+            " WHERE a.title LIKE :query OR ar.displayName LIKE :query")
+    int countSearchAlbums(String query);
+
+    @Query("SELECT COUNT(DISTINCT a.id) FROM album a " +
+            " LEFT JOIN AlbumArtistCrossRef aar ON a.id = aar.albumId " +
+            " LEFT JOIN artist ar ON aar.artistId = ar.id " +
+            " WHERE a.format IN (:formats) AND (a.title LIKE :query OR ar.displayName LIKE :query)")
+    int countAlbumsByFormatsAndSearch(List<String> formats, String query);
+
+    @Query("SELECT DISTINCT a.* FROM album a " +
+            " LEFT JOIN AlbumArtistCrossRef aa ON aa.albumId = a.id " +
+            " LEFT JOIN artist ar ON ar.id = aa.artistId " +
+            " WHERE (:formatsEmpty = 1 OR a.format IN (:formats)) " +
+            " AND (a.title LIKE :query OR ar.displayName LIKE :query) " +
+            " LIMIT :limit OFFSET :offset")
+    List<Album> searchAlbumsPagedWithFormats(
+            List<String> formats,
+            boolean formatsEmpty,
+            String query,
+            int limit,
+            int offset
+    );
+
 }

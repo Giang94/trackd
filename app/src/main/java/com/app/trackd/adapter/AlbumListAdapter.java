@@ -22,13 +22,10 @@ import java.util.List;
 public class AlbumListAdapter extends RecyclerView.Adapter<AlbumListAdapter.AlbumViewHolder> {
 
     private final List<AlbumWithArtists> albums;
-    private final Runnable loadMoreCallback;
-
     private final OnAlbumClickListener listener;
 
-    public AlbumListAdapter(List<AlbumWithArtists> albums, Runnable loadMoreCallback, OnAlbumClickListener listener) {
+    public AlbumListAdapter(List<AlbumWithArtists> albums, OnAlbumClickListener listener) {
         this.albums = albums;
-        this.loadMoreCallback = loadMoreCallback;
         this.listener = listener;
         setHasStableIds(true);
     }
@@ -67,19 +64,12 @@ public class AlbumListAdapter extends RecyclerView.Adapter<AlbumListAdapter.Albu
         holder.tvFormat.setText(formatString);
 
         if (album.getCover() != null) {
-            Bitmap bm = ImageUtils.toBitmap(album.getCover());
+            Bitmap bm = ImageUtils.toBitmap(holder.itemView.getContext(), album.getCover());
             holder.ivCover.setImageBitmap(bm);
         }
 
-        // Pagination trigger
-        if (position == albums.size() - 1) {
-            loadMoreCallback.run();
-        }
-
         holder.itemView.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onAlbumClick(albumWithArtists);
-            }
+            if (listener != null) listener.onAlbumClick(albumWithArtists);
         });
     }
 

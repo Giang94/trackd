@@ -97,7 +97,7 @@ public class TaggingActivity extends AppCompatActivity {
         Album album = albumWithArtists.getAlbum();
 
         if (album.getCover() != null) {
-            Bitmap coverBitmap = ImageUtils.toBitmap(album.getCover());
+            Bitmap coverBitmap = ImageUtils.toBitmap(this, album.getCover());
             ivCover.setImageBitmap(coverBitmap);
         }
         albumTitle.setText(album.getTitle());

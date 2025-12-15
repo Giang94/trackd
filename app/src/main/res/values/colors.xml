@@ -111,4 +111,5 @@
     <!-- Text -->
     <color name="td_textPrimary">#2A2418</color>  <!-- espresso -->
     <color name="td_textSecondary">#6A5C45</color>
+
 </resources>

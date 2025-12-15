@@ -232,16 +232,15 @@ public class AddAlbumActivity extends AppCompatActivity {
         String formatText = AlbumFormatConverter.mapFormatForDb(spFormat.getSelectedItem().toString());
         AlbumFormat format = AlbumFormat.valueOf(formatText);
 
-        TFPhotoMatcher tfPhotoMatcher = new TFPhotoMatcher(this);
-        float[] embedding = tfPhotoMatcher.getEmbedding(currentBitmap);
+        float[] embedding;
+        if (currentBitmap != null) {
+            TFPhotoMatcher tfPhotoMatcher = new TFPhotoMatcher(this);
+            embedding = tfPhotoMatcher.getEmbedding(currentBitmap);
+        } else {
+            embedding = null;
+        }
 
         String[] artistNames = artistInput.split(",");
-
-        if (coverBase64 == null || coverBase64.isEmpty()) {
-            Bitmap defaultBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cover_placeholder);
-            Bitmap resizedBitmap = resizeBitmapKeepRatio(defaultBitmap);
-            coverBase64 = ImageUtils.toBase64(resizedBitmap);
-        }
 
         new Thread(() -> {
             AppDatabase db = AppDatabase.get(this);

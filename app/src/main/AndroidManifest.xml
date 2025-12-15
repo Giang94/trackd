@@ -14,7 +14,7 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:allowBackup="true"
             android:label="Trackd"
-            android:theme="@style/Theme.TrackD.MD">
+            android:theme="@style/Theme.VintageTrackD">
         <activity
                 android:name=".activity.AlbumListActivity"
                 android:exported="false"

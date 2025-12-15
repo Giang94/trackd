@@ -5,6 +5,8 @@ import static com.app.trackd.activity.EditAlbumActivity.EXTRA_UPDATED_ALBUM_ID;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.ImageButton;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,7 +34,6 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class AlbumListActivity extends FragmentActivity {
 
@@ -45,6 +47,19 @@ public class AlbumListActivity extends FragmentActivity {
     private ImageButton btnFilter;
     private AlbumListAdapter adapter;
     private AppDatabase db;
+
+    private static final int PAGE_SIZE = 10;
+
+    private int currentPage = 0;
+    private boolean isLoading = false;
+    private boolean hasMore = true;
+    private String currentQuery = "";
+
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private Runnable searchRunnable;
+
+    private int totalMatchingCount = 0;
+
     // --- ACTIVITY RESULT HANDLER ---
     private final ActivityResultLauncher<Intent> editAlbumLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -88,13 +103,30 @@ public class AlbumListActivity extends FragmentActivity {
         searchInputLayout = findViewById(R.id.searchInputLayout);
         btnFilter = findViewById(R.id.btnFilter);
         btnFilter.setOnClickListener(v -> showFilterSheet());
-        updateHeader(albums);
+        updateHeader();
     }
 
     private void initRecycler() {
         rvAlbums.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new AlbumListAdapter(albums, this::applyCombinedFilter, this::openAlbumDetails);
+        adapter = new AlbumListAdapter(albums, this::openAlbumDetails);
         rvAlbums.setAdapter(adapter);
+        rvAlbums.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView rv, int dx, int dy) {
+                if (dy <= 0 || isLoading || !hasMore) return;
+
+                LinearLayoutManager lm = (LinearLayoutManager) rv.getLayoutManager();
+                if (lm == null) return;
+
+                int visible = lm.getChildCount();
+                int total = lm.getItemCount();
+                int firstVisible = lm.findFirstVisibleItemPosition();
+
+                if (firstVisible + visible >= total - 2) {
+                    loadNextPage();
+                }
+            }
+        });
     }
 
     private void initSearch() {
@@ -116,7 +148,12 @@ public class AlbumListActivity extends FragmentActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                applyCombinedFilter();
+                if (searchRunnable != null) {
+                    handler.removeCallbacks(searchRunnable);
+                }
+
+                searchRunnable = () -> applyCombinedFilter();
+                handler.postDelayed(searchRunnable, 300);
             }
         });
 
@@ -143,52 +180,6 @@ public class AlbumListActivity extends FragmentActivity {
         sheet.show(getSupportFragmentManager(), "album_filter_sheet");
     }
 
-    private void applyCombinedFilter() {
-        // Capture text ONCE on UI thread
-        final String query = searchInput.getText() != null
-                ? searchInput.getText().toString().trim().toLowerCase()
-                : "";
-
-        new Thread(() -> {
-            List<Album> filteredAlbums;
-
-            // Filter by format type
-            if (filterVinyl && filterCds) {
-                filteredAlbums = db.albumDao().getAllAlbums();
-            } else if (filterVinyl) {
-                filteredAlbums = db.albumDao().getAlbumsByFormats(AlbumFormat.getVinylNames());
-            } else if (filterCds) {
-                filteredAlbums = db.albumDao().getAlbumsByFormats(List.of(AlbumFormat.CD.name()));
-            } else {
-                filteredAlbums = db.albumDao().getAllAlbums();
-            }
-
-            // Get full AlbumWithArtists objects
-            List<Long> ids = filteredAlbums.stream().map(Album::getId).toList();
-            List<AlbumWithArtists> results =
-                    db.albumDao().getAlbumsWithArtistsByIds(ids);
-
-            // Search filtering (NO UI calls)
-            if (!query.isEmpty()) {
-                results = results.stream()
-                        .filter(awa ->
-                                awa.getAlbum().getTitle().toLowerCase().contains(query)
-                                        || awa.getArtists().stream().anyMatch(a ->
-                                        a.getDisplayName().toLowerCase().contains(query))
-                        )
-                        .collect(Collectors.toList());
-            }
-
-            // UI update
-            List<AlbumWithArtists> finalResults = results;
-            runOnUiThread(() -> {
-                adapter.updateList(finalResults);
-                updateHeader(finalResults);
-            });
-
-        }).start();
-    }
-
     // ----------------- DETAILS + UPDATE -----------------
     private void openAlbumDetails(AlbumWithArtists album) {
         AlbumDetailBottomSheet sheet = new AlbumDetailBottomSheet(album);
@@ -206,8 +197,8 @@ public class AlbumListActivity extends FragmentActivity {
         sheet.show(getSupportFragmentManager(), "album_detail_sheet");
     }
 
-    private void updateHeader(List<AlbumWithArtists> currentList) {
-        tvTitle.setText("Albums (" + currentList.size() + ")");
+    private void updateHeader() {
+        tvTitle.setText(String.format("Albums (%d)", totalMatchingCount));
     }
 
     private void updateSingleAlbum(long albumId) {
@@ -240,4 +231,120 @@ public class AlbumListActivity extends FragmentActivity {
         super.onResume();
         applyCombinedFilter();
     }
+
+    private void applyCombinedFilter() {
+        rvAlbums.post(() -> {
+            currentPage = 0;
+            hasMore = true;
+            isLoading = false;
+
+            currentQuery = searchInput.getText() == null
+                    ? ""
+                    : searchInput.getText().toString().trim().toLowerCase();
+
+            albums.clear();
+            adapter.notifyDataSetChanged();
+
+            // 🔥 NEW: calculate total count
+            new Thread(() -> {
+                int count = queryTotalCount();
+
+                runOnUiThread(() -> {
+                    totalMatchingCount = count;
+                    updateHeader();
+                });
+            }).start();
+
+            loadNextPage();
+        });
+    }
+
+    private int queryTotalCount() {
+        boolean hasSearch = !currentQuery.isEmpty();
+        List<String> formats = getActiveFormats();
+        boolean allFormats = formats.isEmpty();
+
+        if (hasSearch && allFormats) {
+            return db.albumDao()
+                    .countSearchAlbums("%" + currentQuery + "%");
+        }
+
+        if (hasSearch) {
+            return db.albumDao()
+                    .countAlbumsByFormatsAndSearch(
+                            formats,
+                            "%" + currentQuery + "%"
+                    );
+        }
+
+        if (allFormats) {
+            return db.albumDao().countAllAlbums();
+        }
+
+        return db.albumDao()
+                .countAlbumsByFormats(formats);
+    }
+
+
+    private List<String> getActiveFormats() {
+        if (filterVinyl && filterCds) return AlbumFormat.getNames();
+        if (filterVinyl) return AlbumFormat.getVinylNames();
+        if (filterCds) return List.of(AlbumFormat.CD.name());
+        return List.of();
+    }
+
+    private void loadNextPage() {
+        if (isLoading || !hasMore) return;
+        isLoading = true;
+
+        new Thread(() -> {
+            List<AlbumWithArtists> next = queryNextPage();
+
+            runOnUiThread(() -> {
+                if (!next.isEmpty()) {
+                    int start = albums.size();
+                    albums.addAll(next);
+                    adapter.notifyItemRangeInserted(start, next.size());
+                    updateHeader();
+                }
+                isLoading = false;
+            });
+        }).start();
+    }
+
+    private List<AlbumWithArtists> queryNextPage() {
+        int offset = currentPage * PAGE_SIZE;
+        boolean hasSearch = !currentQuery.isEmpty();
+        List<String> formats = getActiveFormats();
+        boolean allFormats = formats.isEmpty();
+
+        List<Album> page;
+
+        if (hasSearch) {
+            page = db.albumDao().searchAlbumsPagedWithFormats(
+                    formats,
+                    allFormats,
+                    "%" + currentQuery + "%",
+                    PAGE_SIZE,
+                    offset
+            );
+        } else if (allFormats) {
+            page = db.albumDao().getAlbumsPaged(offset, PAGE_SIZE);
+        } else {
+            page = db.albumDao()
+                    .getAlbumsByFormatsPaged(formats, PAGE_SIZE, offset);
+        }
+
+        if (page.isEmpty()) {
+            hasMore = false;
+            return List.of();
+        }
+
+        currentPage++;
+
+        List<Long> ids = page.stream().map(Album::getId).toList();
+        return db.albumDao().getAlbumsWithArtistsByIds(ids);
+    }
+
+
 }
