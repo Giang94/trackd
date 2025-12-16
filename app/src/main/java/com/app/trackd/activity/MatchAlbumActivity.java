@@ -33,6 +33,7 @@ import com.app.trackd.database.AppDatabase;
 import com.app.trackd.matcher.TFPhotoMatcher;
 import com.app.trackd.model.Album;
 import com.app.trackd.util.ImageUtils;
+import com.app.trackd.util.ThemeHelper;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
@@ -88,6 +89,8 @@ public class MatchAlbumActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeHelper.applyTheme(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match_album);
 
@@ -122,8 +125,6 @@ public class MatchAlbumActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-//        GridLayoutManager glm = new GridLayoutManager(this, 2);
-//        recyclerView.setLayoutManager(glm);
         LinearLayoutManager layoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
 

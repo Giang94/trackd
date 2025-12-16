@@ -21,17 +21,12 @@ public class SpotifyUrlHelper {
      * Output: album/3JUrJP460nFIqwjxM19slT
      */
     public static String normalize(String input) {
-
         // Already normalized
         if (isNormalized(input)) {
             return input;
         }
-
         // Try extracting from URL
-        String extracted = extractFromUrl(input);
-        return extracted;
-
-        // Not a valid Spotify input
+        return extractFromUrl(input);
     }
 
 
@@ -77,7 +72,21 @@ public class SpotifyUrlHelper {
         if (storedPath == null || storedPath.trim().isEmpty()) {
             return null;
         }
-        return "https://open.spotify.com/" + storedPath;
+
+        String path = storedPath.trim();
+
+        // Fully qualified URL
+        if (path.startsWith("http://") || path.startsWith("https://")) {
+            return path;
+        }
+
+        // Domain-only URL (missing scheme)
+        if (path.startsWith("open.spotify.com/")) {
+            return "https://" + path;
+        }
+
+        // Stored as type/id
+        return "https://open.spotify.com/" + path;
     }
 
 

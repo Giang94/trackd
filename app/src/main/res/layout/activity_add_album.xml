@@ -39,6 +39,7 @@
                 android:orientation="horizontal">
 
             <com.google.android.material.textfield.TextInputLayout
+                    app:boxBackgroundMode="outline"
                     android:id="@+id/lyBarcode"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

@@ -29,6 +29,7 @@ import com.app.trackd.model.Artist;
 import com.app.trackd.model.Tag;
 import com.app.trackd.model.ref.AlbumTagCrossRef;
 import com.app.trackd.util.ImageUtils;
+import com.app.trackd.util.ThemeHelper;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.chip.Chip;
 
@@ -56,6 +57,8 @@ public class TaggingActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        ThemeHelper.applyTheme(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tagging);
 

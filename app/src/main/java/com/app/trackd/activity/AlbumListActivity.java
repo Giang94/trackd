@@ -30,6 +30,7 @@ import com.app.trackd.fragment.AlbumFilterBottomSheet;
 import com.app.trackd.model.Album;
 import com.app.trackd.model.AlbumWithArtists;
 import com.app.trackd.model.enums.AlbumFormat;
+import com.app.trackd.util.ThemeHelper;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
@@ -39,7 +40,9 @@ public class AlbumListActivity extends FragmentActivity {
 
     public static final String EXTRA_FILTER_VINYL = "filterVinyl";
     public static final String EXTRA_FILTER_CDS = "filterCds";
+    private static final int PAGE_SIZE = 10;
     private final List<AlbumWithArtists> albums = new ArrayList<>();
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private RecyclerView rvAlbums;
     private TextInputLayout searchInputLayout;
     private NoMultiTouchEditText searchInput;
@@ -47,20 +50,6 @@ public class AlbumListActivity extends FragmentActivity {
     private ImageButton btnFilter;
     private AlbumListAdapter adapter;
     private AppDatabase db;
-
-    private static final int PAGE_SIZE = 10;
-
-    private int currentPage = 0;
-    private boolean isLoading = false;
-    private boolean hasMore = true;
-    private String currentQuery = "";
-
-    private final Handler handler = new Handler(Looper.getMainLooper());
-    private Runnable searchRunnable;
-
-    private int totalMatchingCount = 0;
-
-    // --- ACTIVITY RESULT HANDLER ---
     private final ActivityResultLauncher<Intent> editAlbumLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -70,11 +59,19 @@ public class AlbumListActivity extends FragmentActivity {
                     if (id != -1) updateSingleAlbum(id);
                 }
             });
+    private int currentPage = 0;
+    private boolean isLoading = false;
+    private boolean hasMore = true;
+    private String currentQuery = "";
+    private Runnable searchRunnable;
+    private int totalMatchingCount = 0;
     private boolean filterVinyl = true;
     private boolean filterCds = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeHelper.applyTheme(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_list);
 

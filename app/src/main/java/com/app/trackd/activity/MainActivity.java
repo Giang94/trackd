@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,14 +23,13 @@ import com.app.trackd.R;
 import com.app.trackd.adapter.RecentAlbumListAdapter;
 import com.app.trackd.common.TwoFingerDoubleTapHelper;
 import com.app.trackd.common.TwoFingerZoomHelper;
-import com.app.trackd.dao.ITagDao;
 import com.app.trackd.database.AppDatabase;
 import com.app.trackd.database.DatabaseHelper;
 import com.app.trackd.fragment.AlbumDetailBottomSheet;
 import com.app.trackd.model.Album;
 import com.app.trackd.model.AlbumWithArtists;
-import com.app.trackd.model.Tag;
-import com.app.trackd.util.StringUtils;
+import com.app.trackd.util.SpotifyUrlHelper;
+import com.app.trackd.util.ThemeHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
@@ -65,38 +63,23 @@ public class MainActivity extends FragmentActivity {
     private ActivityResultLauncher<Intent> exportLauncher;
     private ActivityResultLauncher<Intent> importLauncher;
 
-    public static void seedTags(AppDatabase db, List<String> tagsToSeed) {
-        ITagDao tagDao = db.tagDao();
-
-        new Thread(() -> {
-            for (String rawName : tagsToSeed) {
-                String normalized = StringUtils.normalize(rawName);
-
-                // Skip if exists
-                if (tagDao.findByNormalized(normalized) == null) {
-                    tagDao.insert(new Tag(rawName));
-                }
-            }
-        }).start();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeHelper.applyTheme(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         db = AppDatabase.get(this);
         databaseHelper = DatabaseHelper.get(this);
 
-        // seedTags(db, List.of("Autographed", "Boxset", "Limited Edition", "Deluxe"));
-
-        TwoFingerZoomHelper.enableTwoFingerZoom(this);
-        TwoFingerDoubleTapHelper.enableTwoFingerDoubleTap(this);
-
         initViews();
         setupData();
         setupLaunchers();
         setupMenu();
+
+        TwoFingerZoomHelper.enableTwoFingerZoom(this);
+        TwoFingerDoubleTapHelper.enableTwoFingerDoubleTap(this);
     }
 
     private void initViews() {
@@ -262,6 +245,9 @@ public class MainActivity extends FragmentActivity {
             menu.getMenu().add("Export Database");
             menu.getMenu().add("Import Database");
 
+            boolean isDark = ThemeHelper.isDarkTheme(this);
+            menu.getMenu().add(isDark ? "Classic Theme" : "Dark Wine Theme");
+
             menu.setOnMenuItemClickListener(item -> {
                 String title = item.getTitle().toString();
 
@@ -273,8 +259,13 @@ public class MainActivity extends FragmentActivity {
                     case "Import Database":
                         startImportPicker();
                         break;
-                }
 
+                    default:
+                        ThemeHelper.toggleTheme(this);
+                        boolean nowDark = ThemeHelper.isDarkTheme(this);
+                        item.setTitle(nowDark ? "Classic Theme" : "Dark Wine Theme");
+                        break;
+                }
                 return true;
             });
 

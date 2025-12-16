@@ -37,6 +37,7 @@ import com.app.trackd.model.ref.AlbumArtistCrossRef;
 import com.app.trackd.util.ImageUtils;
 import com.app.trackd.util.SpotifyUrlHelper;
 import com.app.trackd.util.StringUtils;
+import com.app.trackd.util.ThemeHelper;
 
 import java.io.InputStream;
 import java.util.List;
@@ -60,6 +61,8 @@ public class EditAlbumActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeHelper.applyTheme(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_album);
 

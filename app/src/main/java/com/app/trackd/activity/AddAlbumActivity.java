@@ -43,6 +43,7 @@ import com.app.trackd.model.ref.AlbumArtistCrossRef;
 import com.app.trackd.util.ImageUtils;
 import com.app.trackd.util.SpotifyUrlHelper;
 import com.app.trackd.util.StringUtils;
+import com.app.trackd.util.ThemeHelper;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -77,6 +78,8 @@ public class AddAlbumActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeHelper.applyTheme(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_album);
 

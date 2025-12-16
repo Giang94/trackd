@@ -9,4 +9,5 @@
     <dimen name="margin_large">24dp</dimen>
     <dimen name="header_text_size">20sp</dimen>
     <dimen name="bottom_sheet_corner_radius">24dp</dimen>
+    <dimen name="bottom_sheet_scroll_max_height">1200dp</dimen>
 </resources>

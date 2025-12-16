@@ -186,45 +186,54 @@
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>
 
-            <!-- OVERLAY ICONS (edit, delete, etc.) -->
-            <LinearLayout
-                    android:id="@+id/topRightButtons"
-                    android:layout_width="wrap_content"
-                    android:layout_height="200dp"
-                    android:layout_gravity="top|end"
-                    android:layout_marginTop="@dimen/padding_medium"
-                    android:gravity="center"
-                    android:orientation="vertical">
+            <!-- ACTION OVERLAY -->
+            <FrameLayout
+                    android:id="@+id/actionOverlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#66010101"
+                    android:visibility="gone"
+                    android:clickable="true"
+                    android:focusable="true">
 
-                <ImageButton
-                        android:id="@+id/btnTag"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:layout_margin="@dimen/margin_small"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="Tagging"
-                        android:src="@drawable/ic_tag" />
+                <!-- BUTTON GROUP -->
+                <LinearLayout
+                        android:id="@+id/buttonGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|bottom"
+                        android:layout_marginBottom="@dimen/margin_large"
+                        android:orientation="horizontal"
+                        android:gravity="center">
 
-                <ImageButton
-                        android:id="@+id/btnEdit"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:layout_margin="@dimen/margin_small"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="Edit"
-                        android:src="@drawable/ic_edit" />
+                    <ImageButton
+                            android:id="@+id/btnTag"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:background="@drawable/lux_circle_bg"
+                            android:layout_margin="@dimen/margin_medium"
+                            android:src="@drawable/ic_tag" />
 
-                <ImageButton
-                        android:id="@+id/btnDelete"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:layout_margin="@dimen/margin_small"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="Delete"
-                        android:src="@drawable/ic_delete" />
-            </LinearLayout>
+                    <ImageButton
+                            android:layout_margin="@dimen/margin_medium"
+                            android:id="@+id/btnEdit"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:background="@drawable/lux_circle_bg"
+                            android:src="@drawable/ic_edit" />
+
+                    <ImageButton
+                            android:id="@+id/btnDelete"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:layout_margin="@dimen/margin_medium"
+                            android:background="@drawable/lux_circle_bg"
+                            android:src="@drawable/ic_delete" />
+                </LinearLayout>
+
+            </FrameLayout>
+
 
         </FrameLayout>
     </com.google.android.material.card.MaterialCardView>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

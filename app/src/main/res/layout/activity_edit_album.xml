@@ -70,6 +70,7 @@
                 android:layout_marginLeft="@dimen/margin_large"
                 android:layout_marginTop="@dimen/margin_medium"
                 android:layout_marginRight="@dimen/margin_large"
+                android:text="1989"
                 android:hint="Year"
                 android:imeOptions="actionNext"
                 android:inputType="number" />

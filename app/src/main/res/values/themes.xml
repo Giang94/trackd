@@ -27,6 +27,75 @@
 
         <!-- EditText -->
         <item name="textInputStyle">@style/Widget.TrackD.TextInput</item>
+        <item name="android:textColorHint">@color/td_textSecondary</item>
+        <item name="hintTextColor">@color/td_textSecondary</item>
+        <item name="android:editTextColor">@color/td_textPrimary</item>
+        <item name="colorControlNormal">@color/td_textSecondary</item>
+
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">never</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <!-- CardView -->
+    <style name="Widget.TrackD.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/td_accent</item>
+        <item name="cardElevation">3dp</item>
+        <item name="cardUseCompatPadding">true</item>
+    </style>
+
+    <!-- TextInputs -->
+    <style name="Widget.TrackD.TextInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundMode">outline</item>
+        <item name="boxStrokeColor">@color/mtrl_textinput_default_box_stroke_color</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="hintTextColor">@color/td_textSecondary</item>
+        <item name="android:textColor">@color/td_textPrimary</item>
+        <item name="android:textColorHint">@color/td_textSecondary</item>
+    </style>
+
+    <style name="Widget.TrackD.EditText" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/td_primary</item>
+        <item name="hintTextColor">@color/td_textSecondary</item>
+        <item name="android:textColor">@color/td_textPrimary</item>
+        <item name="android:textColorHint">@color/td_textSecondary</item>
+    </style>
+
+    <style name="Theme.VintageTrackD.Dark" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Background & Surface -->
+        <item name="android:colorBackground">@color/td_bg_dark</item>
+        <item name="colorSurface">@color/td_surface_dark</item>
+        <item name="colorOnSurface">@color/td_onSurface_dark</item>
+        <item name="colorOnBackground">@color/td_onBg_dark</item>
+
+        <!-- Primary -->
+        <item name="colorPrimary">@color/td_primary_dark</item>
+        <item name="colorPrimaryVariant">@color/td_primaryVariant_dark</item>
+        <item name="colorOnPrimary">@color/td_onPrimary_dark</item>
+
+        <!-- Secondary -->
+        <item name="colorSecondary">@color/td_secondary_dark</item>
+        <item name="colorSecondaryVariant">@color/td_secondaryVariant_dark</item>
+        <item name="colorOnSecondary">@color/td_onSecondary_dark</item>
+
+        <!-- Accent -->
+        <item name="colorAccent">@color/td_accent_dark</item>
+
+        <!-- Text -->
+        <item name="android:textColor">@color/td_textPrimary_dark</item>
+
+        <!-- Card -->
+        <item name="cardViewStyle">@style/Widget.TrackD.CardView.Dark</item>
+
+        <!-- EditText -->
+        <item name="textInputStyle">@style/Widget.TrackD.TextInput.Dark</item>
+        <item name="android:textColorHint">@color/td_textSecondary_dark</item>
+        <item name="hintTextColor">@color/td_textSecondary_dark</item>
+        <item name="android:editTextColor">@color/td_textPrimary_dark</item>
+        <item name="colorControlNormal">@color/td_textSecondary_dark</item>
 
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowTranslucentNavigation">false</item>
@@ -35,16 +104,27 @@
     </style>
 
     <!-- CardView -->
-    <style name="Widget.TrackD.CardView" parent="Widget.MaterialComponents.CardView">
-        <item name="cardBackgroundColor">@color/td_surface</item>
+    <style name="Widget.TrackD.CardView.Dark" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/td_accent_dark</item>
         <item name="cardElevation">3dp</item>
         <item name="cardUseCompatPadding">true</item>
     </style>
 
     <!-- TextInputs -->
-    <style name="Widget.TrackD.TextInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="hintTextColor">@color/td_textSecondary</item>
-        <item name="android:textColor">@color/td_textPrimary</item>
-        <item name="boxStrokeColor">@color/td_primary</item>
+    <style name="Widget.TrackD.TextInput.Dark" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundMode">outline</item>
+        <item name="boxStrokeColor">@color/mtrl_textinput_default_box_stroke_color</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="hintTextColor">@color/td_textSecondary_dark</item>
+        <item name="android:textColor">@color/td_textPrimary_dark</item>
+        <item name="android:textColorHint">@color/td_textSecondary_dark</item>
+    </style>
+
+    <style name="Widget.TrackD.EditText.Dark" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/td_primary_dark</item>
+        <item name="hintTextColor">@color/td_textSecondary_dark</item>
+        <item name="android:textColor">@color/td_textPrimary_dark</item>
+        <item name="android:textColorHint">@color/td_textSecondary_dark</item>
     </style>
 </resources>

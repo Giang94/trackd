@@ -9,10 +9,13 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,6 +24,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 
 import com.app.trackd.R;
 import com.app.trackd.activity.TaggingActivity;
@@ -33,18 +37,21 @@ import com.app.trackd.util.ImageUtils;
 import com.app.trackd.util.SpotifyUrlHelper;
 import com.app.trackd.util.StringUtils;
 import com.google.android.flexbox.FlexboxLayout;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.chip.Chip;
 
 import java.util.List;
 import java.util.Random;
 
+
 public class AlbumDetailBottomSheet extends BottomSheetDialogFragment {
-    private static final float MAX_BOTTOM_SHEET_HEIGHT = 0.75f;
+    private static final float MAX_BOTTOM_SHEET_HEIGHT = 0.9f;
     private final AlbumWithArtists albumWithArtists;
     int lastColor = -1;
     private ImageView albumCover;
+    private NestedScrollView scrollView;
+    private FrameLayout overlay;
+    private LinearLayout buttonGroup;
     private TextView albumTitle, albumYear, albumFormat;
     private LinearLayout artistListContainer, openInContainer;
     private ImageButton btnOpenSpotify, btnDelete, btnEdit, btnTag;
@@ -77,6 +84,75 @@ public class AlbumDetailBottomSheet extends BottomSheetDialogFragment {
         btnTag = view.findViewById(R.id.btnTag);
         chipGroupTags = view.findViewById(R.id.chipGroupTags);
 
+        scrollView = view.findViewById(R.id.scrollView);
+        overlay = view.findViewById(R.id.actionOverlay);
+        buttonGroup = overlay.findViewById(R.id.buttonGroup);
+
+        GestureDetector detector = new GestureDetector(requireContext(),
+                new GestureDetector.SimpleOnGestureListener() {
+                    @Override
+                    public void onLongPress(MotionEvent e) {
+                        showOverlay(overlay);
+                    }
+                });
+
+        scrollView.setOnTouchListener((v, event) -> {
+            detector.onTouchEvent(event);
+            return false;
+        });
+
+        overlay.setOnClickListener(l -> hideOverlay(overlay));
+
+        populateAlbumData();
+        loadTags();
+        setupButtons(view);
+        return view;
+    }
+
+    private void showOverlay(View overlay) {
+        overlay.setVisibility(View.VISIBLE);
+        overlay.setAlpha(0f);
+
+        // fade in scrim
+        overlay.animate()
+                .alpha(1f)
+                .setDuration(200)
+                .start();
+
+        LinearLayout buttonGroup = overlay.findViewById(R.id.buttonGroup);
+        // animate buttons AFTER overlay is visible
+        for (int i = 0; i < buttonGroup.getChildCount(); i++) {
+            View child = buttonGroup.getChildAt(i);
+            child.setAlpha(0f);
+            child.setTranslationY(20f);
+
+            child.animate()
+                    .alpha(1f)
+                    .translationY(0f)
+                    .setStartDelay(i * 40L)
+                    .setDuration(500)
+                    .start();
+        }
+    }
+
+    private void hideOverlay(View overlay) {
+        for (int i = 0; i < buttonGroup.getChildCount(); i++) {
+            View child = buttonGroup.getChildAt(i);
+            child.animate()
+                    .alpha(0f)
+                    .translationY(20f)
+                    .setDuration(120)
+                    .start();
+        }
+
+        overlay.animate()
+                .alpha(0f)
+                .setDuration(500)
+                .withEndAction(() -> overlay.setVisibility(View.GONE))
+                .start();
+    }
+
+    private void setupButtons(View view) {
         btnDelete.setOnClickListener(v -> {
             new AlertDialog.Builder(requireContext())
                     .setTitle("Delete album")
@@ -115,10 +191,6 @@ public class AlbumDetailBottomSheet extends BottomSheetDialogFragment {
             startActivity(i);
             dismiss();
         });
-
-        populateAlbumData();
-        loadTags();
-        return view;
     }
 
     private void loadTags() {
@@ -134,27 +206,8 @@ public class AlbumDetailBottomSheet extends BottomSheetDialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        setupBehaviors();
     }
 
-    private void setupBehaviors() {
-        View bottomSheet = getDialog().findViewById(com.google.android.material.R.id.design_bottom_sheet);
-        if (bottomSheet != null) {
-            BottomSheetBehavior<View> behavior = BottomSheetBehavior.from(bottomSheet);
-
-            bottomSheet.post(() -> {
-                int maxHeight = (int) (getResources().getDisplayMetrics().heightPixels * MAX_BOTTOM_SHEET_HEIGHT);
-
-                bottomSheet.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
-                bottomSheet.requestLayout();
-
-                behavior.setPeekHeight(maxHeight, true);
-                behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                behavior.setSkipCollapsed(true);
-            });
-        }
-    }
 
     @Override
     public int getTheme() {
@@ -189,7 +242,6 @@ public class AlbumDetailBottomSheet extends BottomSheetDialogFragment {
             tv.setTextSize(16);
             tv.setPadding(0, 6, 0, 6);
             tv.setGravity(Gravity.CENTER);
-            tv.setTextColor(Color.BLACK);
             artistListContainer.addView(tv);
         }
 
@@ -224,10 +276,11 @@ public class AlbumDetailBottomSheet extends BottomSheetDialogFragment {
         this.editListener = listener;
     }
 
-    private Chip addChip(Tag tag) {
+    private void addChip(Tag tag) {
         Chip chip = new Chip(this.getContext());
         chip.setText(tag.getName());
-        chip.setCheckable(true);
+        chip.setCheckable(false);
+        chip.setClickable(false);
         chip.setTag(tag.getId());
         chip.setCloseIconVisible(false);
         chip.setTag(R.id.delete_mode, false);
@@ -241,7 +294,6 @@ public class AlbumDetailBottomSheet extends BottomSheetDialogFragment {
         lp.setMargins(margin, 0, margin, 0);
         chip.setLayoutParams(lp);
         chipGroupTags.addView(chip);
-        return chip;
     }
 
 
