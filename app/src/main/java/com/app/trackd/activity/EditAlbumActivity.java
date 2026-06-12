@@ -26,7 +26,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.app.trackd.R;
-import com.app.trackd.database.AlbumFormatConverter;
 import com.app.trackd.database.AppDatabase;
 import com.app.trackd.matcher.TFPhotoMatcher;
 import com.app.trackd.model.Album;
@@ -58,6 +57,7 @@ public class EditAlbumActivity extends AppCompatActivity {
     private Bitmap currentBitmap = null;
     private String coverBase64 = null;
     private boolean isCoverChanged = false;
+    private List<AlbumFormat> sortedFormatOptions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,8 +139,7 @@ public class EditAlbumActivity extends AppCompatActivity {
         } catch (NumberFormatException ignored) {
         }
 
-        String formatText = AlbumFormatConverter.mapFormatForDb(spFormat.getSelectedItem().toString());
-        AlbumFormat format = AlbumFormat.valueOf(formatText);
+        AlbumFormat format = sortedFormatOptions.get(spFormat.getSelectedItemPosition());
 
         Album album = db.albumDao().getAlbumById(albumId);
         album.setTitle(title);
@@ -256,10 +255,15 @@ public class EditAlbumActivity extends AppCompatActivity {
     }
 
     private void setupFormatDropdown() {
+        sortedFormatOptions = AlbumFormat.getSortedByName();
+        List<String> formatNames = sortedFormatOptions.stream()
+                .map(AlbumFormat::getDisplayName)
+                .toList();
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_spinner_item,
-                new String[]{"CD", "CASSETTE", "VINYL 12\"", "VINYL 10\"", "VINYL 7\""}
+                formatNames
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spFormat.setAdapter(adapter);
@@ -280,7 +284,7 @@ public class EditAlbumActivity extends AppCompatActivity {
             etYear.setText(album.getYear() + "");
         }
 
-        spFormat.setSelection(getFormatIndex(album.getFormat().name()));
+        spFormat.setSelection(getFormatIndex(album.getFormat()));
 
         etTitle.setText(album.getTitle());
 
@@ -312,18 +316,11 @@ public class EditAlbumActivity extends AppCompatActivity {
         }).start();
     }
 
-    private int getFormatIndex(String format) {
-        switch (format.toUpperCase()) {
-            case "CASSETTE":
-                return 1;
-            case "VINYL":
-                return 2;
-            case "VINYL_10":
-                return 3;
-            case "VINYL_7":
-                return 4;
-            default:
-                return 0; // CD
+    private int getFormatIndex(AlbumFormat format) {
+        if (format == null || sortedFormatOptions == null) return 0;
+        for (int i = 0; i < sortedFormatOptions.size(); i++) {
+            if (sortedFormatOptions.get(i) == format) return i;
         }
+        return 0;
     }
 }

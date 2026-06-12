@@ -1,5 +1,19 @@
 <resources>
     <string name="app_name">trackd</string>
+    <string name="library">Library</string>
+    <string name="hint_album_search">Album title, artist name...</string>
+    <string name="cd_filter_albums">Filter albums</string>
+    <string name="cd_switch_album_layout">Switch album layout</string>
+    <string name="cd_switch_to_grid_view">Switch to grid view</string>
+    <string name="cd_switch_to_list_view">Switch to list view</string>
+    <string name="header_albums_count">Albums (%1$d)</string>
+    <string name="filter_format_all">All</string>
+    <string name="filter_format_lp_12">12&quot; LP</string>
+    <string name="filter_format_lp_10">10&quot; LP</string>
+    <string name="filter_format_lp_7">7&quot; LP</string>
+    <string name="filter_format_cd">CD</string>
+    <string name="filter_format_dvd">DVD</string>
+    <string name="filter_format_cassette">Cassette</string>
     <string name="title_activity_add_album">AddAlbumActivity</string>
     <string name="title_activity_edit_album">EditAlbumActivity</string>
     <string name="title_activity_camera">CameraActivity</string>

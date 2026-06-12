@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+
+    <ImageView
+            android:id="@+id/imageCover"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"
+            android:src="@drawable/album_cover_example"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintDimensionRatio="1:1" />
+
+    <TextView
+            android:id="@+id/textFormat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:background="@drawable/bg_album_format_badge"
+            android:paddingStart="5dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="5dp"
+            android:paddingBottom="2dp"
+            android:textColor="@android:color/white"
+            android:textSize="9sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@id/imageCover"
+            app:layout_constraintEnd_toEndOf="@id/imageCover" />
+
+    <TextView
+            android:visibility="gone"
+            android:id="@+id/textTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_album_title_glass"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:paddingStart="8dp"
+            android:paddingTop="7dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="7dp"
+            android:text="La Sonnambula"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/imageCover"
+            app:layout_constraintStart_toStartOf="@id/imageCover"
+            app:layout_constraintEnd_toEndOf="@id/imageCover" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

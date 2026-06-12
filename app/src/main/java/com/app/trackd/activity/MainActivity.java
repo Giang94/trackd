@@ -1,7 +1,5 @@
 package com.app.trackd.activity;
 
-import static com.app.trackd.activity.AlbumListActivity.EXTRA_FILTER_CDS;
-import static com.app.trackd.activity.AlbumListActivity.EXTRA_FILTER_VINYL;
 import static com.app.trackd.activity.EditAlbumActivity.EXTRA_ALBUM_ID;
 
 import android.content.Intent;
@@ -112,15 +110,11 @@ public class MainActivity extends FragmentActivity {
 
         cardVinyl.setOnClickListener(v -> {
             Intent i = new Intent(MainActivity.this, AlbumListActivity.class);
-            i.putExtra(EXTRA_FILTER_VINYL, true);
-            i.putExtra(EXTRA_FILTER_CDS, false);
             startActivity(i);
         });
 
         cardCds.setOnClickListener(v -> {
             Intent i = new Intent(MainActivity.this, AlbumListActivity.class);
-            i.putExtra(EXTRA_FILTER_VINYL, false);
-            i.putExtra(EXTRA_FILTER_CDS, true);
             startActivity(i);
         });
 
@@ -156,7 +150,7 @@ public class MainActivity extends FragmentActivity {
     private void setupRecycler() {
         adapter = new RecentAlbumListAdapter(albums, this::openAlbumDetails);
 
-        rvRecent.setLayoutManager(new GridLayoutManager(this, 2));
+        rvRecent.setLayoutManager(new GridLayoutManager(this, 3));
         rvRecent.setAdapter(adapter);
 
         adapter.setShowAllCallback(() -> {

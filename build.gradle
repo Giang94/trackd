@@ -3,17 +3,11 @@ buildscript {
         google()
         mavenCentral()
     }
-    ext {
-        kotlin_version = '1.8.22'
-    }
     dependencies {
-        classpath "com.android.tools.build:gradle:8.3.0" // or your AGP version
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.22" // Kotlin plugin
+        classpath 'com.android.tools.build:gradle:8.13.2' // or your AGP version
     }
 }
 
 plugins {
     alias(libs.plugins.android.application) apply false
-    alias(libs.plugins.kotlin.android) apply false
-    alias(libs.plugins.kotlin.compose) apply false
 }

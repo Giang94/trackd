@@ -88,6 +88,9 @@ public interface IAlbumDao {
             " LIMIT :limit OFFSET :offset "             )
     List<Album> getAlbumsByFormatsPaged(List<String> formats, int limit, int offset);
 
+    @Query("SELECT * FROM Album WHERE format IN (:formats) ORDER BY id DESC")
+    List<Album> getAlbumsByFormats(List<String> formats);
+
     @Query("SELECT COUNT(*) FROM album")
     int countAllAlbums();
 
@@ -119,5 +122,34 @@ public interface IAlbumDao {
             int limit,
             int offset
     );
+
+    @Query("SELECT DISTINCT a.* FROM album a " +
+            " LEFT JOIN AlbumArtistCrossRef aa ON aa.albumId = a.id " +
+            " LEFT JOIN artist ar ON ar.id = aa.artistId " +
+            " WHERE (:formatsEmpty = 1 OR a.format IN (:formats)) " +
+            " AND (a.title LIKE :query OR ar.displayName LIKE :query) " +
+            " ORDER BY a.id DESC")
+    List<Album> searchAlbumsWithFormats(
+            List<String> formats,
+            boolean formatsEmpty,
+            String query
+    );
+
+    @Query("SELECT a.format AS format, COUNT(DISTINCT a.id) AS count FROM album a " +
+            " LEFT JOIN AlbumArtistCrossRef aar ON a.id = aar.albumId " +
+            " LEFT JOIN artist ar ON aar.artistId = ar.id " +
+            " WHERE (:formatsEmpty = 1 OR a.format IN (:formats)) " +
+            " AND (a.title LIKE :query OR ar.displayName LIKE :query) " +
+            " GROUP BY a.format")
+    List<FormatCountRow> countAlbumsByFormatAndSearch(
+            List<String> formats,
+            boolean formatsEmpty,
+            String query
+    );
+
+    class FormatCountRow {
+        public String format;
+        public int count;
+    }
 
 }

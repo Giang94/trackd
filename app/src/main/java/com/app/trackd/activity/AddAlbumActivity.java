@@ -33,7 +33,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.app.trackd.R;
 import com.app.trackd.adapter.ArtistSuggestionAdapter;
 import com.app.trackd.common.OpenCVLoader;
-import com.app.trackd.database.AlbumFormatConverter;
 import com.app.trackd.database.AppDatabase;
 import com.app.trackd.matcher.TFPhotoMatcher;
 import com.app.trackd.model.Album;
@@ -72,6 +71,7 @@ public class AddAlbumActivity extends AppCompatActivity {
     private TextInputLayout lyBarcode;
     private String coverBase64 = "";
     private Bitmap currentBitmap;
+    private List<AlbumFormat> sortedFormatOptions;
 
     private ActivityResultLauncher<Intent> pickImageLauncher;
     private ActivityResultLauncher<Intent> barcodeLauncher;
@@ -175,10 +175,15 @@ public class AddAlbumActivity extends AppCompatActivity {
     }
 
     private void setupFormatDropdown() {
+        sortedFormatOptions = AlbumFormat.getSortedByName();
+        List<String> formatNames = sortedFormatOptions.stream()
+                .map(AlbumFormat::getDisplayName)
+                .toList();
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_spinner_item,
-                new String[]{"CD", "CASSETTE", "VINYL 12\"", "VINYL 10\"", "VINYL 7\""}
+                formatNames
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spFormat.setAdapter(adapter);
@@ -232,8 +237,7 @@ public class AddAlbumActivity extends AppCompatActivity {
         } catch (NumberFormatException ignored) {
         }
 
-        String formatText = AlbumFormatConverter.mapFormatForDb(spFormat.getSelectedItem().toString());
-        AlbumFormat format = AlbumFormat.valueOf(formatText);
+        AlbumFormat format = sortedFormatOptions.get(spFormat.getSelectedItemPosition());
 
         float[] embedding;
         if (currentBitmap != null) {

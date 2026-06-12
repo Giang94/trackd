@@ -1,12 +1,14 @@
 package com.app.trackd.model.enums;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public enum AlbumFormat {
 
     CD("CD"),
+    DVD("DVD"),
     VINYL("Vinyl 12\""),
     CASSETTE("Cassette"),
     VINYL_7("Vinyl 7\""),
@@ -31,6 +33,12 @@ public enum AlbumFormat {
     public static List<String> getDisplayNames() {
         return Arrays.stream(AlbumFormat.values())
                 .map(AlbumFormat::getDisplayName)
+                .collect(Collectors.toList());
+    }
+
+    public static List<AlbumFormat> getSortedByName() {
+        return Arrays.stream(AlbumFormat.values())
+                .sorted(Comparator.comparing(AlbumFormat::name))
                 .collect(Collectors.toList());
     }
 

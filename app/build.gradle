@@ -1,6 +1,5 @@
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android' // needed for Room runtime
 }
 
 android {
@@ -42,6 +41,7 @@ dependencies {
     // RecyclerView & CardView
     implementation "androidx.recyclerview:recyclerview:1.4.0"
     implementation "androidx.cardview:cardview:1.0.0"
+    implementation "androidx.palette:palette:1.0.0"
 
     // Glide for image loading
     implementation "com.github.bumptech.glide:glide:5.0.5"

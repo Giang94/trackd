@@ -202,14 +202,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center|bottom"
-                        android:layout_marginBottom="@dimen/margin_large"
+                        android:layout_marginBottom="@dimen/margin_medium"
                         android:orientation="horizontal"
                         android:gravity="center">
 
                     <ImageButton
                             android:id="@+id/btnTag"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
                             android:background="@drawable/lux_circle_bg"
                             android:layout_margin="@dimen/margin_medium"
                             android:src="@drawable/ic_tag" />
@@ -217,15 +217,15 @@
                     <ImageButton
                             android:layout_margin="@dimen/margin_medium"
                             android:id="@+id/btnEdit"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
                             android:background="@drawable/lux_circle_bg"
                             android:src="@drawable/ic_edit" />
 
                     <ImageButton
                             android:id="@+id/btnDelete"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
                             android:layout_margin="@dimen/margin_medium"
                             android:background="@drawable/lux_circle_bg"
                             android:src="@drawable/ic_delete" />

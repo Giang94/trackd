@@ -16,28 +16,29 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-        <View
+        <ImageButton
+                android:id="@+id/btnLayoutSwitch"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:visibility="invisible" />
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_view_grid"
+                app:tint="?attr/colorOnSurface"
+                android:contentDescription="@string/cd_switch_album_layout" />
 
         <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Library"
+                android:text="@string/library"
                 android:gravity="center"
                 android:textSize="@dimen/header_text_size"
                 android:textStyle="bold" />
 
-        <ImageButton
-                android:id="@+id/btnFilter"
+        <View
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_filter"
-                android:contentDescription="Filter albums" />
+                android:visibility="invisible" />
     </LinearLayout>
 
     <!-- Search -->
@@ -45,7 +46,7 @@
             android:id="@+id/searchInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Album title, artist name..."
+            android:hint="@string/hint_album_search"
             android:paddingStart="@dimen/screen_padding"
             android:paddingEnd="@dimen/screen_padding"
             app:layout_constraintTop_toBottomOf="@id/albumListHeader"
@@ -59,6 +60,79 @@
                 android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <HorizontalScrollView
+            android:id="@+id/formatFilterScroll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/screen_padding"
+            android:paddingEnd="@dimen/screen_padding"
+            android:scrollbars="none"
+            app:layout_constraintTop_toBottomOf="@id/searchInputLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupFormatFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                app:singleSelection="true"
+                app:selectionRequired="true"
+                app:singleLine="true">
+
+            <com.google.android.material.chip.Chip
+                    android:id="@+id/chipFilterAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filter_format_all"
+                    android:checked="true"
+                    android:checkable="true" />
+
+            <com.google.android.material.chip.Chip
+                    android:id="@+id/chipFilterLp12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filter_format_lp_12"
+                    android:checkable="true" />
+
+            <com.google.android.material.chip.Chip
+                    android:id="@+id/chipFilterLp10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filter_format_lp_10"
+                    android:checkable="true" />
+
+            <com.google.android.material.chip.Chip
+                    android:id="@+id/chipFilterLp7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filter_format_lp_7"
+                    android:checkable="true" />
+
+            <com.google.android.material.chip.Chip
+                    android:id="@+id/chipFilterCd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filter_format_cd"
+                    android:checkable="true" />
+
+            <com.google.android.material.chip.Chip
+                    android:id="@+id/chipFilterDvd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filter_format_dvd"
+                    android:checkable="true" />
+
+            <com.google.android.material.chip.Chip
+                    android:id="@+id/chipFilterCassette"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filter_format_cassette"
+                    android:checkable="true" />
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+
     <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvAlbums"
@@ -66,7 +140,18 @@
             android:layout_height="0dp"
             android:padding="@dimen/screen_padding"
             android:splitMotionEvents="false"
-            app:layout_constraintTop_toBottomOf="@id/searchInputLayout"
+            app:layout_constraintTop_toBottomOf="@id/formatFilterScroll"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    <ProgressBar
+            android:id="@+id/loadingSpinner"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/formatFilterScroll"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
